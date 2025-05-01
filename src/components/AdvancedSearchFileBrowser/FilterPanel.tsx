@@ -533,15 +533,6 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
           <div>
             <div className="mb-2 flex items-center justify-between">
               <h4 className="text-xs font-medium text-gray-700">Filter By:</h4>
-              {hasActiveFilters && (
-                <button
-                  type="button"
-                  onClick={clearFilters}
-                  className="text-xs text-gray-500 hover:text-red-600 transition-colors duration-150"
-                >
-                  Clear all
-                </button>
-              )}
             </div>
 
             {/* Grid of filter buttons */}
