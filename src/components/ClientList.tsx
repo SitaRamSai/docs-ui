@@ -19,6 +19,7 @@ const ClientList: React.FC = () => {
     });
 
     const handleClientClick = (client: Client) => {
+        console.log("client id click", client.clientId, client, sourceSystem)
         navigate(`/policy/${sourceSystem}/${client.clientId}`);
     };
 

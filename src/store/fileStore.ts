@@ -12,10 +12,7 @@ const useFileStore = create<FileStore>()(
       isLoading: false,
       error: null,
 
-      fetchDocuments: async (
-        sourceSystem: string = "Dragon",
-        clientId?: string
-      ) => {
+      fetchDocuments: async (sourceSystem?: string, clientId?: string) => {
         set({ isLoading: true, error: null });
         try {
           const documents = await apiService.getDocuments(

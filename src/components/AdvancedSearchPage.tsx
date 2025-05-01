@@ -3,15 +3,15 @@ import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { AdvancedSearchFileBrowser } from './AdvancedSearchFileBrowser';
 import { ContentSearchBar } from './ContentSearchBar';
-
+ 
 const AdvancedSearchPage: React.FC = () => {
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState<'metadata' | 'content'>('metadata');
     // State for content search bar
     const [contentSearchQuery, setContentSearchQuery] = useState('');
     const [tempContentSearchQuery, setTempContentSearchQuery] = useState('');
-
-
+ 
+ 
     return (
         <div className="min-h-screen bg-gray-50">
             {/* Header */}
@@ -30,7 +30,7 @@ const AdvancedSearchPage: React.FC = () => {
                     </div>
                 </div>
             </div>
-
+ 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <div className="mb-6 border-b border-gray-200">
                     <nav className="-mb-px flex space-x-8" aria-label="Tabs">
@@ -56,7 +56,7 @@ const AdvancedSearchPage: React.FC = () => {
                         </button>
                     </nav>
                 </div>
-
+ 
                 <div>
                     {activeTab === 'metadata' && (
                         <div className="w-full bg-white rounded-xl shadow p-4 my-4 flex flex-col justify-start max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-[500px]">
@@ -83,7 +83,7 @@ const AdvancedSearchPage: React.FC = () => {
                             />
                         </div>
                     )}
-
+ 
                     {activeTab === 'content' && (
                         <div className="w-full bg-white rounded-xl shadow p-4 my-4 flex flex-col justify-start max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-[500px]">
                             
@@ -116,5 +116,5 @@ const AdvancedSearchPage: React.FC = () => {
         </div>
     );
 };
-
+ 
 export default AdvancedSearchPage;

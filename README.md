@@ -100,4 +100,3 @@ yarn format
 ## Deployment
 
 You can deploy the `dist/` folder using any static hosting service like S3 bucket, Vercel, Netlify, or GitHub Pages.
-# docs-ui

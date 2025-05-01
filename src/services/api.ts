@@ -99,32 +99,32 @@ class ApiService {
     }
 
     try {
-      if (this.isDevelopment) {
-        await this.delay(1000);
-        const mockConfigs: SourceSystemConfig[] = [
-          {
-            id: "1",
-            name: "Dragon System",
-            sourceSystem: "dragon",
-            description: "Primary document management system",
-            enabled: true,
-            lastUpdated: new Date().toISOString(),
-          },
-          {
-            id: "2",
-            name: "eBao System",
-            sourceSystem: "ebao",
-            description: "Insurance policy management",
-            enabled: true,
-            lastUpdated: new Date().toISOString(),
-          },
-        ];
-        this.configCache = {
-          data: mockConfigs,
-          timestamp: now,
-        };
-        return mockConfigs;
-      }
+      // if (this.isDevelopment) {
+      //   await this.delay(1000);
+      //   const mockConfigs: SourceSystemConfig[] = [
+      //     {
+      //       id: "1",
+      //       name: "Dragon System",
+      //       sourceSystem: "dragon",
+      //       description: "Primary document management system",
+      //       enabled: true,
+      //       lastUpdated: new Date().toISOString(),
+      //     },
+      //     {
+      //       id: "2",
+      //       name: "eBao System",
+      //       sourceSystem: "ebao",
+      //       description: "Insurance policy management",
+      //       enabled: true,
+      //       lastUpdated: new Date().toISOString(),
+      //     },
+      //   ];
+      //   this.configCache = {
+      //     data: mockConfigs,
+      //     timestamp: now,
+      //   };
+      //   return mockConfigs;
+      // }
 
       const headers = await this.getAuthHeaders();
       const response = await fetch(
@@ -217,6 +217,7 @@ class ApiService {
       // }
 
       const headers = await this.getAuthHeaders();
+      console.log("checking...", sourceSystem, clientId);
       const url = clientId
         ? `${this.baseUrl}/${sourceSystem}/${clientId}/documents`
         : `${this.baseUrl}/${sourceSystem}/documents`;

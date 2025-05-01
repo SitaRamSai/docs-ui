@@ -46,21 +46,8 @@ const Toolbar: React.FC = () => {
                     <Upload className="w-4 h-4 sm:mr-2" />
                     <span className="hidden sm:inline">Upload</span>
                 </button>
-                <button
-                    onClick={handleNewFolder}
-                    className="flex-none flex items-center justify-center px-3 sm:px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 min-w-[80px]"
-                >
-                    <FolderPlus className="w-4 h-4 sm:mr-2" />
-                    <span className="hidden sm:inline">New Folder</span>
-                </button>
-                <button
-                    onClick={handleDelete}
-                    disabled={selectedFiles.size === 0}
-                    className="flex-none flex items-center justify-center px-3 sm:px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 disabled:opacity-50 min-w-[80px]"
-                >
-                    <Trash2 className="w-4 h-4 sm:mr-2" />
-                    <span className="hidden sm:inline">Delete</span>
-                </button>
+
+
                 {/* <button
                     onClick={handleShare}
                     disabled={selectedFiles.size !== 1}

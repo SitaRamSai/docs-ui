@@ -40,8 +40,9 @@ function FileBrowserLayout() {
               </h1>
             </div>
             <Breadcrumbs />
-            <Toolbar />
+
             <div className="overflow-x-auto">
+              <Toolbar />
               <FileList />
             </div>
           </div>
@@ -63,6 +64,7 @@ function SourceSystemsLayout() {
               <h1 className="text-lg font-medium leading-6 text-gray-900">
                 Source Systems
               </h1>
+              <p className="text-sm text-gray-500">Identifies the originating system where the data was initially created or is primarily maintained.<br />This ensures traceability and data integrity across integrated insurance platforms.</p>
             </div>
             <SourceSystemGrid />
           </div>
@@ -103,12 +105,12 @@ function App() {
     <Router>
       <Security oktaAuth={oktaAuth} restoreOriginalUri={restoreOriginalUri}>
         <Routes>
+          <Route path="/" element={<SecureRoute><SourceSystemsLayout /></SecureRoute>} />
           <Route path="/login" element={<Login />} />
           <Route path="/login/callback" element={<OktaLoginCallback />} />
           <Route path="/policy/:sourceSystem/:clientId" element={<FileBrowserLayout />} />
           <Route path="/policy/:sourceSystem" element={<ClientListLayout />} />
           <Route path="/advanced-search" element={<AdvancedSearchPage />} />
-          <Route path="/" element={<SourceSystemsLayout />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Security>

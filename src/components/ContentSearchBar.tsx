@@ -1,12 +1,12 @@
 import React from "react";
 import { Search } from "lucide-react";
-
+ 
 interface ContentSearchBarProps {
   value: string;
   onChange: (v: string) => void;
   onSubmit: () => void;
 }
-
+ 
 export const ContentSearchBar: React.FC<ContentSearchBarProps> = ({
   value,
   onChange,
@@ -41,8 +41,9 @@ export const ContentSearchBar: React.FC<ContentSearchBarProps> = ({
             <span>Search</span>
           </button>
         </div>
-
+ 
       </div>
     </form>
   );
 };
+

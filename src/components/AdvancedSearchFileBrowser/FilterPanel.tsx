@@ -1,25 +1,17 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Search, X, ChevronDown, ChevronUp, Plus, Filter, Check, Sliders, ArrowRight, Lightbulb, AlertCircle, Tag, Edit } from 'lucide-react';
-
-interface FilterPanelProps {
-  currentFilters?: Record<string, any>; // Allow different filter types
-  onFilterChange: (filters: Record<string, any>) => void;
-  onSearch: () => void;
-  isLoading?: boolean;
-}
-
-// Define query types as a literal type for TypeScript
-type QueryType = 'matches' | 'like' | 'in' | 'range';
-
+import { FilterPanelProps, FilterOption, QueryType, QueryFilter, SmartSuggestion, DateRange } from '../../types/filterTypes';
+import { formatKey, classNames, isFilterApplied, getAppliedFilter } from '../../utils/filterUtils';
+ 
 // Filter option categories aligned with API's searchable fields
-const filterOptions = [
+const filterOptions: FilterOption[] = [
   { key: 'filename', label: 'Filename', placeholder: 'e.g., report.pdf', queryType: 'like' as QueryType },
   { key: 'contentType', label: 'Content Type', placeholder: 'Select content types', queryType: 'in' as QueryType },
   { key: 'fileType', label: 'File Type', placeholder: 'Select file types', queryType: 'in' as QueryType },
   { key: 'clientId', label: 'Client ID', placeholder: 'e.g., 12345', queryType: 'matches' as QueryType },
   { key: 'createdAt', label: 'Created Date', placeholder: 'Select date range', queryType: 'range' as QueryType }
 ];
-
+ 
 // Map of query types to UI behaviors
 const queryTypeConfig: Record<QueryType, { component: string; inputType: string; description: string }> = {
   'matches': { 
@@ -43,7 +35,7 @@ const queryTypeConfig: Record<QueryType, { component: string; inputType: string;
     description: 'Date range' 
   }
 };
-
+ 
 // Common content types with friendly names
 const commonContentTypes = [
   { value: 'application/pdf', label: 'PDF' },
@@ -53,15 +45,15 @@ const commonContentTypes = [
   { value: 'application/msword', label: 'DOC' },
   { value: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', label: 'DOCX' },
 ];
-
+ 
 // Common file types
 const commonFileTypes = [
   { value: 'submission', label: 'Submission' },
   { value: 'letter', label: 'Letter' }
 ];
-
+ 
 // Smart suggestions based on common filter combinations
-const smartSuggestions = [
+const smartSuggestions: SmartSuggestion[] = [
   {
     id: 'recent-docs',
     title: 'Recent Documents',
@@ -109,7 +101,7 @@ const smartSuggestions = [
     }]
   }
 ];
-
+ 
 export const FilterPanel: React.FC<FilterPanelProps> = ({
   currentFilters = {},
   onFilterChange,
@@ -117,13 +109,9 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
   isLoading = false,
 }) => {
   // State for the query being built - array of filter objects like the API requires
-  const [queryFilters, setQueryFilters] = useState<Array<{
-    key: string;
-    type: string;
-    value: any;
-  }>>(() => {
+  const [queryFilters, setQueryFilters] = useState<QueryFilter[]>(() => {
     // Convert incoming filters to query format if any
-    const initialFilters: Array<{key: string; type: string; value: any}> = [];
+    const initialFilters: QueryFilter[] = [];
     if (currentFilters && typeof currentFilters === 'object') {
       Object.entries(currentFilters).forEach(([key, value]) => {
         const option = filterOptions.find(opt => opt.key === key);
@@ -138,7 +126,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
     }
     return initialFilters;
   });
-
+ 
   // State for smart suggestions
   const [showSuggestions, setShowSuggestions] = useState(true);
   const [suggestionsMinimized, setSuggestionsMinimized] = useState(false);
@@ -147,7 +135,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
   const [filterInput, setFilterInput] = useState('');
   const [selectedChips, setSelectedChips] = useState<string[]>([]);
-  const [dateRange, setDateRange] = useState<{start?: string; end?: string}>({});
+  const [dateRange, setDateRange] = useState<DateRange>({});
   
   // Ref for detecting clicks outside the active filter section
   const activeFilterRef = useRef<HTMLDivElement>(null);
@@ -158,7 +146,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
   
   // State to track which filter buttons have been clicked
   const [activeFilterButton, setActiveFilterButton] = useState<string | null>(null);
-
+ 
   // Reference for the filter container
   const filterContainerRef = useRef<HTMLDivElement | null>(null);
   
@@ -167,7 +155,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
   
   // Selected button position for positioning the popup
   const [selectedButtonPosition, setSelectedButtonPosition] = useState({ top: 0, left: 0, width: 0 });
-
+ 
   // Close active filter when clicking outside
   useEffect(() => {
     if (!activeFilter) return;
@@ -183,17 +171,17 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [activeFilter, filterInput, dateRange, selectedChips]);
-
+ 
   // Focus input when active filter changes
   useEffect(() => {
     if (activeFilter && inputRef.current) {
       inputRef.current.focus();
     }
   }, [activeFilter]);
-
+ 
   // Check if we have any active filters
   const hasActiveFilters = queryFilters.length > 0;
-
+ 
   // Get the filter value display format for a given filter
   const getFilterValueDisplay = (key: string, filter: any) => {
     const value = filter.value;
@@ -228,7 +216,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
     
     return String(value);
   };
-
+ 
   // Toggle filter selection on/off
   const handleFilterSelect = (key: string) => {
     // Toggle the filter button state
@@ -240,7 +228,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
       setDateRange({});
       return;
     }
-
+ 
     // Get the button position for popup positioning
     const buttonEl = filterButtonRefs.current[key];
     const containerEl = filterContainerRef.current;
@@ -256,7 +244,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
         width: buttonRect.width
       });
     }
-
+ 
     setActiveFilterButton(key);
     
     const option = filterOptions.find(opt => opt.key === key);
@@ -282,12 +270,12 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
     // Track usage for smart suggestions
     setFilterUsageHistory(prev => [key, ...prev.filter(k => k !== key).slice(0, 9)]);
   };
-
+ 
   // Handle text input change
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFilterInput(e.target.value);
   };
-
+ 
   // Handle date range change
   const handleDateRangeChange = (part: 'start' | 'end', value: string) => {
     setDateRange(prev => ({
@@ -295,7 +283,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
       [part]: value
     }));
   };
-
+ 
   // Handle toggle of a chip selection
   const handleChipToggle = (value: string) => {
     setSelectedChips(prev => {
@@ -306,7 +294,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
       }
     });
   };
-
+ 
   // Process the current filter input and add to filters
   const handleFilterConfirm = () => {
     if (!activeFilter) return;
@@ -389,7 +377,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
     setDateRange({});
     setSelectedChips([]);
   };
-
+ 
   // Handle key press in filter input
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
@@ -403,7 +391,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
       setSelectedChips([]);
     }
   };
-
+ 
   // Apply a smart suggestion
   const applySmartSuggestion = (suggestion: typeof smartSuggestions[0]) => {
     // Get existing filters without conflicting ones
@@ -428,7 +416,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
     // Track that we used this suggestion for future smart suggestions
     setFilterUsageHistory(prev => [suggestion.id, ...prev.filter(id => id !== suggestion.id).slice(0, 9)]);
   };
-
+ 
   // Remove a filter from the query
   const removeFilter = (index: number) => {
     const newFilters = [...queryFilters];
@@ -444,30 +432,30 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
     
     onFilterChange(filterObject);
   };
-
+ 
   // Clear all filters
   const clearFilters = () => {
     setQueryFilters([]);
     setActiveFilter(null);
     onFilterChange({});
   };
-
+ 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     onSearch();
   };
-
+ 
   // Helper to format keys for display
   const formatKey = (key: string): string => {
     const option = filterOptions.find(opt => opt.key === key);
     return option ? option.label : key.charAt(0).toUpperCase() + key.slice(1);
   };
-
+ 
   // Helper for conditional classes
   const classNames = (...classes: (string | boolean)[]) => {
     return classes.filter(Boolean).join(' ');
   };
-
+ 
   // Get smart suggestions that don't conflict with current filters
   const getRelevantSuggestions = () => {
     return smartSuggestions.filter(suggestion => {
@@ -479,7 +467,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
   };
   
   const relevantSuggestions = getRelevantSuggestions();
-
+ 
   // Toggle suggestions visibility directly with the header
   const toggleSuggestions = () => {
     if (suggestionsMinimized) {
@@ -488,19 +476,19 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
       setSuggestionsMinimized(!suggestionsMinimized);
     }
   };
-
+ 
   // Check if a specific filter is applied
   const isFilterApplied = (key: string) => {
     return queryFilters.some(f => f.key === key);
   };
-
+ 
   // Get the applied filter for a key
   const getAppliedFilter = (key: string) => {
     return queryFilters.find(f => f.key === key);
   };
-
+ 
   return (
-    <div className="mb-4 border border-gray-300 rounded-lg shadow-sm bg-white relative">
+    <div className="mb-4 relative">
       {/* Fixed Filter Header */}
       <div className="border-b border-gray-200 p-3 flex items-center justify-between bg-gray-50">
         <div className="flex items-center">
@@ -526,15 +514,16 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
           </button>
         )}
       </div>
-
-      <div className="p-4" ref={filterContainerRef}>
+ 
+      <div className="pt-2 pb-4 px-0" ref={filterContainerRef}>
+        {/* Reduced top padding, removed horizontal padding, and kept bottom padding for a tighter, "higher" look */}
         <form onSubmit={handleSearch} className="space-y-4">
           {/* All filter options shown upfront */}
           <div>
             <div className="mb-2 flex items-center justify-between">
               <h4 className="text-xs font-medium text-gray-700">Filter By:</h4>
             </div>
-
+ 
             {/* Grid of filter buttons */}
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 mb-3">
               {filterOptions.map(option => {
@@ -597,7 +586,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
               })}
             </div>
           </div>
-
+ 
           {/* Floating filter edit UI */}
           {activeFilter && (
             <div 
@@ -636,7 +625,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
                   <X size={14} />
                 </button>
               </div>
-
+ 
               {/* Dynamic filter input based on query type */}
               {activeFilter && (() => {
                 const option = filterOptions.find(opt => opt.key === activeFilter);
@@ -821,3 +810,4 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
     </div>
   );
 };
+

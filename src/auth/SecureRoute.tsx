@@ -41,13 +41,13 @@ const SecureRoute: React.FC<SecureRouteProps> = ({ children }) => {
     } catch (error) {
       console.error("Error setting original URI:", error);
     }
-
-
-    navigate('/login', { replace: true, state: { from: pathname } })
+    navigate('/login', { replace: true, state: { from: pathname } });
     return null;
   }
 
   // If authenticated, render the protected content
   return <>{children}</>;
+
 }
 export default SecureRoute;
+ 
