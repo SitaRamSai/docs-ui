@@ -2,10 +2,15 @@ import React, { useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { AdvancedSearchFileBrowser } from './AdvancedSearchFileBrowser';
+import { ContentSearchBar } from './ContentSearchBar';
 
 const AdvancedSearchPage: React.FC = () => {
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState<'metadata' | 'content'>('metadata');
+    // State for content search bar
+    const [contentSearchQuery, setContentSearchQuery] = useState('');
+    const [tempContentSearchQuery, setTempContentSearchQuery] = useState('');
+
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -54,32 +59,56 @@ const AdvancedSearchPage: React.FC = () => {
 
                 <div>
                     {activeTab === 'metadata' && (
-                        <AdvancedSearchFileBrowser
-                            initialQuery={{
-                                query: [
-                                    {
-                                        key: "sourceSystem",
-                                        type: "matches",
-                                        value: "dragon"
-                                    }
-                                ],
-                                count: 10,
-                                offset: 0,
-                                projection: ["id", "filename", "contentType", "createdAt"]
-                            }}
-                            onFileSelect={(file) => console.log("Selected file:", file)}
-                            onPageChange={(offset) => console.log("Page changed:", offset)}
-                            itemsPerPage={10}
-                            showFilters={true}
-                            enableMultiSelect={true}
-                            className="min-h-[calc(100vh-16rem)]"
-                        />
+                        <div className="w-full bg-white rounded-xl shadow p-4 my-4 flex flex-col justify-start max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-[500px]">
+                            
+                            <AdvancedSearchFileBrowser
+                                initialQuery={{
+                                    query: [
+                                        {
+                                            key: "sourceSystem",
+                                            type: "matches",
+                                            value: "dragon"
+                                        }
+                                    ],
+                                    count: 10,
+                                    offset: 0,
+                                    projection: ["id", "filename", "contentType", "createdAt"]
+                                }}
+                                onFileSelect={(file) => console.log("Selected file:", file)}
+                                onPageChange={(offset) => console.log("Page changed:", offset)}
+                                itemsPerPage={10}
+                                showFilters={true}
+                                enableMultiSelect={true}
+                                className="h-full"
+                            />
+                        </div>
                     )}
 
                     {activeTab === 'content' && (
-                        <div className="p-6 bg-white rounded-lg border border-gray-200 min-h-[calc(100vh-16rem)]">
-                            <h2 className="text-lg font-medium text-gray-900 mb-4">Content Search</h2>
-                            <p className="text-gray-600">Content search functionality will be implemented here.</p>
+                        <div className="w-full bg-white rounded-xl shadow p-4 my-4 flex flex-col justify-start max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-[500px]">
+                            
+                            <ContentSearchBar
+                                value={tempContentSearchQuery}
+                                onChange={setTempContentSearchQuery}
+                                onSubmit={() => setContentSearchQuery(tempContentSearchQuery)}
+                            />
+                            <div className="mb-6" />
+                            <AdvancedSearchFileBrowser
+                                initialQuery={{
+                                    query: [
+                                        ...(contentSearchQuery ? [{ key: "content", type: "matches", value: contentSearchQuery }] : []),
+                                    ],
+                                    count: 10,
+                                    offset: 0,
+                                    projection: ["id", "filename", "contentType", "createdAt", "sourceSystem"]
+                                }}
+                                onFileSelect={file => console.log("Selected file:", file)}
+                                onPageChange={offset => console.log("Page changed:", offset)}
+                                itemsPerPage={10}
+                                showFilters={false}
+                                enableMultiSelect={true}
+                                className="h-full"
+                            />
                         </div>
                     )}
                 </div>
