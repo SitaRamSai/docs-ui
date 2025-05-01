@@ -1,10 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { AdvancedSearchFileBrowser } from './AdvancedSearchFileBrowser';
+import { ContentSearchBar } from './ContentSearchBar';
 
 const AdvancedSearchPage: React.FC = () => {
     const navigate = useNavigate();
+    const [activeTab, setActiveTab] = useState<'metadata' | 'content'>('metadata');
+    // State for content search bar
+    const [contentSearchQuery, setContentSearchQuery] = useState('');
+    const [tempContentSearchQuery, setTempContentSearchQuery] = useState('');
+
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -19,33 +25,93 @@ const AdvancedSearchPage: React.FC = () => {
                             >
                                 <ArrowLeft className="w-5 h-5" />
                             </button>
-                            <h1 className="text-xl font-semibold text-gray-900">Advanced Search</h1>
+                            <h1 className="text-xl font-semibold text-gray-900">Search</h1>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                <AdvancedSearchFileBrowser
-                    initialQuery={{
-                        query: [
-                            {
-                                key: "sourceSystem",
-                                type: "matches",
-                                value: "dragon"
-                            }
-                        ],
-                        count: 10,
-                        offset: 0,
-                        projection: ["id", "filename", "contentType", "createdAt"]
-                    }}
-                    onFileSelect={(file) => console.log("Selected file:", file)}
-                    onPageChange={(offset) => console.log("Page changed:", offset)}
-                    itemsPerPage={10}
-                    showFilters={true}
-                    enableMultiSelect={true}
-                    className="min-h-[calc(100vh-12rem)]"
-                />
+                <div className="mb-6 border-b border-gray-200">
+                    <nav className="-mb-px flex space-x-8" aria-label="Tabs">
+                        <button
+                            onClick={() => setActiveTab('metadata')}
+                            className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm ${
+                                activeTab === 'metadata'
+                                    ? 'border-blue-500 text-blue-600'
+                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                            }`}
+                        >
+                            Metadata Search
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('content')}
+                            className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm ${
+                                activeTab === 'content'
+                                    ? 'border-blue-500 text-blue-600'
+                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                            }`}
+                        >
+                            Content Search
+                        </button>
+                    </nav>
+                </div>
+
+                <div>
+                    {activeTab === 'metadata' && (
+                        <div className="w-full bg-white rounded-xl shadow p-4 my-4 flex flex-col justify-start max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-[500px]">
+                            
+                            <AdvancedSearchFileBrowser
+                                initialQuery={{
+                                    query: [
+                                        {
+                                            key: "sourceSystem",
+                                            type: "matches",
+                                            value: "dragon"
+                                        }
+                                    ],
+                                    count: 10,
+                                    offset: 0,
+                                    projection: ["id", "filename", "contentType", "createdAt"]
+                                }}
+                                onFileSelect={(file) => console.log("Selected file:", file)}
+                                onPageChange={(offset) => console.log("Page changed:", offset)}
+                                itemsPerPage={10}
+                                showFilters={true}
+                                enableMultiSelect={true}
+                                className="h-full"
+                            />
+                        </div>
+                    )}
+
+                    {activeTab === 'content' && (
+                        <div className="w-full bg-white rounded-xl shadow p-4 my-4 flex flex-col justify-start max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-[500px]">
+                            
+                            <ContentSearchBar
+                                value={tempContentSearchQuery}
+                                onChange={setTempContentSearchQuery}
+                                onSubmit={() => setContentSearchQuery(tempContentSearchQuery)}
+                            />
+                            <div className="mb-6" />
+                            <AdvancedSearchFileBrowser
+                                initialQuery={{
+                                    query: [
+                                        ...(contentSearchQuery ? [{ key: "content", type: "matches", value: contentSearchQuery }] : []),
+                                    ],
+                                    count: 10,
+                                    offset: 0,
+                                    projection: ["id", "filename", "contentType", "createdAt", "sourceSystem"]
+                                }}
+                                onFileSelect={file => console.log("Selected file:", file)}
+                                onPageChange={offset => console.log("Page changed:", offset)}
+                                itemsPerPage={10}
+                                showFilters={false}
+                                enableMultiSelect={true}
+                                className="h-full"
+                            />
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );

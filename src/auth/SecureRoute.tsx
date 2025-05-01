@@ -43,8 +43,11 @@ const SecureRoute: React.FC<SecureRouteProps> = ({ children }) => {
     }
 
 
-    navigate('/filebrowser', { replace: true, state: { from: pathname } })
-    // If authenticated, render the protected content
-  };
+    navigate('/login', { replace: true, state: { from: pathname } })
+    return null;
+  }
+
+  // If authenticated, render the protected content
+  return <>{children}</>;
 }
 export default SecureRoute;
