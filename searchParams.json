@@ -1,0 +1,4 @@
+{
+    "statusCode": 200,
+    "body": "{"Date info": [[11, "createdDate", "Date info"], [26, "emailSentDate", "Date info"]], "File info": [[8, "filename", "File info"], [15, "author", "File info"], [18, "Title", "File info"], [20, "AWDocumentOwner", "File info"]], "Policy info": [[14, "clientId", "Policy info"], [16, "submissionNumber", "Policy info"], [17, "filename", "Policy info"]]}"
+}

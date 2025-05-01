@@ -1,0 +1,188 @@
+[
+    {
+        "fileid": "468968",
+        "getetag": "\"67ae05dd87b8c\"",
+        "getlastmodified": "Thu, 13 Feb 2025 14:46:49 GMT",
+        "href": "/nextcloud/remote.php/dav/files/docsville/PolicyDocs/Dragon/123/",
+        "owner-display-name": "docsville",
+        "permissions": "RMGDNVCK",
+        "resourcetype": {
+            "collection": null
+        },
+        "system-tags": null,
+        "url": "https://awac-policy-docs-s3.s3.amazonaws.com//nextcloud/remote.php/dav/files/docsville/PolicyDocs/Dragon/123//api.py?AWSAccessKeyId=ASIA3XAHIRMHDXUVPNVH&Expires=1739893871&Signature=wmkGJnjxaxtdygl6dq%2F%2BVmVLppY%3D&X-Amzn-Trace-Id=Root%3D1-67b4ac33-608915d242c6860c7a69b451%3BParent%3D02def8bd4c7dd497%3BSampled%3D0%3BLineage%3D1%3Aed6fd637%3A0&response-content-disposition=attachment%3B%20filename%3D%22api.py%22&x-amz-security-token=IQoJb3JpZ2luX2VjEGgaCXVzLWVhc3QtMSJIMEYCIQDmGFZjMXqUw7r8CBtZ4YEijFZyIIc8d16GTWiMZvSeUAIhANxwRhRxSpqVPm4Amm8QU0UkeK7i6%2F6%2FkX907SEpNWrYKqgDCJH%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEQAxoMODA1MzIxNjA3OTUwIgzvFA57CV%2FGwJbsy7Aq%2FAJ6oy1yh2CFxnC7kQseu58LyKbkfe36mIiVV6lvM%2BUlE5s1rWhpowp4PFt5L7LVjT6O63Fj%2BUt2TJ5MIwwzLlmrQR16MCKAmGuH%2F2Uw%2BrxNY8uwqvS%2Fv328E1tsniycaqGzcWoMd7NpVdH4LJaGGd2FPCqkUJv669Bm2N%2FCP0ZHNT31X5Z5LspxpUDh4WuBAkLrr6SIjSis8ag7lomyyh8G0F2GW3VLZGrH%2Bm1xzQm3ukfyx6F12A7GJ8TAW6TCJMR8y6xcGvOVWW8k4qsLVdCR7NQiZBkxVuEIV7YXJmKwRCrXRZHl1EQ4oHJ8iGklCg%2B%2FAbmpkF2ar2Gg7QRCICS58Bp2MkkgzOZctYum5g9CxjXrNlGVU1zcHyojZE9hC%2BFClKAcq0b9NLLN%2BrIx05pl4Dkp2VW9SBp2OW0YFgNkYXEx1ZcLGQ%2FF8CRT3ltnqXaWqa4EGjHllX7KMfjhLx2%2BO3ysqJ%2FhvALwiUl%2BOWJQx59P2%2FTs01bblqukFDDQ0dK9BjqcAUrtswjfzoCb07ZHQX%2Bn2npMykUxfp58WD9%2F9HSaCrCWYcvSNIADsFh90zBt4%2FSqkXE9VMX89428GvWW6X2LjjpRzhG%2F9VkMxY%2BhQEj8h3Hvs11dNedzPEvgdjeD3WKXFdVYAwHzNKoB4SO9l5Lacm2%2Fy%2FPsUVjZAqq3fpiSGvyCFVQHIrTyNU8coscXFv8nW175SLdjUBl9iSue1w%3D%3D"
+    },
+    {
+        "fileid": "468971",
+        "getcontentlength": "27368",
+        "getcontenttype": "image/png",
+        "getetag": "\"679b9ecde7b33\"",
+        "getlastmodified": "Thu, 30 Jan 2025 15:46:22 GMT",
+        "href": "/nextcloud/remote.php/dav/files/docsville/PolicyDocs/Dragon/123/Blank.png",
+        "owner-display-name": "docsville",
+        "permissions": "RMGDNVW",
+        "resourcetype": null,
+        "system-tags": {
+            "system-tag": [
+                {
+                    "#text": "Custom_txt",
+                    "@ns0:can-assign": "true",
+                    "@ns0:id": "483",
+                    "@ns0:user-assignable": "true",
+                    "@ns0:user-visible": "true"
+                },
+                {
+                    "#text": "uploadedby_testuser",
+                    "@ns0:can-assign": "true",
+                    "@ns0:id": "492",
+                    "@ns0:user-assignable": "true",
+                    "@ns0:user-visible": "true"
+                }
+            ]
+        },
+        "url": "https://awac-policy-docs-s3.s3.amazonaws.com//nextcloud/remote.php/dav/files/docsville/PolicyDocs/Dragon/123/Blank.png/api.py?AWSAccessKeyId=ASIA3XAHIRMHDXUVPNVH&Expires=1739893871&Signature=a0VXEeOhmEDtcgMNpgZAnmEITHo%3D&X-Amzn-Trace-Id=Root%3D1-67b4ac33-5b98ffb8463240960695bc00%3BParent%3D005c38f676630abc%3BSampled%3D0%3BLineage%3D1%3Aed6fd637%3A0&response-content-disposition=attachment%3B%20filename%3D%22api.py%22&x-amz-security-token=IQoJb3JpZ2luX2VjEGgaCXVzLWVhc3QtMSJIMEYCIQDmGFZjMXqUw7r8CBtZ4YEijFZyIIc8d16GTWiMZvSeUAIhANxwRhRxSpqVPm4Amm8QU0UkeK7i6%2F6%2FkX907SEpNWrYKqgDCJH%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEQAxoMODA1MzIxNjA3OTUwIgzvFA57CV%2FGwJbsy7Aq%2FAJ6oy1yh2CFxnC7kQseu58LyKbkfe36mIiVV6lvM%2BUlE5s1rWhpowp4PFt5L7LVjT6O63Fj%2BUt2TJ5MIwwzLlmrQR16MCKAmGuH%2F2Uw%2BrxNY8uwqvS%2Fv328E1tsniycaqGzcWoMd7NpVdH4LJaGGd2FPCqkUJv669Bm2N%2FCP0ZHNT31X5Z5LspxpUDh4WuBAkLrr6SIjSis8ag7lomyyh8G0F2GW3VLZGrH%2Bm1xzQm3ukfyx6F12A7GJ8TAW6TCJMR8y6xcGvOVWW8k4qsLVdCR7NQiZBkxVuEIV7YXJmKwRCrXRZHl1EQ4oHJ8iGklCg%2B%2FAbmpkF2ar2Gg7QRCICS58Bp2MkkgzOZctYum5g9CxjXrNlGVU1zcHyojZE9hC%2BFClKAcq0b9NLLN%2BrIx05pl4Dkp2VW9SBp2OW0YFgNkYXEx1ZcLGQ%2FF8CRT3ltnqXaWqa4EGjHllX7KMfjhLx2%2BO3ysqJ%2FhvALwiUl%2BOWJQx59P2%2FTs01bblqukFDDQ0dK9BjqcAUrtswjfzoCb07ZHQX%2Bn2npMykUxfp58WD9%2F9HSaCrCWYcvSNIADsFh90zBt4%2FSqkXE9VMX89428GvWW6X2LjjpRzhG%2F9VkMxY%2BhQEj8h3Hvs11dNedzPEvgdjeD3WKXFdVYAwHzNKoB4SO9l5Lacm2%2Fy%2FPsUVjZAqq3fpiSGvyCFVQHIrTyNU8coscXFv8nW175SLdjUBl9iSue1w%3D%3D"
+    },
+    {
+        "fileid": "469915",
+        "getetag": "\"67acbfe89063b\"",
+        "getlastmodified": "Wed, 12 Feb 2025 15:36:06 GMT",
+        "href": "/nextcloud/remote.php/dav/files/docsville/PolicyDocs/Dragon/123/Dragon%20Folder/",
+        "owner-display-name": "docsville",
+        "permissions": "RMGDNVCK",
+        "resourcetype": {
+            "collection": null
+        },
+        "system-tags": null,
+        "url": "https://awac-policy-docs-s3.s3.amazonaws.com//nextcloud/remote.php/dav/files/docsville/PolicyDocs/Dragon/123/Dragon%20Folder//api.py?AWSAccessKeyId=ASIA3XAHIRMHDXUVPNVH&Expires=1739893871&Signature=%2FRdOdH0pbN1ufdmvusW8XRSWnpg%3D&X-Amzn-Trace-Id=Root%3D1-67b4ac33-57bef11030212e517a0fc2d6%3BParent%3D0030b51f307121af%3BSampled%3D0%3BLineage%3D1%3Aed6fd637%3A0&response-content-disposition=attachment%3B%20filename%3D%22api.py%22&x-amz-security-token=IQoJb3JpZ2luX2VjEGgaCXVzLWVhc3QtMSJIMEYCIQDmGFZjMXqUw7r8CBtZ4YEijFZyIIc8d16GTWiMZvSeUAIhANxwRhRxSpqVPm4Amm8QU0UkeK7i6%2F6%2FkX907SEpNWrYKqgDCJH%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEQAxoMODA1MzIxNjA3OTUwIgzvFA57CV%2FGwJbsy7Aq%2FAJ6oy1yh2CFxnC7kQseu58LyKbkfe36mIiVV6lvM%2BUlE5s1rWhpowp4PFt5L7LVjT6O63Fj%2BUt2TJ5MIwwzLlmrQR16MCKAmGuH%2F2Uw%2BrxNY8uwqvS%2Fv328E1tsniycaqGzcWoMd7NpVdH4LJaGGd2FPCqkUJv669Bm2N%2FCP0ZHNT31X5Z5LspxpUDh4WuBAkLrr6SIjSis8ag7lomyyh8G0F2GW3VLZGrH%2Bm1xzQm3ukfyx6F12A7GJ8TAW6TCJMR8y6xcGvOVWW8k4qsLVdCR7NQiZBkxVuEIV7YXJmKwRCrXRZHl1EQ4oHJ8iGklCg%2B%2FAbmpkF2ar2Gg7QRCICS58Bp2MkkgzOZctYum5g9CxjXrNlGVU1zcHyojZE9hC%2BFClKAcq0b9NLLN%2BrIx05pl4Dkp2VW9SBp2OW0YFgNkYXEx1ZcLGQ%2FF8CRT3ltnqXaWqa4EGjHllX7KMfjhLx2%2BO3ysqJ%2FhvALwiUl%2BOWJQx59P2%2FTs01bblqukFDDQ0dK9BjqcAUrtswjfzoCb07ZHQX%2Bn2npMykUxfp58WD9%2F9HSaCrCWYcvSNIADsFh90zBt4%2FSqkXE9VMX89428GvWW6X2LjjpRzhG%2F9VkMxY%2BhQEj8h3Hvs11dNedzPEvgdjeD3WKXFdVYAwHzNKoB4SO9l5Lacm2%2Fy%2FPsUVjZAqq3fpiSGvyCFVQHIrTyNU8coscXFv8nW175SLdjUBl9iSue1w%3D%3D"
+    },
+    {
+        "fileid": "468978",
+        "getcontentlength": "1896472",
+        "getcontenttype": "application/pdf",
+        "getetag": "\"679b9ed9a8284\"",
+        "getlastmodified": "Thu, 30 Jan 2025 15:46:33 GMT",
+        "href": "/nextcloud/remote.php/dav/files/docsville/PolicyDocs/Dragon/123/Morning%20Foods%20North%20Western%20Mills%20Crewe%20Nov%202013.pdf",
+        "owner-display-name": "docsville",
+        "permissions": "RMGDNVW",
+        "resourcetype": null,
+        "system-tags": null,
+        "url": "https://awac-policy-docs-s3.s3.amazonaws.com//nextcloud/remote.php/dav/files/docsville/PolicyDocs/Dragon/123/Morning%20Foods%20North%20Western%20Mills%20Crewe%20Nov%202013.pdf/api.py?AWSAccessKeyId=ASIA3XAHIRMHDXUVPNVH&Expires=1739893871&Signature=%2FqiplF70EDYKts%2FXd2cxHyDhZVg%3D&X-Amzn-Trace-Id=Root%3D1-67b4ac33-5539865a7399f43079f61624%3BParent%3D52a478eec09a8d36%3BSampled%3D0%3BLineage%3D1%3Aed6fd637%3A0&response-content-disposition=attachment%3B%20filename%3D%22api.py%22&x-amz-security-token=IQoJb3JpZ2luX2VjEGgaCXVzLWVhc3QtMSJIMEYCIQDmGFZjMXqUw7r8CBtZ4YEijFZyIIc8d16GTWiMZvSeUAIhANxwRhRxSpqVPm4Amm8QU0UkeK7i6%2F6%2FkX907SEpNWrYKqgDCJH%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEQAxoMODA1MzIxNjA3OTUwIgzvFA57CV%2FGwJbsy7Aq%2FAJ6oy1yh2CFxnC7kQseu58LyKbkfe36mIiVV6lvM%2BUlE5s1rWhpowp4PFt5L7LVjT6O63Fj%2BUt2TJ5MIwwzLlmrQR16MCKAmGuH%2F2Uw%2BrxNY8uwqvS%2Fv328E1tsniycaqGzcWoMd7NpVdH4LJaGGd2FPCqkUJv669Bm2N%2FCP0ZHNT31X5Z5LspxpUDh4WuBAkLrr6SIjSis8ag7lomyyh8G0F2GW3VLZGrH%2Bm1xzQm3ukfyx6F12A7GJ8TAW6TCJMR8y6xcGvOVWW8k4qsLVdCR7NQiZBkxVuEIV7YXJmKwRCrXRZHl1EQ4oHJ8iGklCg%2B%2FAbmpkF2ar2Gg7QRCICS58Bp2MkkgzOZctYum5g9CxjXrNlGVU1zcHyojZE9hC%2BFClKAcq0b9NLLN%2BrIx05pl4Dkp2VW9SBp2OW0YFgNkYXEx1ZcLGQ%2FF8CRT3ltnqXaWqa4EGjHllX7KMfjhLx2%2BO3ysqJ%2FhvALwiUl%2BOWJQx59P2%2FTs01bblqukFDDQ0dK9BjqcAUrtswjfzoCb07ZHQX%2Bn2npMykUxfp58WD9%2F9HSaCrCWYcvSNIADsFh90zBt4%2FSqkXE9VMX89428GvWW6X2LjjpRzhG%2F9VkMxY%2BhQEj8h3Hvs11dNedzPEvgdjeD3WKXFdVYAwHzNKoB4SO9l5Lacm2%2Fy%2FPsUVjZAqq3fpiSGvyCFVQHIrTyNU8coscXFv8nW175SLdjUBl9iSue1w%3D%3D"
+    },
+    {
+        "fileid": "468974",
+        "getcontentlength": "1357659",
+        "getcontenttype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "getetag": "\"679b9ed2756af\"",
+        "getlastmodified": "Thu, 30 Jan 2025 15:46:26 GMT",
+        "href": "/nextcloud/remote.php/dav/files/docsville/PolicyDocs/Dragon/123/Okta%20-%20OIDC.docx",
+        "owner-display-name": "docsville",
+        "permissions": "RMGDNVW",
+        "resourcetype": null,
+        "system-tags": null,
+        "url": "https://awac-policy-docs-s3.s3.amazonaws.com//nextcloud/remote.php/dav/files/docsville/PolicyDocs/Dragon/123/Okta%20-%20OIDC.docx/api.py?AWSAccessKeyId=ASIA3XAHIRMHDXUVPNVH&Expires=1739893871&Signature=iEEBpQkhb6%2Fg7ITITj8wpsGQ32g%3D&X-Amzn-Trace-Id=Root%3D1-67b4ac33-6ef5753c13ef54343fc90853%3BParent%3D27d0147c4936eecb%3BSampled%3D0%3BLineage%3D1%3Aed6fd637%3A0&response-content-disposition=attachment%3B%20filename%3D%22api.py%22&x-amz-security-token=IQoJb3JpZ2luX2VjEGgaCXVzLWVhc3QtMSJIMEYCIQDmGFZjMXqUw7r8CBtZ4YEijFZyIIc8d16GTWiMZvSeUAIhANxwRhRxSpqVPm4Amm8QU0UkeK7i6%2F6%2FkX907SEpNWrYKqgDCJH%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEQAxoMODA1MzIxNjA3OTUwIgzvFA57CV%2FGwJbsy7Aq%2FAJ6oy1yh2CFxnC7kQseu58LyKbkfe36mIiVV6lvM%2BUlE5s1rWhpowp4PFt5L7LVjT6O63Fj%2BUt2TJ5MIwwzLlmrQR16MCKAmGuH%2F2Uw%2BrxNY8uwqvS%2Fv328E1tsniycaqGzcWoMd7NpVdH4LJaGGd2FPCqkUJv669Bm2N%2FCP0ZHNT31X5Z5LspxpUDh4WuBAkLrr6SIjSis8ag7lomyyh8G0F2GW3VLZGrH%2Bm1xzQm3ukfyx6F12A7GJ8TAW6TCJMR8y6xcGvOVWW8k4qsLVdCR7NQiZBkxVuEIV7YXJmKwRCrXRZHl1EQ4oHJ8iGklCg%2B%2FAbmpkF2ar2Gg7QRCICS58Bp2MkkgzOZctYum5g9CxjXrNlGVU1zcHyojZE9hC%2BFClKAcq0b9NLLN%2BrIx05pl4Dkp2VW9SBp2OW0YFgNkYXEx1ZcLGQ%2FF8CRT3ltnqXaWqa4EGjHllX7KMfjhLx2%2BO3ysqJ%2FhvALwiUl%2BOWJQx59P2%2FTs01bblqukFDDQ0dK9BjqcAUrtswjfzoCb07ZHQX%2Bn2npMykUxfp58WD9%2F9HSaCrCWYcvSNIADsFh90zBt4%2FSqkXE9VMX89428GvWW6X2LjjpRzhG%2F9VkMxY%2BhQEj8h3Hvs11dNedzPEvgdjeD3WKXFdVYAwHzNKoB4SO9l5Lacm2%2Fy%2FPsUVjZAqq3fpiSGvyCFVQHIrTyNU8coscXFv8nW175SLdjUBl9iSue1w%3D%3D"
+    },
+    {
+        "fileid": "468976",
+        "getcontentlength": "1362079",
+        "getcontenttype": "application/pdf",
+        "getetag": "\"679b9ed6ed1b7\"",
+        "getlastmodified": "Thu, 30 Jan 2025 15:46:31 GMT",
+        "href": "/nextcloud/remote.php/dav/files/docsville/PolicyDocs/Dragon/123/Okta%20-%20OIDC.pdf",
+        "owner-display-name": "docsville",
+        "permissions": "RMGDNVW",
+        "resourcetype": null,
+        "system-tags": null,
+        "url": "https://awac-policy-docs-s3.s3.amazonaws.com//nextcloud/remote.php/dav/files/docsville/PolicyDocs/Dragon/123/Okta%20-%20OIDC.pdf/api.py?AWSAccessKeyId=ASIA3XAHIRMHDXUVPNVH&Expires=1739893871&Signature=GxyqY44Zv6z%2BQQJBbowyzzZcLcA%3D&X-Amzn-Trace-Id=Root%3D1-67b4ac33-28eba48639b1612c1dbdc97b%3BParent%3D73625f08b075e13b%3BSampled%3D0%3BLineage%3D1%3Aed6fd637%3A0&response-content-disposition=attachment%3B%20filename%3D%22api.py%22&x-amz-security-token=IQoJb3JpZ2luX2VjEGgaCXVzLWVhc3QtMSJIMEYCIQDmGFZjMXqUw7r8CBtZ4YEijFZyIIc8d16GTWiMZvSeUAIhANxwRhRxSpqVPm4Amm8QU0UkeK7i6%2F6%2FkX907SEpNWrYKqgDCJH%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEQAxoMODA1MzIxNjA3OTUwIgzvFA57CV%2FGwJbsy7Aq%2FAJ6oy1yh2CFxnC7kQseu58LyKbkfe36mIiVV6lvM%2BUlE5s1rWhpowp4PFt5L7LVjT6O63Fj%2BUt2TJ5MIwwzLlmrQR16MCKAmGuH%2F2Uw%2BrxNY8uwqvS%2Fv328E1tsniycaqGzcWoMd7NpVdH4LJaGGd2FPCqkUJv669Bm2N%2FCP0ZHNT31X5Z5LspxpUDh4WuBAkLrr6SIjSis8ag7lomyyh8G0F2GW3VLZGrH%2Bm1xzQm3ukfyx6F12A7GJ8TAW6TCJMR8y6xcGvOVWW8k4qsLVdCR7NQiZBkxVuEIV7YXJmKwRCrXRZHl1EQ4oHJ8iGklCg%2B%2FAbmpkF2ar2Gg7QRCICS58Bp2MkkgzOZctYum5g9CxjXrNlGVU1zcHyojZE9hC%2BFClKAcq0b9NLLN%2BrIx05pl4Dkp2VW9SBp2OW0YFgNkYXEx1ZcLGQ%2FF8CRT3ltnqXaWqa4EGjHllX7KMfjhLx2%2BO3ysqJ%2FhvALwiUl%2BOWJQx59P2%2FTs01bblqukFDDQ0dK9BjqcAUrtswjfzoCb07ZHQX%2Bn2npMykUxfp58WD9%2F9HSaCrCWYcvSNIADsFh90zBt4%2FSqkXE9VMX89428GvWW6X2LjjpRzhG%2F9VkMxY%2BhQEj8h3Hvs11dNedzPEvgdjeD3WKXFdVYAwHzNKoB4SO9l5Lacm2%2Fy%2FPsUVjZAqq3fpiSGvyCFVQHIrTyNU8coscXFv8nW175SLdjUBl9iSue1w%3D%3D"
+    },
+    {
+        "fileid": "468973",
+        "getcontentlength": "348509",
+        "getcontenttype": "image/png",
+        "getetag": "\"679b9ed1db9ae\"",
+        "getlastmodified": "Thu, 30 Jan 2025 15:46:26 GMT",
+        "href": "/nextcloud/remote.php/dav/files/docsville/PolicyDocs/Dragon/123/Okta.png",
+        "owner-display-name": "docsville",
+        "permissions": "RMGDNVW",
+        "resourcetype": null,
+        "system-tags": null,
+        "url": "https://awac-policy-docs-s3.s3.amazonaws.com//nextcloud/remote.php/dav/files/docsville/PolicyDocs/Dragon/123/Okta.png/api.py?AWSAccessKeyId=ASIA3XAHIRMHDXUVPNVH&Expires=1739893871&Signature=Xa%2BTWvr3rrBFrOYUnbciLaR8ChQ%3D&X-Amzn-Trace-Id=Root%3D1-67b4ac33-3d5a6aad510919441b1ce95b%3BParent%3D034fe449e4508b2c%3BSampled%3D0%3BLineage%3D1%3Aed6fd637%3A0&response-content-disposition=attachment%3B%20filename%3D%22api.py%22&x-amz-security-token=IQoJb3JpZ2luX2VjEGgaCXVzLWVhc3QtMSJIMEYCIQDmGFZjMXqUw7r8CBtZ4YEijFZyIIc8d16GTWiMZvSeUAIhANxwRhRxSpqVPm4Amm8QU0UkeK7i6%2F6%2FkX907SEpNWrYKqgDCJH%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEQAxoMODA1MzIxNjA3OTUwIgzvFA57CV%2FGwJbsy7Aq%2FAJ6oy1yh2CFxnC7kQseu58LyKbkfe36mIiVV6lvM%2BUlE5s1rWhpowp4PFt5L7LVjT6O63Fj%2BUt2TJ5MIwwzLlmrQR16MCKAmGuH%2F2Uw%2BrxNY8uwqvS%2Fv328E1tsniycaqGzcWoMd7NpVdH4LJaGGd2FPCqkUJv669Bm2N%2FCP0ZHNT31X5Z5LspxpUDh4WuBAkLrr6SIjSis8ag7lomyyh8G0F2GW3VLZGrH%2Bm1xzQm3ukfyx6F12A7GJ8TAW6TCJMR8y6xcGvOVWW8k4qsLVdCR7NQiZBkxVuEIV7YXJmKwRCrXRZHl1EQ4oHJ8iGklCg%2B%2FAbmpkF2ar2Gg7QRCICS58Bp2MkkgzOZctYum5g9CxjXrNlGVU1zcHyojZE9hC%2BFClKAcq0b9NLLN%2BrIx05pl4Dkp2VW9SBp2OW0YFgNkYXEx1ZcLGQ%2FF8CRT3ltnqXaWqa4EGjHllX7KMfjhLx2%2BO3ysqJ%2FhvALwiUl%2BOWJQx59P2%2FTs01bblqukFDDQ0dK9BjqcAUrtswjfzoCb07ZHQX%2Bn2npMykUxfp58WD9%2F9HSaCrCWYcvSNIADsFh90zBt4%2FSqkXE9VMX89428GvWW6X2LjjpRzhG%2F9VkMxY%2BhQEj8h3Hvs11dNedzPEvgdjeD3WKXFdVYAwHzNKoB4SO9l5Lacm2%2Fy%2FPsUVjZAqq3fpiSGvyCFVQHIrTyNU8coscXFv8nW175SLdjUBl9iSue1w%3D%3D"
+    },
+    {
+        "fileid": "468975",
+        "getcontentlength": "1044021",
+        "getcontenttype": "image/jpeg",
+        "getetag": "\"679b9ed45f4e8\"",
+        "getlastmodified": "Thu, 30 Jan 2025 15:46:28 GMT",
+        "href": "/nextcloud/remote.php/dav/files/docsville/PolicyDocs/Dragon/123/Screenshot%202025-01-02%20at%209.41.59%e2%80%afPM.jpeg",
+        "owner-display-name": "docsville",
+        "permissions": "RMGDNVW",
+        "resourcetype": null,
+        "system-tags": null,
+        "url": "https://awac-policy-docs-s3.s3.amazonaws.com//nextcloud/remote.php/dav/files/docsville/PolicyDocs/Dragon/123/Screenshot%202025-01-02%20at%209.41.59%E2%80%AFPM.jpeg/api.py?AWSAccessKeyId=ASIA3XAHIRMHDXUVPNVH&Expires=1739893871&Signature=iv922wVTssNXQnzkBjqxRrFgXYw%3D&X-Amzn-Trace-Id=Root%3D1-67b4ac33-3d3eea044ff249783ae52628%3BParent%3D7f4f53f622fa15d6%3BSampled%3D0%3BLineage%3D1%3Aed6fd637%3A0&response-content-disposition=attachment%3B%20filename%3D%22api.py%22&x-amz-security-token=IQoJb3JpZ2luX2VjEGgaCXVzLWVhc3QtMSJIMEYCIQDmGFZjMXqUw7r8CBtZ4YEijFZyIIc8d16GTWiMZvSeUAIhANxwRhRxSpqVPm4Amm8QU0UkeK7i6%2F6%2FkX907SEpNWrYKqgDCJH%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEQAxoMODA1MzIxNjA3OTUwIgzvFA57CV%2FGwJbsy7Aq%2FAJ6oy1yh2CFxnC7kQseu58LyKbkfe36mIiVV6lvM%2BUlE5s1rWhpowp4PFt5L7LVjT6O63Fj%2BUt2TJ5MIwwzLlmrQR16MCKAmGuH%2F2Uw%2BrxNY8uwqvS%2Fv328E1tsniycaqGzcWoMd7NpVdH4LJaGGd2FPCqkUJv669Bm2N%2FCP0ZHNT31X5Z5LspxpUDh4WuBAkLrr6SIjSis8ag7lomyyh8G0F2GW3VLZGrH%2Bm1xzQm3ukfyx6F12A7GJ8TAW6TCJMR8y6xcGvOVWW8k4qsLVdCR7NQiZBkxVuEIV7YXJmKwRCrXRZHl1EQ4oHJ8iGklCg%2B%2FAbmpkF2ar2Gg7QRCICS58Bp2MkkgzOZctYum5g9CxjXrNlGVU1zcHyojZE9hC%2BFClKAcq0b9NLLN%2BrIx05pl4Dkp2VW9SBp2OW0YFgNkYXEx1ZcLGQ%2FF8CRT3ltnqXaWqa4EGjHllX7KMfjhLx2%2BO3ysqJ%2FhvALwiUl%2BOWJQx59P2%2FTs01bblqukFDDQ0dK9BjqcAUrtswjfzoCb07ZHQX%2Bn2npMykUxfp58WD9%2F9HSaCrCWYcvSNIADsFh90zBt4%2FSqkXE9VMX89428GvWW6X2LjjpRzhG%2F9VkMxY%2BhQEj8h3Hvs11dNedzPEvgdjeD3WKXFdVYAwHzNKoB4SO9l5Lacm2%2Fy%2FPsUVjZAqq3fpiSGvyCFVQHIrTyNU8coscXFv8nW175SLdjUBl9iSue1w%3D%3D"
+    },
+    {
+        "fileid": "468979",
+        "getcontentlength": "5133",
+        "getcontenttype": "text/x-python",
+        "getetag": "\"679b9edb39083\"",
+        "getlastmodified": "Thu, 30 Jan 2025 15:46:35 GMT",
+        "href": "/nextcloud/remote.php/dav/files/docsville/PolicyDocs/Dragon/123/api.py",
+        "owner-display-name": "docsville",
+        "permissions": "RMGDNVW",
+        "resourcetype": null,
+        "system-tags": null,
+        "url": "https://awac-policy-docs-s3.s3.amazonaws.com//nextcloud/remote.php/dav/files/docsville/PolicyDocs/Dragon/123/api.py/api.py?AWSAccessKeyId=ASIA3XAHIRMHDXUVPNVH&Expires=1739893871&Signature=%2Fuk3YaG6OJpadjfnP%2FKHoUAvJTU%3D&X-Amzn-Trace-Id=Root%3D1-67b4ac33-6d9803d07139f3ac31dd2fe5%3BParent%3D62a80b5f35c4aa7a%3BSampled%3D0%3BLineage%3D1%3Aed6fd637%3A0&response-content-disposition=attachment%3B%20filename%3D%22api.py%22&x-amz-security-token=IQoJb3JpZ2luX2VjEGgaCXVzLWVhc3QtMSJIMEYCIQDmGFZjMXqUw7r8CBtZ4YEijFZyIIc8d16GTWiMZvSeUAIhANxwRhRxSpqVPm4Amm8QU0UkeK7i6%2F6%2FkX907SEpNWrYKqgDCJH%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEQAxoMODA1MzIxNjA3OTUwIgzvFA57CV%2FGwJbsy7Aq%2FAJ6oy1yh2CFxnC7kQseu58LyKbkfe36mIiVV6lvM%2BUlE5s1rWhpowp4PFt5L7LVjT6O63Fj%2BUt2TJ5MIwwzLlmrQR16MCKAmGuH%2F2Uw%2BrxNY8uwqvS%2Fv328E1tsniycaqGzcWoMd7NpVdH4LJaGGd2FPCqkUJv669Bm2N%2FCP0ZHNT31X5Z5LspxpUDh4WuBAkLrr6SIjSis8ag7lomyyh8G0F2GW3VLZGrH%2Bm1xzQm3ukfyx6F12A7GJ8TAW6TCJMR8y6xcGvOVWW8k4qsLVdCR7NQiZBkxVuEIV7YXJmKwRCrXRZHl1EQ4oHJ8iGklCg%2B%2FAbmpkF2ar2Gg7QRCICS58Bp2MkkgzOZctYum5g9CxjXrNlGVU1zcHyojZE9hC%2BFClKAcq0b9NLLN%2BrIx05pl4Dkp2VW9SBp2OW0YFgNkYXEx1ZcLGQ%2FF8CRT3ltnqXaWqa4EGjHllX7KMfjhLx2%2BO3ysqJ%2FhvALwiUl%2BOWJQx59P2%2FTs01bblqukFDDQ0dK9BjqcAUrtswjfzoCb07ZHQX%2Bn2npMykUxfp58WD9%2F9HSaCrCWYcvSNIADsFh90zBt4%2FSqkXE9VMX89428GvWW6X2LjjpRzhG%2F9VkMxY%2BhQEj8h3Hvs11dNedzPEvgdjeD3WKXFdVYAwHzNKoB4SO9l5Lacm2%2Fy%2FPsUVjZAqq3fpiSGvyCFVQHIrTyNU8coscXFv8nW175SLdjUBl9iSue1w%3D%3D"
+    },
+    {
+        "fileid": "469882",
+        "getcontentlength": "13342",
+        "getcontenttype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "getetag": "\"67aa0526da40b\"",
+        "getlastmodified": "Mon, 10 Feb 2025 13:54:47 GMT",
+        "href": "/nextcloud/remote.php/dav/files/docsville/PolicyDocs/Dragon/123/mytestwork_document.docx",
+        "owner-display-name": "docsville",
+        "permissions": "RMGDNVW",
+        "resourcetype": null,
+        "system-tags": null,
+        "url": "https://awac-policy-docs-s3.s3.amazonaws.com//nextcloud/remote.php/dav/files/docsville/PolicyDocs/Dragon/123/mytestwork_document.docx/api.py?AWSAccessKeyId=ASIA3XAHIRMHDXUVPNVH&Expires=1739893871&Signature=UjEYtvxRWji2icidRvkak0kbmpE%3D&X-Amzn-Trace-Id=Root%3D1-67b4ac33-30b89b68368e96d261b4ef8e%3BParent%3D016acf56129e3149%3BSampled%3D0%3BLineage%3D1%3Aed6fd637%3A0&response-content-disposition=attachment%3B%20filename%3D%22api.py%22&x-amz-security-token=IQoJb3JpZ2luX2VjEGgaCXVzLWVhc3QtMSJIMEYCIQDmGFZjMXqUw7r8CBtZ4YEijFZyIIc8d16GTWiMZvSeUAIhANxwRhRxSpqVPm4Amm8QU0UkeK7i6%2F6%2FkX907SEpNWrYKqgDCJH%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEQAxoMODA1MzIxNjA3OTUwIgzvFA57CV%2FGwJbsy7Aq%2FAJ6oy1yh2CFxnC7kQseu58LyKbkfe36mIiVV6lvM%2BUlE5s1rWhpowp4PFt5L7LVjT6O63Fj%2BUt2TJ5MIwwzLlmrQR16MCKAmGuH%2F2Uw%2BrxNY8uwqvS%2Fv328E1tsniycaqGzcWoMd7NpVdH4LJaGGd2FPCqkUJv669Bm2N%2FCP0ZHNT31X5Z5LspxpUDh4WuBAkLrr6SIjSis8ag7lomyyh8G0F2GW3VLZGrH%2Bm1xzQm3ukfyx6F12A7GJ8TAW6TCJMR8y6xcGvOVWW8k4qsLVdCR7NQiZBkxVuEIV7YXJmKwRCrXRZHl1EQ4oHJ8iGklCg%2B%2FAbmpkF2ar2Gg7QRCICS58Bp2MkkgzOZctYum5g9CxjXrNlGVU1zcHyojZE9hC%2BFClKAcq0b9NLLN%2BrIx05pl4Dkp2VW9SBp2OW0YFgNkYXEx1ZcLGQ%2FF8CRT3ltnqXaWqa4EGjHllX7KMfjhLx2%2BO3ysqJ%2FhvALwiUl%2BOWJQx59P2%2FTs01bblqukFDDQ0dK9BjqcAUrtswjfzoCb07ZHQX%2Bn2npMykUxfp58WD9%2F9HSaCrCWYcvSNIADsFh90zBt4%2FSqkXE9VMX89428GvWW6X2LjjpRzhG%2F9VkMxY%2BhQEj8h3Hvs11dNedzPEvgdjeD3WKXFdVYAwHzNKoB4SO9l5Lacm2%2Fy%2FPsUVjZAqq3fpiSGvyCFVQHIrTyNU8coscXFv8nW175SLdjUBl9iSue1w%3D%3D"
+    },
+    {
+        "fileid": "468972",
+        "getcontentlength": "0",
+        "getcontenttype": "image/png",
+        "getetag": "\"67aa02182c6d9\"",
+        "getlastmodified": "Mon, 10 Feb 2025 13:41:44 GMT",
+        "href": "/nextcloud/remote.php/dav/files/docsville/PolicyDocs/Dragon/123/next.png",
+        "owner-display-name": "docsville",
+        "permissions": "RMGDNVW",
+        "resourcetype": null,
+        "system-tags": null,
+        "url": "https://awac-policy-docs-s3.s3.amazonaws.com//nextcloud/remote.php/dav/files/docsville/PolicyDocs/Dragon/123/next.png/api.py?AWSAccessKeyId=ASIA3XAHIRMHDXUVPNVH&Expires=1739893872&Signature=CMIuxq7TxHAIWhCxtaBv8wAh2yE%3D&X-Amzn-Trace-Id=Root%3D1-67b4ac33-0ba47ad9291e38320dc9e437%3BParent%3D492115a236f41888%3BSampled%3D0%3BLineage%3D1%3Aed6fd637%3A0&response-content-disposition=attachment%3B%20filename%3D%22api.py%22&x-amz-security-token=IQoJb3JpZ2luX2VjEGgaCXVzLWVhc3QtMSJIMEYCIQDmGFZjMXqUw7r8CBtZ4YEijFZyIIc8d16GTWiMZvSeUAIhANxwRhRxSpqVPm4Amm8QU0UkeK7i6%2F6%2FkX907SEpNWrYKqgDCJH%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEQAxoMODA1MzIxNjA3OTUwIgzvFA57CV%2FGwJbsy7Aq%2FAJ6oy1yh2CFxnC7kQseu58LyKbkfe36mIiVV6lvM%2BUlE5s1rWhpowp4PFt5L7LVjT6O63Fj%2BUt2TJ5MIwwzLlmrQR16MCKAmGuH%2F2Uw%2BrxNY8uwqvS%2Fv328E1tsniycaqGzcWoMd7NpVdH4LJaGGd2FPCqkUJv669Bm2N%2FCP0ZHNT31X5Z5LspxpUDh4WuBAkLrr6SIjSis8ag7lomyyh8G0F2GW3VLZGrH%2Bm1xzQm3ukfyx6F12A7GJ8TAW6TCJMR8y6xcGvOVWW8k4qsLVdCR7NQiZBkxVuEIV7YXJmKwRCrXRZHl1EQ4oHJ8iGklCg%2B%2FAbmpkF2ar2Gg7QRCICS58Bp2MkkgzOZctYum5g9CxjXrNlGVU1zcHyojZE9hC%2BFClKAcq0b9NLLN%2BrIx05pl4Dkp2VW9SBp2OW0YFgNkYXEx1ZcLGQ%2FF8CRT3ltnqXaWqa4EGjHllX7KMfjhLx2%2BO3ysqJ%2FhvALwiUl%2BOWJQx59P2%2FTs01bblqukFDDQ0dK9BjqcAUrtswjfzoCb07ZHQX%2Bn2npMykUxfp58WD9%2F9HSaCrCWYcvSNIADsFh90zBt4%2FSqkXE9VMX89428GvWW6X2LjjpRzhG%2F9VkMxY%2BhQEj8h3Hvs11dNedzPEvgdjeD3WKXFdVYAwHzNKoB4SO9l5Lacm2%2Fy%2FPsUVjZAqq3fpiSGvyCFVQHIrTyNU8coscXFv8nW175SLdjUBl9iSue1w%3D%3D"
+    },
+    {
+        "fileid": "469881",
+        "getcontentlength": "0",
+        "getcontenttype": "image/png",
+        "getetag": "\"67aa0231bd9bc\"",
+        "getlastmodified": "Mon, 10 Feb 2025 13:42:10 GMT",
+        "href": "/nextcloud/remote.php/dav/files/docsville/PolicyDocs/Dragon/123/next1.png",
+        "owner-display-name": "docsville",
+        "permissions": "RMGDNVW",
+        "resourcetype": null,
+        "system-tags": null,
+        "url": "https://awac-policy-docs-s3.s3.amazonaws.com//nextcloud/remote.php/dav/files/docsville/PolicyDocs/Dragon/123/next1.png/api.py?AWSAccessKeyId=ASIA3XAHIRMHDXUVPNVH&Expires=1739893872&Signature=S%2FDyoznPnwVi6X8mbJP9%2FcXQYFg%3D&X-Amzn-Trace-Id=Root%3D1-67b4ac34-4d007d0d0ecd36ad6c2b458b%3BParent%3D28c19df96b50938d%3BSampled%3D0%3BLineage%3D1%3Aed6fd637%3A0&response-content-disposition=attachment%3B%20filename%3D%22api.py%22&x-amz-security-token=IQoJb3JpZ2luX2VjEGgaCXVzLWVhc3QtMSJIMEYCIQDmGFZjMXqUw7r8CBtZ4YEijFZyIIc8d16GTWiMZvSeUAIhANxwRhRxSpqVPm4Amm8QU0UkeK7i6%2F6%2FkX907SEpNWrYKqgDCJH%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEQAxoMODA1MzIxNjA3OTUwIgzvFA57CV%2FGwJbsy7Aq%2FAJ6oy1yh2CFxnC7kQseu58LyKbkfe36mIiVV6lvM%2BUlE5s1rWhpowp4PFt5L7LVjT6O63Fj%2BUt2TJ5MIwwzLlmrQR16MCKAmGuH%2F2Uw%2BrxNY8uwqvS%2Fv328E1tsniycaqGzcWoMd7NpVdH4LJaGGd2FPCqkUJv669Bm2N%2FCP0ZHNT31X5Z5LspxpUDh4WuBAkLrr6SIjSis8ag7lomyyh8G0F2GW3VLZGrH%2Bm1xzQm3ukfyx6F12A7GJ8TAW6TCJMR8y6xcGvOVWW8k4qsLVdCR7NQiZBkxVuEIV7YXJmKwRCrXRZHl1EQ4oHJ8iGklCg%2B%2FAbmpkF2ar2Gg7QRCICS58Bp2MkkgzOZctYum5g9CxjXrNlGVU1zcHyojZE9hC%2BFClKAcq0b9NLLN%2BrIx05pl4Dkp2VW9SBp2OW0YFgNkYXEx1ZcLGQ%2FF8CRT3ltnqXaWqa4EGjHllX7KMfjhLx2%2BO3ysqJ%2FhvALwiUl%2BOWJQx59P2%2FTs01bblqukFDDQ0dK9BjqcAUrtswjfzoCb07ZHQX%2Bn2npMykUxfp58WD9%2F9HSaCrCWYcvSNIADsFh90zBt4%2FSqkXE9VMX89428GvWW6X2LjjpRzhG%2F9VkMxY%2BhQEj8h3Hvs11dNedzPEvgdjeD3WKXFdVYAwHzNKoB4SO9l5Lacm2%2Fy%2FPsUVjZAqq3fpiSGvyCFVQHIrTyNU8coscXFv8nW175SLdjUBl9iSue1w%3D%3D"
+    },
+    {
+        "fileid": "468977",
+        "getcontentlength": "1362079",
+        "getcontenttype": "application/pdf",
+        "getetag": "\"679b9ed7aa40b\"",
+        "getlastmodified": "Thu, 30 Jan 2025 15:46:31 GMT",
+        "href": "/nextcloud/remote.php/dav/files/docsville/PolicyDocs/Dragon/123/sample.pdf",
+        "owner-display-name": "docsville",
+        "permissions": "RMGDNVW",
+        "resourcetype": null,
+        "system-tags": null,
+        "url": "https://awac-policy-docs-s3.s3.amazonaws.com//nextcloud/remote.php/dav/files/docsville/PolicyDocs/Dragon/123/sample.pdf/api.py?AWSAccessKeyId=ASIA3XAHIRMHDXUVPNVH&Expires=1739893872&Signature=SCn9DKlrX0a6ZHMBOwjeiGpeTgY%3D&X-Amzn-Trace-Id=Root%3D1-67b4ac34-0295601a24fdbf004805b633%3BParent%3D68b707d519cbcff4%3BSampled%3D0%3BLineage%3D1%3Aed6fd637%3A0&response-content-disposition=attachment%3B%20filename%3D%22api.py%22&x-amz-security-token=IQoJb3JpZ2luX2VjEGgaCXVzLWVhc3QtMSJIMEYCIQDmGFZjMXqUw7r8CBtZ4YEijFZyIIc8d16GTWiMZvSeUAIhANxwRhRxSpqVPm4Amm8QU0UkeK7i6%2F6%2FkX907SEpNWrYKqgDCJH%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEQAxoMODA1MzIxNjA3OTUwIgzvFA57CV%2FGwJbsy7Aq%2FAJ6oy1yh2CFxnC7kQseu58LyKbkfe36mIiVV6lvM%2BUlE5s1rWhpowp4PFt5L7LVjT6O63Fj%2BUt2TJ5MIwwzLlmrQR16MCKAmGuH%2F2Uw%2BrxNY8uwqvS%2Fv328E1tsniycaqGzcWoMd7NpVdH4LJaGGd2FPCqkUJv669Bm2N%2FCP0ZHNT31X5Z5LspxpUDh4WuBAkLrr6SIjSis8ag7lomyyh8G0F2GW3VLZGrH%2Bm1xzQm3ukfyx6F12A7GJ8TAW6TCJMR8y6xcGvOVWW8k4qsLVdCR7NQiZBkxVuEIV7YXJmKwRCrXRZHl1EQ4oHJ8iGklCg%2B%2FAbmpkF2ar2Gg7QRCICS58Bp2MkkgzOZctYum5g9CxjXrNlGVU1zcHyojZE9hC%2BFClKAcq0b9NLLN%2BrIx05pl4Dkp2VW9SBp2OW0YFgNkYXEx1ZcLGQ%2FF8CRT3ltnqXaWqa4EGjHllX7KMfjhLx2%2BO3ysqJ%2FhvALwiUl%2BOWJQx59P2%2FTs01bblqukFDDQ0dK9BjqcAUrtswjfzoCb07ZHQX%2Bn2npMykUxfp58WD9%2F9HSaCrCWYcvSNIADsFh90zBt4%2FSqkXE9VMX89428GvWW6X2LjjpRzhG%2F9VkMxY%2BhQEj8h3Hvs11dNedzPEvgdjeD3WKXFdVYAwHzNKoB4SO9l5Lacm2%2Fy%2FPsUVjZAqq3fpiSGvyCFVQHIrTyNU8coscXFv8nW175SLdjUBl9iSue1w%3D%3D"
+    }
+]

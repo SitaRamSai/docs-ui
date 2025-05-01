@@ -1,0 +1,90 @@
+name: Development Pipeline docsville-frontend
+concurrency: development-pipeline
+
+# Deploy when:
+# - A pull request is merged to develop
+
+on:
+  push:
+    branches:
+      - main
+
+  # Deploy when manually triggered from the GitHub UI.
+  workflow_dispatch:
+
+env:
+  ENV: development
+
+permissions:
+  id-token: write
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: development
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: |
+          npm install -g yarn
+          yarn install
+
+      - name: Build
+        env:
+          CI: false # Disable Treat Warnings as errors until the dev team can address them
+        run: |
+          echo "Environment $ENV"
+          yarn build-development
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: code_files
+          path: dist
+          retention-days: 1
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment: development
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: code_files
+
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          role-session-name: ${{ github.sha }}
+          aws-region: us-east-1
+
+      - name: Sync files to S3
+        run: |
+          aws s3 sync ./ s3://${{ vars.S3_BUCKET_NAME }}/
+
+  invalidate-cache:
+    runs-on: ubuntu-latest
+    needs: deploy
+    environment: development
+    steps:
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          role-session-name: ${{ github.sha }}
+          aws-region: us-east-1
+
+      - name: Invalidate CloudFront Cache
+        run: |
+          aws cloudfront create-invalidation --distribution-id ${{ vars.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
