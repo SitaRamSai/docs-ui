@@ -11,15 +11,14 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import AdvancedSearchPage from './components/AdvancedSearchPage';
 import Login from './components/Login';
-import LoginCallback from './components/LoginCallback';
-import SourceSystemGrid from './components/SourceSystemGrid';
 import ClientList from './components/ClientList';
+import Dashboard from './components/Dashboard';
 
 const oktaAuth = new OktaAuth({
   issuer: OKTA_CONFIG.issuer,
   clientId: OKTA_CONFIG.clientId,
   redirectUri: OKTA_CONFIG.redirectUri,
-  scopes: OKTA_CONFIG.scopes,
+  scopes: ['openid', 'profile', 'email'], // Default scopes needed for auth
   pkce: true,
   tokenManager: {
     autoRenew: true,
@@ -53,21 +52,13 @@ function FileBrowserLayout() {
   );
 }
 
-function SourceSystemsLayout() {
+function DashboardLayout() {
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Header />
       <main className="flex-1">
         <div className="w-full max-w-7xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
-          <div className="bg-white rounded-lg shadow">
-            <div className="px-3 py-4 sm:px-4 md:px-6 border-b border-gray-200">
-              <h1 className="text-lg font-medium leading-6 text-gray-900">
-                Source Systems
-              </h1>
-              <p className="text-sm text-gray-500">Identifies the originating system where the data was initially created or is primarily maintained.<br />This ensures traceability and data integrity across integrated insurance platforms.</p>
-            </div>
-            <SourceSystemGrid />
-          </div>
+          <Dashboard />
         </div>
       </main>
       <Footer />
@@ -105,7 +96,7 @@ function App() {
     <Router>
       <Security oktaAuth={oktaAuth} restoreOriginalUri={restoreOriginalUri}>
         <Routes>
-          <Route path="/" element={<SecureRoute><SourceSystemsLayout /></SecureRoute>} />
+          <Route path="/" element={<SecureRoute><DashboardLayout /></SecureRoute>} />
           <Route path="/login" element={<Login />} />
           <Route path="/login/callback" element={<OktaLoginCallback />} />
           <Route path="/policy/:sourceSystem/:clientId" element={<FileBrowserLayout />} />
