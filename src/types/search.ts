@@ -28,6 +28,8 @@ export interface SearchResult {
   contentType: string;
   filename: string;
   createdAt: string;
+  fileType?: string;
+  clientId?: string;
 }
 
 export interface SearchResponse {

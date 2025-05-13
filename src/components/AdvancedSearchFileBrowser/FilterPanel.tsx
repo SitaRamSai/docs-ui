@@ -1,15 +1,16 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { Search, X, ChevronDown, ChevronUp, Plus, Filter, Check, Sliders, ArrowRight, Lightbulb, AlertCircle, Tag, Edit } from 'lucide-react';
+import { Search, X, ChevronDown, ChevronUp, Plus, Filter, Check, Sliders, ArrowRight, Lightbulb, AlertCircle, Tag, Edit, Database, FileText, File, User, Calendar, Clock, Mail } from 'lucide-react';
 import { FilterPanelProps, FilterOption, QueryType, QueryFilter, SmartSuggestion, DateRange } from '../../types/filterTypes';
 import { formatKey, classNames, isFilterApplied, getAppliedFilter } from '../../utils/filterUtils';
  
 // Filter option categories aligned with API's searchable fields
 const filterOptions: FilterOption[] = [
-  { key: 'filename', label: 'Filename', placeholder: 'e.g., report.pdf', queryType: 'like' as QueryType },
-  { key: 'contentType', label: 'Content Type', placeholder: 'Select content types', queryType: 'in' as QueryType },
-  { key: 'fileType', label: 'File Type', placeholder: 'Select file types', queryType: 'in' as QueryType },
-  { key: 'clientId', label: 'Client ID', placeholder: 'e.g., 12345', queryType: 'matches' as QueryType },
-  { key: 'createdAt', label: 'Created Date', placeholder: 'Select date range', queryType: 'range' as QueryType }
+  { key: 'sourceSystem', label: 'Source System', placeholder: 'e.g., genius', queryType: 'matches' as QueryType, icon: Database },
+  { key: 'filename', label: 'Filename', placeholder: 'e.g., report.pdf', queryType: 'like' as QueryType, icon: FileText },
+  { key: 'contentType', label: 'Content Type', placeholder: 'Select content types', queryType: 'in' as QueryType, icon: File },
+  { key: 'fileType', label: 'File Type', placeholder: 'Select file types', queryType: 'in' as QueryType, icon: Tag },
+  { key: 'clientId', label: 'Client ID', placeholder: 'e.g., 12345', queryType: 'matches' as QueryType, icon: User },
+  { key: 'createdAt', label: 'Created Date', placeholder: 'Select date range', queryType: 'range' as QueryType, icon: Calendar }
 ];
  
 // Map of query types to UI behaviors
@@ -51,6 +52,14 @@ const commonFileTypes = [
   { value: 'submission', label: 'Submission' },
   { value: 'letter', label: 'Letter' }
 ];
+
+// Common source systems
+const commonSourceSystems = [
+  { value: 'genius', label: 'Genius' },
+  { value: 'dragon', label: 'Dragon' },
+  { value: 'ebao', label: 'eBao' },
+  { value: 'ivos', label: 'IVOS' }
+];
  
 // Smart suggestions based on common filter combinations
 const smartSuggestions: SmartSuggestion[] = [
@@ -59,6 +68,8 @@ const smartSuggestions: SmartSuggestion[] = [
     title: 'Recent Documents',
     description: 'Created in the last week',
     icon: 'clock',
+    iconColor: 'text-blue-500',
+    bgColor: 'bg-blue-50',
     filters: [{
       key: 'createdAt',
       type: 'range',
@@ -72,6 +83,8 @@ const smartSuggestions: SmartSuggestion[] = [
     title: 'Submissions',
     description: 'All submission documents',
     icon: 'file-text',
+    iconColor: 'text-green-500',
+    bgColor: 'bg-green-50',
     filters: [{
       key: 'fileType',
       type: 'in',
@@ -83,6 +96,8 @@ const smartSuggestions: SmartSuggestion[] = [
     title: 'Letters',
     description: 'All letter documents',
     icon: 'mail',
+    iconColor: 'text-purple-500',
+    bgColor: 'bg-purple-50',
     filters: [{
       key: 'fileType',
       type: 'in',
@@ -94,6 +109,8 @@ const smartSuggestions: SmartSuggestion[] = [
     title: 'PDF Documents',
     description: 'All PDF files',
     icon: 'file',
+    iconColor: 'text-amber-500',
+    bgColor: 'bg-amber-50',
     filters: [{
       key: 'contentType',
       type: 'in',
@@ -107,6 +124,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
   onFilterChange,
   onSearch,
   isLoading = false,
+  autoApplyFilters = false,
 }) => {
   // State for the query being built - array of filter objects like the API requires
   const [queryFilters, setQueryFilters] = useState<QueryFilter[]>(() => {
@@ -228,7 +246,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
       setDateRange({});
       return;
     }
- 
+
     // Get the button position for popup positioning
     const buttonEl = filterButtonRefs.current[key];
     const containerEl = filterContainerRef.current;
@@ -244,7 +262,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
         width: buttonRect.width
       });
     }
- 
+
     setActiveFilterButton(key);
     
     const option = filterOptions.find(opt => opt.key === key);
@@ -270,31 +288,117 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
     // Track usage for smart suggestions
     setFilterUsageHistory(prev => [key, ...prev.filter(k => k !== key).slice(0, 9)]);
   };
- 
-  // Handle text input change
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFilterInput(e.target.value);
+
+  // Auto-apply sourceSystem when selected
+  const handleSourceSystemSelect = (value: string) => {
+    // First update the state
+    setFilterInput(value);
+    
+    // If autoApplyFilters is enabled, use the value directly
+    if (autoApplyFilters && activeFilter) {
+      const option = filterOptions.find(opt => opt.key === activeFilter);
+      if (!option) return;
+      
+      // Apply filter with this value
+      applyFilterWithValue(activeFilter, option.queryType, value);
+    }
   };
- 
-  // Handle date range change
-  const handleDateRangeChange = (part: 'start' | 'end', value: string) => {
-    setDateRange(prev => ({
-      ...prev,
-      [part]: value
-    }));
+
+  // Helper function to directly apply a filter with a value
+  const applyFilterWithValue = (key: string, type: QueryType, newValue: any) => {
+    // Check if this filter already exists
+    const existingIndex = queryFilters.findIndex(f => f.key === key);
+    
+    let newFilters = [...queryFilters];
+    if (existingIndex >= 0) {
+      // Update existing filter
+      newFilters[existingIndex] = {
+        key,
+        type,
+        value: newValue
+      };
+    } else {
+      // Add new filter
+      newFilters.push({
+        key,
+        type,
+        value: newValue
+      });
+    }
+    
+    setQueryFilters(newFilters);
+    
+    // Convert the filter array to the format expected by the parent component
+    const filterObject = newFilters.reduce((acc, filter) => {
+      acc[filter.key] = filter.value;
+      return acc;
+    }, {} as Record<string, any>);
+    
+    onFilterChange(filterObject);
+    
+    // Reset state
+    setActiveFilter(null);
+    setActiveFilterButton(null);
+    setFilterInput('');
+    setDateRange({});
+    setSelectedChips([]);
+    
+    // If autoApplyFilters is enabled, trigger a search
+    if (autoApplyFilters) {
+      onSearch();
+    }
   };
- 
+
   // Handle toggle of a chip selection
   const handleChipToggle = (value: string) => {
-    setSelectedChips(prev => {
-      if (prev.includes(value)) {
-        return prev.filter(v => v !== value);
-      } else {
-        return [...prev, value];
+    if (autoApplyFilters && activeFilter) {
+      // For auto-apply, we need to handle chips differently
+      const option = filterOptions.find(opt => opt.key === activeFilter);
+      if (!option) return;
+      
+      // Create a new array with the toggled value
+      const newChips = selectedChips.includes(value)
+        ? selectedChips.filter(v => v !== value)
+        : [...selectedChips, value];
+
+      if (activeFilter === 'contentType' || activeFilter === 'fileType') {
+        if (newChips.length > 0) {
+          // Apply with the new chips array
+          setSelectedChips(newChips);
+          applyFilterWithValue(activeFilter, option.queryType, newChips);
+        }
       }
-    });
+    } else {
+      // Regular behavior without auto-apply
+      setSelectedChips(prev => {
+        if (prev.includes(value)) {
+          return prev.filter(v => v !== value);
+        } else {
+          return [...prev, value];
+        }
+      });
+    }
   };
- 
+
+  // Handle date range change
+  const handleDateRangeChange = (part: 'start' | 'end', value: string) => {
+    const newDateRange = { ...dateRange, [part]: value };
+    setDateRange(newDateRange);
+    
+    if (autoApplyFilters && activeFilter) {
+      const option = filterOptions.find(opt => opt.key === activeFilter);
+      if (!option) return;
+      
+      // Only apply if at least one date is set
+      if (newDateRange.start || newDateRange.end) {
+        // Add small delay to allow state to update
+        setTimeout(() => {
+          applyFilterWithValue(activeFilter, option.queryType, newDateRange);
+        }, 100);
+      }
+    }
+  };
+
   // Process the current filter input and add to filters
   const handleFilterConfirm = () => {
     if (!activeFilter) return;
@@ -340,44 +444,9 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
       return;
     }
     
-    // Check if this filter already exists
-    const existingIndex = queryFilters.findIndex(f => f.key === activeFilter);
-    
-    let newFilters = [...queryFilters];
-    if (existingIndex >= 0) {
-      // Update existing filter
-      newFilters[existingIndex] = {
-        key: activeFilter,
-        type: option.queryType,
-        value: newValue
-      };
-    } else {
-      // Add new filter
-      newFilters.push({
-        key: activeFilter,
-        type: option.queryType,
-        value: newValue
-      });
-    }
-    
-    setQueryFilters(newFilters);
-    
-    // Convert the filter array to the format expected by the parent component
-    const filterObject = newFilters.reduce((acc, filter) => {
-      acc[filter.key] = filter.value;
-      return acc;
-    }, {} as Record<string, any>);
-    
-    onFilterChange(filterObject);
-    
-    // Reset state
-    setActiveFilter(null);
-    setActiveFilterButton(null);
-    setFilterInput('');
-    setDateRange({});
-    setSelectedChips([]);
+    applyFilterWithValue(activeFilter, option.queryType, newValue);
   };
- 
+
   // Handle key press in filter input
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
@@ -391,13 +460,30 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
       setSelectedChips([]);
     }
   };
+
+  // Handle text input change
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFilterInput(e.target.value);
+    
+    if (autoApplyFilters && activeFilter && e.target.value && 
+        !['in', 'range'].includes(filterOptions.find(opt => opt.key === activeFilter)?.queryType || '')) {
+      // Debounce the input for text fields
+      clearTimeout(inputDebounceRef.current);
+      inputDebounceRef.current = setTimeout(() => {
+        handleFilterConfirm();
+      }, 500);
+    }
+  };
+
+  // Ref for debouncing text input
+  const inputDebounceRef = useRef<any>(null);
  
   // Apply a smart suggestion
   const applySmartSuggestion = (suggestion: typeof smartSuggestions[0]) => {
     // Get existing filters without conflicting ones
     let newFilters = queryFilters.filter(filter => {
       // Check if this filter conflicts with any in the suggestion
-      return !suggestion.filters.some(sugFilter => sugFilter.key === filter.key);
+      return !suggestion.filters.some((sugFilter: QueryFilter) => sugFilter.key === filter.key);
     });
     
     // Add the suggestion filters
@@ -460,7 +546,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
   const getRelevantSuggestions = () => {
     return smartSuggestions.filter(suggestion => {
       // Don't show suggestions that would conflict with current filters
-      return !suggestion.filters.some(sugFilter => {
+      return !suggestion.filters.some((sugFilter: QueryFilter) => {
         return queryFilters.some(filter => filter.key === sugFilter.key);
       });
     }).slice(0, 3); // Limit to 3 suggestions
@@ -488,18 +574,18 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
   };
  
   return (
-    <div className="mb-4 relative">
+    <div className="relative">
       {/* Fixed Filter Header */}
       <div className="border-b border-gray-200 p-3 flex items-center justify-between bg-gray-50">
         <div className="flex items-center">
           <div className="p-1.5 rounded-md bg-blue-50 text-blue-600 mr-3">
-            <Sliders size={16} />
+            <Filter size={16} className="text-blue-600" />
           </div>
           <div>
-            <h3 className="text-sm font-medium text-gray-900">Search Filters</h3>
+            <h3 className="text-sm font-medium text-gray-900">Document Filters</h3>
             <p className="text-xs text-gray-500">
               {queryFilters.length === 0
-                ? "No filters applied"
+                ? "Select filters below to refine results"
                 : `${queryFilters.length} filter${queryFilters.length !== 1 ? 's' : ''} applied`}
             </p>
           </div>
@@ -508,15 +594,15 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
           <button
             type="button"
             onClick={clearFilters}
-            className="text-xs text-gray-500 hover:text-red-600 transition-colors duration-150"
+            className="text-xs text-gray-500 hover:text-red-600 transition-colors duration-150 flex items-center"
           >
+            <X size={12} className="mr-1" />
             Clear all
           </button>
         )}
       </div>
- 
-      <div className="pt-2 pb-4 px-0" ref={filterContainerRef}>
-        {/* Reduced top padding, removed horizontal padding, and kept bottom padding for a tighter, "higher" look */}
+
+      <div className="pt-3 pb-3 px-3 bg-white" ref={filterContainerRef}>
         <form onSubmit={handleSearch} className="space-y-4">
           {/* All filter options shown upfront */}
           <div>
@@ -525,28 +611,54 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
             </div>
  
             {/* Grid of filter buttons */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 mb-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2.5 mb-3">
               {filterOptions.map(option => {
                 const isApplied = isFilterApplied(option.key);
                 const isActive = activeFilterButton === option.key;
                 const appliedFilter = getAppliedFilter(option.key);
                 const displayValue = appliedFilter ? getFilterValueDisplay(appliedFilter.key, appliedFilter) : null;
+                const IconComponent = option.icon || Filter;
+                
+                // Color mappings for different filter types
+                const getFilterColorClasses = (key: string) => {
+                  switch(key) {
+                    case 'sourceSystem':
+                      return { bg: 'bg-purple-50', text: 'text-purple-700', icon: 'text-purple-500', border: 'border-purple-200', hover: 'hover:bg-purple-100' };
+                    case 'filename':
+                      return { bg: 'bg-blue-50', text: 'text-blue-700', icon: 'text-blue-500', border: 'border-blue-200', hover: 'hover:bg-blue-100' };
+                    case 'contentType':
+                      return { bg: 'bg-green-50', text: 'text-green-700', icon: 'text-green-500', border: 'border-green-200', hover: 'hover:bg-green-100' };
+                    case 'fileType':
+                      return { bg: 'bg-amber-50', text: 'text-amber-700', icon: 'text-amber-500', border: 'border-amber-200', hover: 'hover:bg-amber-100' };
+                    case 'clientId':
+                      return { bg: 'bg-cyan-50', text: 'text-cyan-700', icon: 'text-cyan-500', border: 'border-cyan-200', hover: 'hover:bg-cyan-100' };
+                    case 'createdAt':
+                      return { bg: 'bg-red-50', text: 'text-red-700', icon: 'text-red-500', border: 'border-red-200', hover: 'hover:bg-red-100' };
+                    default:
+                      return { bg: 'bg-gray-50', text: 'text-gray-700', icon: 'text-gray-500', border: 'border-gray-200', hover: 'hover:bg-gray-100' };
+                  }
+                };
+
+                const colors = getFilterColorClasses(option.key);
                 
                 // If this filter is applied, show it as a chip
                 if (isApplied && !isActive) {
                   return (
                     <div
                       key={option.key}
-                      className="px-3 py-2 rounded-md text-sm border border-blue-100 bg-blue-50 text-blue-700 hover:bg-blue-100 flex items-center justify-between group cursor-pointer"
+                      className={`px-3 py-2 rounded-md text-sm border ${colors.border} ${colors.bg} ${colors.text} ${colors.hover} flex items-center justify-between group cursor-pointer transition-colors shadow-sm`}
                       onClick={() => handleFilterSelect(option.key)}
                     >
-                      <div className="flex-1 min-w-0">
-                        <div className="font-medium text-xs text-blue-800">{option.label}</div>
-                        <div className="text-xs flex items-center">
-                          <span className="font-medium">=</span>
-                          <span className="ml-1 truncate" title={displayValue || ''}>
-                            {displayValue}
-                          </span>
+                      <div className="flex-1 min-w-0 flex items-center">
+                        <IconComponent size={14} className={`${colors.icon} mr-2 flex-shrink-0`} />
+                        <div>
+                          <div className="font-medium text-xs">{option.label}</div>
+                          <div className="text-xs flex items-center">
+                            <span className="font-medium">=</span>
+                            <span className="ml-1 truncate" title={displayValue || ''}>
+                              {displayValue}
+                            </span>
+                          </div>
                         </div>
                       </div>
                       <button
@@ -573,14 +685,15 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
                     ref={el => filterButtonRefs.current[option.key] = el}
                     onClick={() => handleFilterSelect(option.key)}
                     className={classNames(
-                      "px-3 py-2 rounded-md text-sm border transition-all duration-150 text-left",
+                      "px-3 py-2 rounded-md text-sm border transition-colors duration-150 text-left flex items-center shadow-sm hover:shadow",
                       isActive
-                        ? "border-blue-300 bg-blue-100 text-blue-800 shadow-sm"
-                        : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-300"
+                        ? `${colors.border} ${colors.bg} ${colors.text}`
+                        : `border-gray-200 bg-white hover:${colors.bg} hover:${colors.text} hover:border-gray-300`
                     )}
                   >
-                    <span>{option.label}</span>
-                    {isActive && <X size={14} className="float-right" />}
+                    <IconComponent size={14} className={isActive ? colors.icon : "text-gray-400 mr-2"} />
+                    <span className="ml-2">{option.label}</span>
+                    {isActive && <X size={14} className="ml-auto" />}
                   </button>
                 );
               })}
@@ -643,7 +756,13 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
                           id={`${activeFilter}-start`}
                           type="date"
                           value={dateRange.start || ''}
-                          onChange={(e) => handleDateRangeChange('start', e.target.value)}
+                          onChange={(e) => {
+                            handleDateRangeChange('start', e.target.value);
+                            if (autoApplyFilters && e.target.value) {
+                              // Add small delay to allow state to update
+                              setTimeout(handleFilterConfirm, 300);
+                            }
+                          }}
                           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-white transition text-sm"
                           ref={inputRef}
                           autoFocus
@@ -655,7 +774,13 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
                           id={`${activeFilter}-end`}
                           type="date"
                           value={dateRange.end || ''}
-                          onChange={(e) => handleDateRangeChange('end', e.target.value)}
+                          onChange={(e) => {
+                            handleDateRangeChange('end', e.target.value);
+                            if (autoApplyFilters && e.target.value) {
+                              // Add small delay to allow state to update
+                              setTimeout(handleFilterConfirm, 300);
+                            }
+                          }}
                           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-white transition text-sm"
                         />
                       </div>
@@ -700,6 +825,50 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
                   );
                 }
                 
+                // Special case for sourceSystem to show common options
+                if (activeFilter === 'sourceSystem') {
+                  return (
+                    <div>
+                      <div className="mb-3">
+                        <p className="text-xs text-gray-500 mb-2">Select a source system:</p>
+                        <div className="flex flex-wrap gap-2">
+                          {commonSourceSystems.map(option => (
+                            <button
+                              key={option.value}
+                              type="button"
+                              onClick={() => handleSourceSystemSelect(option.value)}
+                              className={`
+                                px-2 py-1.5 rounded-full text-xs font-medium border 
+                                ${filterInput === option.value 
+                                  ? 'bg-blue-100 text-blue-800 border-blue-300' 
+                                  : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'}
+                                transition-colors flex items-center
+                              `}
+                            >
+                              {option.label}
+                              {filterInput === option.value && (
+                                <Check size={12} className="ml-1 text-blue-600" />
+                              )}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                      <div>
+                        <input
+                          type="text"
+                          value={filterInput}
+                          onChange={handleInputChange}
+                          placeholder={option.placeholder}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-white transition"
+                          ref={inputRef}
+                          onKeyDown={handleKeyPress}
+                          autoFocus
+                        />
+                      </div>
+                    </div>
+                  );
+                }
+                
                 return (
                   <div>
                     <input
@@ -712,36 +881,43 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
                       onKeyDown={handleKeyPress}
                       autoFocus
                     />
+                    {autoApplyFilters && filterInput && (
+                      <div className="mt-2 text-xs text-gray-500 flex items-center">
+                        <span>Press Enter to apply filter</span>
+                      </div>
+                    )}
                   </div>
                 );
               })()}
               
-              {/* Action buttons */}
-              <div className="flex justify-end mt-4 gap-2">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setActiveFilter(null);
-                    setActiveFilterButton(null);
-                  }}
-                  className="px-3 py-1 bg-gray-100 text-gray-700 border border-gray-300 rounded-md text-xs font-medium hover:bg-gray-200 transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  onClick={handleFilterConfirm}
-                  className="px-3 py-1 bg-blue-600 text-white border border-blue-600 rounded-md text-xs font-medium hover:bg-blue-700 transition-colors"
-                >
-                  Apply
-                </button>
-              </div>
+              {/* Action buttons - show only if not auto applying */}
+              {!autoApplyFilters && (
+                <div className="flex justify-end mt-4 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setActiveFilter(null);
+                      setActiveFilterButton(null);
+                    }}
+                    className="px-3 py-1 bg-gray-100 text-gray-700 border border-gray-300 rounded-md text-xs font-medium hover:bg-gray-200 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleFilterConfirm}
+                    className="px-3 py-1 bg-blue-600 text-white border border-blue-600 rounded-md text-xs font-medium hover:bg-blue-700 transition-colors"
+                  >
+                    Apply
+                  </button>
+                </div>
+              )}
             </div>
           )}
           
           {/* Smart Suggestions */}
           {showSuggestions && relevantSuggestions.length > 0 && (
-            <div className="border border-gray-200 rounded-md">
+            <div className="border border-gray-200 rounded-lg shadow-sm overflow-hidden">
               <button
                 type="button"
                 onClick={toggleSuggestions}
@@ -749,7 +925,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
               >
                 <h4 className="text-xs font-medium text-gray-700 flex items-center">
                   <Lightbulb size={12} className="mr-1.5 text-amber-500" />
-                  Try these filters
+                  Quick Filter Suggestions
                 </h4>
                 <div className="text-gray-400">
                   {suggestionsMinimized ? <ChevronDown size={16} /> : <ChevronUp size={16} />}
@@ -759,23 +935,39 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
               {!suggestionsMinimized && (
                 <div className="p-2">
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-                    {relevantSuggestions.map((suggestion) => (
-                      <button
-                        key={suggestion.id}
-                        type="button"
-                        onClick={() => applySmartSuggestion(suggestion)}
-                        className="flex items-center p-2 rounded-md border border-gray-100 hover:bg-blue-50 hover:border-blue-100 transition-colors text-left group"
-                      >
-                        <div className="flex-1">
-                          <p className="text-sm font-medium text-gray-800 group-hover:text-blue-700">
-                            {suggestion.title}
-                          </p>
-                          <p className="text-xs text-gray-500">
-                            {suggestion.description}
-                          </p>
-                        </div>
-                      </button>
-                    ))}
+                    {relevantSuggestions.map((suggestion) => {
+                      // Map icon string to component
+                      let IconComponent;
+                      switch(suggestion.icon) {
+                        case 'clock': IconComponent = Clock; break;
+                        case 'file-text': IconComponent = FileText; break;
+                        case 'mail': IconComponent = Mail; break;
+                        case 'file': IconComponent = File; break;
+                        default: IconComponent = Lightbulb;
+                      }
+                      
+                      return (
+                        <button
+                          key={suggestion.id}
+                          type="button"
+                          onClick={() => applySmartSuggestion(suggestion)}
+                          className={`flex items-center p-2 rounded-md border border-gray-100 hover:bg-blue-50 hover:border-blue-100 transition-colors text-left group`}
+                        >
+                          <div className={`${suggestion.bgColor || 'bg-gray-100'} p-2 rounded-full mr-3`}>
+                            <IconComponent className={`w-4 h-4 ${suggestion.iconColor || 'text-gray-500'}`} />
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-sm font-medium text-gray-800 group-hover:text-blue-700">
+                              {suggestion.title}
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              {suggestion.description}
+                            </p>
+                          </div>
+                          <ArrowRight size={14} className="text-gray-400 group-hover:text-blue-500 ml-2" />
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               )}
@@ -787,7 +979,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
             <button
               type="submit"
               disabled={isLoading}
-              className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed flex items-center transition-colors duration-150 shadow-sm"
+              className="px-4 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed flex items-center transition-colors duration-150 shadow-sm"
             >
               {isLoading ? (
                 <>
@@ -800,7 +992,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
               ) : (
                 <>
                   <Search className="w-4 h-4 mr-1.5" />
-                  <span>Search with Filters</span>
+                  <span>Apply Filters & Search</span>
                 </>
               )}
             </button>
