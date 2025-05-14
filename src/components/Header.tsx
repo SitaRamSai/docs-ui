@@ -48,165 +48,131 @@ const Header: React.FC = () => {
 
     return (
         <>
+            {/* Fixed Hamburger Menu Button - Completely separated from header */}
+            <button
+                className="sm:hidden fixed top-0 left-0 z-50 bg-white p-4 shadow-md rounded-br-lg text-gray-800 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                aria-label="Toggle menu"
+            >
+                {isMenuOpen ? 
+                    <X className="h-6 w-6" /> : 
+                    <Menu className="h-6 w-6" />
+                }
+            </button>
+            
             <header className="bg-white border-b border-gray-200">
-                <div className="max-w-7xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8">
-                    <div className="flex justify-between items-center h-14 sm:h-16">
-                        <div className="flex items-center space-x-4">
-
-                            <Link to="/" className="flex items-center">
-                                <Database className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600" />
-                                <span className="ml-2 text-lg sm:text-xl font-semibold text-gray-900">Docsville</span>
+                <div className="max-w-7xl mx-auto px-6 sm:px-6 md:px-8 lg:px-8">
+                    <div className="flex justify-center items-center h-16 sm:h-16 sm:justify-between">
+                        {/* Empty div for spacing on mobile, Logo area on desktop */}
+                        <div className="hidden sm:flex sm:items-center sm:w-1/3">
+                            <Link
+                                to="/"
+                                className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100"
+                            >
+                                <Home className="w-4 h-4 mr-2" />
+                                Home
                             </Link>
                         </div>
-                        <div className="flex items-center space-x-4">
-                            {/* <DropdownMenu.Root>
-                                <DropdownMenu.Trigger asChild>
-                                    <button className="hidden sm:flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100">
-                                        <Star className="w-4 h-4 mr-2" />
-                                        Favorites
-                                    </button>
-                                </DropdownMenu.Trigger>
-                                <DropdownMenu.Portal>
-                                    <DropdownMenu.Content
-                                        className="w-72 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50"
-                                        align="end"
-                                    >
-                                        {favorites.length === 0 ? (
-                                            <div className="px-4 py-3 text-sm text-gray-500">
-                                                No favorites yet
-                                            </div>
-                                        ) : (
-                                            favorites.map((favorite) => (
-                                                <DropdownMenu.Item
-                                                    key={favorite.id}
-                                                    className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer outline-none"
-                                                    onClick={() => handleFavoriteClick(favorite.id)}
-                                                >
-                                                    <div className="flex items-center">
-                                                        <Star className="w-4 h-4 text-yellow-400 mr-2" />
-                                                        <div className="flex-1 min-w-0">
-                                                            <p className="text-sm font-medium text-gray-900 truncate">
-                                                                {favorite.name}
-                                                            </p>
-                                                            <p className="text-xs text-gray-500">
-                                                                {formatDate(favorite.modified)}
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                </DropdownMenu.Item>
-                                            ))
-                                        )}
-                                    </DropdownMenu.Content>
-                                </DropdownMenu.Portal>
-                            </DropdownMenu.Root> */}
-
+                        
+                        {/* Centered Logo */}
+                        <div className="flex justify-center items-center sm:w-1/3">
+                            <Link to="/" className="flex items-center">
+                                <Database className="h-8 w-8 sm:h-8 sm:w-8 text-blue-600" />
+                                <span className="ml-2 text-xl font-semibold text-gray-900">Docsville</span>
+                            </Link>
+                        </div>
+                        
+                        {/* Right Navigation */}
+                        <div className="hidden sm:flex justify-end items-center sm:w-1/3">
                             <Link
                                 to="/advanced-search"
-                                className="hidden sm:flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100"
+                                className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 mr-3"
                             >
                                 <Search className="w-4 h-4 mr-2" />
                                 Advanced Search
                             </Link>
+                            
                             {OKTA_CONFIG.isEnabled && (
                                 <button
                                     onClick={() => setShowSignOutDialog(true)}
-                                    className="hidden sm:flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100"
+                                    className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 mr-3"
                                 >
                                     <LogOut className="w-4 h-4 mr-2" />
                                     Sign Out
                                 </button>
                             )}
-                            <button
-                                className="sm:hidden inline-flex items-center p-2 rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
-                                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                            >
-                                {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-                            </button>
-                            <div className="hidden sm:flex items-center space-x-3">
-                                <span className="text-sm text-gray-500">{userName}</span>
+                            
+                            {/* User Profile */}
+                            <div className="flex items-center">
+                                <span className="text-sm text-gray-500 mr-2">{userName}</span>
                                 <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center">
                                     <span className="text-white text-sm font-medium">{initials}</span>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    {/* Mobile menu */}
-                    {isMenuOpen && (
-                        <div className="sm:hidden border-t border-gray-200 py-2">
-                            <DropdownMenu.Root>
-                                <DropdownMenu.Trigger asChild>
-                                    <button
-                                        className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                    >
-                                        <Star className="w-4 h-4 mr-2" />
-                                        Favorites
-                                    </button>
-                                </DropdownMenu.Trigger>
-                                <DropdownMenu.Portal>
-                                    <DropdownMenu.Content
-                                        className="w-72 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50"
-                                        align="end"
-                                    >
-                                        {favorites.length === 0 ? (
-                                            <div className="px-4 py-3 text-sm text-gray-500">
-                                                No favorites yet
-                                            </div>
-                                        ) : (
-                                            favorites.map((favorite) => (
-                                                <DropdownMenu.Item
-                                                    key={favorite.id}
-                                                    className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer outline-none"
-                                                    onClick={() => handleFavoriteClick(favorite.id)}
-                                                >
-                                                    <div className="flex items-center">
-                                                        <Star className="w-4 h-4 text-yellow-400 mr-2" />
-                                                        <div className="flex-1 min-w-0">
-                                                            <p className="text-sm font-medium text-gray-900 truncate">
-                                                                {favorite.name}
-                                                            </p>
-                                                            <p className="text-xs text-gray-500">
-                                                                {formatDate(favorite.modified)}
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                </DropdownMenu.Item>
-                                            ))
-                                        )}
-                                    </DropdownMenu.Content>
-                                </DropdownMenu.Portal>
-                            </DropdownMenu.Root>
-
-                            <Link
-                                to="/advanced-search"
-                                className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                onClick={() => setIsMenuOpen(false)}
-                            >
-                                <Search className="w-4 h-4 mr-2" />
-                                Advanced Search
-                            </Link>
-                            {OKTA_CONFIG.isEnabled && (
-                                <button
-                                    onClick={() => {
-                                        setShowSignOutDialog(true);
-                                        setIsMenuOpen(false);
-                                    }}
-                                    className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                >
-                                    <LogOut className="w-4 h-4 mr-2" />
-                                    Sign Out
-                                </button>
-                            )}
-                            <div className="flex items-center space-x-3 px-4 py-2 mt-2 border-t border-gray-100">
-                                <span className="text-sm text-gray-500">{userName}</span>
-                                <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center">
-                                    <span className="text-white text-sm font-medium">{initials}</span>
-                                </div>
-                            </div>
-                        </div>
-                    )}
                 </div>
             </header>
+            
+            {/* Mobile menu - Slide from left */}
+            <div 
+                className={`fixed inset-y-0 left-0 transform ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'} w-64 bg-white shadow-xl z-40 transition-transform duration-300 ease-in-out sm:hidden`}
+            >
+                <div className="pt-16 pb-4 px-4 flex flex-col h-full">
+                    {/* User info at the top */}
+                    <div className="flex items-center space-x-3 px-2 py-4 mb-6 border-b border-gray-100">
+                        <div className="h-10 w-10 rounded-full bg-blue-600 flex items-center justify-center">
+                            <span className="text-white text-sm font-medium">{initials}</span>
+                        </div>
+                        <span className="text-sm font-medium text-gray-800">{userName}</span>
+                    </div>
+                    
+                    {/* Navigation links */}
+                    <nav className="flex-1 space-y-1">
+                        <Link
+                            to="/"
+                            className="flex items-center px-3 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-md"
+                            onClick={() => setIsMenuOpen(false)}
+                        >
+                            <Home className="w-5 h-5 mr-3 text-blue-600" />
+                            Home
+                        </Link>
+                        
+                        <Link
+                            to="/advanced-search"
+                            className="flex items-center px-3 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-md"
+                            onClick={() => setIsMenuOpen(false)}
+                        >
+                            <Search className="w-5 h-5 mr-3 text-blue-600" />
+                            Advanced Search
+                        </Link>
+                    </nav>
+                    
+                    {/* Sign out at the bottom */}
+                    <div className="pt-4 mt-auto border-t border-gray-200">
+                        {OKTA_CONFIG.isEnabled && (
+                            <button
+                                onClick={() => {
+                                    setShowSignOutDialog(true);
+                                    setIsMenuOpen(false);
+                                }}
+                                className="flex items-center w-full px-3 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-md text-left"
+                            >
+                                <LogOut className="w-5 h-5 mr-3 text-red-500" />
+                                Sign Out
+                            </button>
+                        )}
+                    </div>
+                </div>
+            </div>
+            
+            {/* Dark overlay when menu is open */}
+            {isMenuOpen && (
+                <div 
+                    className="fixed inset-0 bg-black bg-opacity-50 z-30 sm:hidden"
+                    onClick={() => setIsMenuOpen(false)}
+                ></div>
+            )}
 
             {/* Sign Out Confirmation Dialog */}
             <Dialog.Root open={showSignOutDialog} onOpenChange={setShowSignOutDialog}>

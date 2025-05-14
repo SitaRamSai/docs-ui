@@ -119,7 +119,7 @@ const FileList: React.FC = () => {
         }
     });
 
-    const truncateText = (text) => {
+    const truncateText = (text: string) => {
         const words = text.split(' ');
 
         if (words.length > 6) {
@@ -182,21 +182,21 @@ const FileList: React.FC = () => {
             {file.type === 'file' && (
                 <>
                     <button
-                        className="p-1.5 rounded-full hover:bg-gray-100 text-gray-600 hover:text-blue-600 transition-colors"
+                        className="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 hover:text-brand-500 dark:hover:text-brand-400 transition-colors"
                         title="Preview"
                         onClick={(e) => handlePreview(file, e)}
                     >
                         <Eye className="w-4 h-4" />
                     </button>
                     <button
-                        className="p-1.5 rounded-full hover:bg-gray-100 text-gray-600 hover:text-blue-600 transition-colors"
+                        className="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 hover:text-brand-500 dark:hover:text-brand-400 transition-colors"
                         title="Download"
                         onClick={(e) => handleDownload(file, e)}
                     >
                         <Download className="w-4 h-4" />
                     </button>
                     <button
-                        className="p-1.5 rounded-full hover:bg-gray-100 text-gray-600 hover:text-blue-600 transition-colors"
+                        className="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 hover:text-brand-500 dark:hover:text-brand-400 transition-colors"
                         title="Share"
                         onClick={(e) => handleShare(file, e)}
                     >
@@ -205,21 +205,14 @@ const FileList: React.FC = () => {
                 </>
             )}
             <button
-                className="p-1.5 rounded-full hover:bg-gray-100 text-gray-600 hover:text-blue-600 transition-colors"
+                className="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 hover:text-brand-500 dark:hover:text-brand-400 transition-colors"
                 title="Rename"
                 onClick={(e) => handleRename(file, e)}
             >
                 <Pencil className="w-4 h-4" />
             </button>
-            {/* <button
-                className="p-1.5 rounded-full hover:bg-gray-100 text-gray-600 hover:text-red-600 transition-colors"
-                title="Delete"
-                onClick={(e) => handleDelete(file, e)}
-            >
-                <Trash2 className="w-4 h-4" />
-            </button> */}
             <button
-                className="p-1.5 rounded-full hover:bg-gray-100 text-gray-600 hover:text-blue-600 transition-colors"
+                className="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 hover:text-brand-500 dark:hover:text-brand-400 transition-colors"
                 title="Info"
                 onClick={(e) => handleMetadata(file, e)}
             >
@@ -231,7 +224,7 @@ const FileList: React.FC = () => {
     if (isLoading) {
         return (
             <div className="flex items-center justify-center h-64">
-                <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+                <Loader2 className="w-8 h-8 animate-spin text-brand-500" />
             </div>
         );
     }
@@ -248,30 +241,26 @@ const FileList: React.FC = () => {
     }
 
     return (
-        <div className="w-full">
-            {/* Source System and Client ID Info */}
-            <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
-                <div className="flex flex-col sm:flex-row sm:items-center gap-5">
+        <div className="bg-white/70 dark:bg-slate-800/60 rounded-xl border border-white/30 dark:border-slate-800 shadow-glass overflow-hidden">
+            {/* Client info */}
+            <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700">
+                <div className="flex flex-wrap gap-8">
                     <div>
-                        <h2 className="text-sm font-medium text-gray-500">Source System</h2>
-                        <p className="text-lg font-semibold text-gray-900">{sourceSystem}</p>
+                        <h2 className="text-sm font-medium text-slate-500 dark:text-slate-400">Source System</h2>
+                        <p className="text-lg font-semibold text-slate-900 dark:text-white">{sourceSystem}</p>
                     </div>
                     <div>
-                        <h2 className="text-sm font-medium text-gray-500">Client ID</h2>
-                        <p className="text-lg font-semibold text-gray-900">{clientId}</p>
+                        <h2 className="text-sm font-medium text-slate-500 dark:text-slate-400">Client ID</h2>
+                        <p className="text-lg font-semibold text-slate-900 dark:text-white">{clientId}</p>
                     </div>
                 </div>
             </div>
 
             {/* View mode switcher */}
-            <div className="px-4 py-2 border-b border-gray-200 flex justify-between items-center">
-                <div className="flex items-center space-x-4 text-sm text-gray-600">
-                    {/* <div className="flex items-center">
-                        <Folder className="w-4 h-4 mr-1 text-gray-400" />
-                        <span>{currentFiles.filter(f => f.type === 'folder').length} folders</span>
-                    </div> */}
+            <div className="px-4 py-2 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center">
+                <div className="flex items-center space-x-4 text-sm text-slate-600 dark:text-slate-400">
                     <div className="flex items-center">
-                        <File className="w-4 h-4 mr-1 text-gray-400" />
+                        <File className="w-4 h-4 mr-1 text-slate-400 dark:text-slate-500" />
                         <span>{currentFiles.filter(f => f.type === 'file').length} files</span>
                     </div>
                 </div>
@@ -279,8 +268,8 @@ const FileList: React.FC = () => {
                     <button
                         onClick={() => setViewMode('list')}
                         className={`p-2 rounded-md ${viewMode === 'list'
-                            ? 'bg-blue-100 text-blue-600'
-                            : 'text-gray-500 hover:bg-gray-100'
+                            ? 'bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400'
+                            : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700'
                             }`}
                     >
                         <LayoutList className="w-5 h-5" />
@@ -288,8 +277,8 @@ const FileList: React.FC = () => {
                     <button
                         onClick={() => setViewMode('grid')}
                         className={`p-2 rounded-md ${viewMode === 'grid'
-                            ? 'bg-blue-100 text-blue-600'
-                            : 'text-gray-500 hover:bg-gray-100'
+                            ? 'bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400'
+                            : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700'
                             }`}
                     >
                         <LayoutGrid className="w-5 h-5" />
@@ -299,20 +288,20 @@ const FileList: React.FC = () => {
 
             {/* File List */}
             <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
+                <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
+                    <thead className="bg-slate-50 dark:bg-slate-800/80">
                         <tr>
                             <th scope="col" className="px-6 py-3 text-left">
                                 <input
                                     type="checkbox"
-                                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                    className="rounded border-slate-300 dark:border-slate-600 text-brand-600 focus:ring-brand-500 dark:bg-slate-700"
                                     checked={selectedFiles.size === paginatedFiles.length}
                                     onChange={handleSelectAll}
                                 />
                             </th>
                             <th
                                 scope="col"
-                                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer w-32 break-words"
+                                className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider cursor-pointer w-32 break-words"
                                 onClick={() => handleSort('name')}
                             >
                                 <div className="flex items-center">
@@ -327,7 +316,7 @@ const FileList: React.FC = () => {
                             </th>
                             <th
                                 scope="col"
-                                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                                className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider cursor-pointer"
                                 onClick={() => handleSort('author')}
                             >
                                 <div className="flex items-center">
@@ -342,7 +331,7 @@ const FileList: React.FC = () => {
                             </th>
                             <th
                                 scope="col"
-                                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                                className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider cursor-pointer"
                                 onClick={() => handleSort('modified')}
                             >
                                 <div className="flex items-center">
@@ -355,17 +344,17 @@ const FileList: React.FC = () => {
                                     )}
                                 </div>
                             </th>
-                            <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                                 Actions
                             </th>
                         </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
+                    <tbody className="bg-white dark:bg-slate-800/40 divide-y divide-slate-200 dark:divide-slate-700">
                         {currentFolder !== 'root' && (
-                            <tr className="hover:bg-gray-50">
+                            <tr className="hover:bg-slate-50 dark:hover:bg-slate-700/30">
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     <div className="flex items-center">
-                                        <Folder className="w-5 h-5 text-gray-400" />
+                                        <Folder className="w-5 h-5 text-slate-400 dark:text-slate-500" />
                                     </div>
                                 </td>
                                 <td
@@ -376,7 +365,7 @@ const FileList: React.FC = () => {
                                     }}
                                 >
                                     <div className="flex items-center">
-                                        <span className="text-sm text-gray-900">..</span>
+                                        <span className="text-sm text-slate-900 dark:text-slate-100">..</span>
                                     </div>
                                 </td>
                                 <td colSpan={3}></td>
@@ -385,13 +374,13 @@ const FileList: React.FC = () => {
                         {paginatedFiles.map((file) => (
                             <tr
                                 key={file.id}
-                                className={`hover:bg-gray-50 ${selectedFiles.has(file.id) ? 'bg-blue-50' : ''
+                                className={`hover:bg-slate-50 dark:hover:bg-slate-700/30 ${selectedFiles.has(file.id) ? 'bg-brand-50/50 dark:bg-brand-900/20' : ''
                                     }`}
                             >
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     <input
                                         type="checkbox"
-                                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                        className="rounded border-slate-300 dark:border-slate-600 text-brand-600 focus:ring-brand-500 dark:bg-slate-700"
                                         checked={selectedFiles.has(file.id)}
                                         onChange={() => toggleFileSelection(file.id)}
                                     />
@@ -399,16 +388,16 @@ const FileList: React.FC = () => {
                                 <td className="px-6 py-4 whitespace-nowrap break-words w-32 overflow-ellipsis">
                                     <div className="flex items-center">
                                         {React.createElement(getFileIcon(file, 5))}
-                                        <span className="ml-2 text-sm text-gray-900">{truncateText(file.name)}</span>
+                                        <span className="ml-2 text-sm text-slate-900 dark:text-slate-100">{truncateText(file.name)}</span>
                                     </div>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
-                                    <div className="flex items-center text-sm text-gray-500">
+                                    <div className="flex items-center text-sm text-slate-500 dark:text-slate-400">
                                         <User className="w-4 h-4 mr-1" />
                                         {file.metadata?.author || '-'}
                                     </div>
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">
                                     {formatDate(file.modified)}
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
@@ -424,26 +413,26 @@ const FileList: React.FC = () => {
 
             {/* Pagination */}
             {totalPages > 1 && (
-                <div className="px-6 py-4 flex items-center justify-between border-t border-gray-200">
+                <div className="px-6 py-4 flex items-center justify-between border-t border-slate-200 dark:border-slate-700">
                     <div className="flex-1 flex justify-between sm:hidden">
                         <button
                             onClick={() => setCurrentPage(page => Math.max(1, page - 1))}
                             disabled={currentPage === 1}
-                            className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="relative inline-flex items-center px-4 py-2 border border-slate-300 dark:border-slate-600 text-sm font-medium rounded-md text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             Previous
                         </button>
                         <button
                             onClick={() => setCurrentPage(page => Math.min(totalPages, page + 1))}
                             disabled={currentPage === totalPages}
-                            className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="ml-3 relative inline-flex items-center px-4 py-2 border border-slate-300 dark:border-slate-600 text-sm font-medium rounded-md text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             Next
                         </button>
                     </div>
                     <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
                         <div>
-                            <p className="text-sm text-gray-700">
+                            <p className="text-sm text-slate-700 dark:text-slate-300">
                                 Showing <span className="font-medium">{(currentPage - 1) * ITEMS_PER_PAGE + 1}</span> to{' '}
                                 <span className="font-medium">
                                     {Math.min(currentPage * ITEMS_PER_PAGE, sortedFiles.length)}
@@ -456,7 +445,7 @@ const FileList: React.FC = () => {
                                 <button
                                     onClick={() => setCurrentPage(1)}
                                     disabled={currentPage === 1}
-                                    className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm font-medium text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     <span className="sr-only">First</span>
                                     <ChevronLeft className="h-5 w-5" />
@@ -465,18 +454,18 @@ const FileList: React.FC = () => {
                                 <button
                                     onClick={() => setCurrentPage(page => Math.max(1, page - 1))}
                                     disabled={currentPage === 1}
-                                    className="relative inline-flex items-center px-2 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="relative inline-flex items-center px-2 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm font-medium text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     <span className="sr-only">Previous</span>
                                     <ChevronLeft className="h-5 w-5" />
                                 </button>
-                                <span className="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">
+                                <span className="relative inline-flex items-center px-4 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm font-medium text-slate-700 dark:text-slate-300">
                                     Page {currentPage} of {totalPages}
                                 </span>
                                 <button
                                     onClick={() => setCurrentPage(page => Math.min(totalPages, page + 1))}
                                     disabled={currentPage === totalPages}
-                                    className="relative inline-flex items-center px-2 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="relative inline-flex items-center px-2 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm font-medium text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     <span className="sr-only">Next</span>
                                     <ChevronRight className="h-5 w-5" />
@@ -484,7 +473,7 @@ const FileList: React.FC = () => {
                                 <button
                                     onClick={() => setCurrentPage(totalPages)}
                                     disabled={currentPage === totalPages}
-                                    className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm font-medium text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     <span className="sr-only">Last</span>
                                     <ChevronRight className="h-5 w-5" />
@@ -666,8 +655,6 @@ const FileList: React.FC = () => {
                     </Dialog.Portal>
                 </Dialog.Root>
             )}
-
-
         </div>
     );
 };
