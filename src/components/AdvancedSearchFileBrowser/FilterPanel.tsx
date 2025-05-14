@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Search, X, ChevronDown, ChevronUp, Plus, Filter, Check, Sliders, ArrowRight, Lightbulb, AlertCircle, Tag, Edit, Database, FileText, File, User, Calendar, Clock, Mail } from 'lucide-react';
-import { FilterPanelProps, FilterOption, QueryType, QueryFilter, SmartSuggestion, DateRange } from '../../types/filterTypes';
+import { FilterPanelProps, FilterOption, QueryType, QueryFilter, DateRange } from '../../types/filterTypes';
 import { formatKey, classNames, isFilterApplied, getAppliedFilter } from '../../utils/filterUtils';
  
 // Filter option categories aligned with API's searchable fields
@@ -61,64 +61,6 @@ const commonSourceSystems = [
   { value: 'ivos', label: 'IVOS' }
 ];
  
-// Smart suggestions based on common filter combinations
-const smartSuggestions: SmartSuggestion[] = [
-  {
-    id: 'recent-docs',
-    title: 'Recent Documents',
-    description: 'Created in the last week',
-    icon: 'clock',
-    iconColor: 'text-blue-500',
-    bgColor: 'bg-blue-50',
-    filters: [{
-      key: 'createdAt',
-      type: 'range',
-      value: { 
-        start: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] 
-      }
-    }]
-  },
-  {
-    id: 'submissions',
-    title: 'Submissions',
-    description: 'All submission documents',
-    icon: 'file-text',
-    iconColor: 'text-green-500',
-    bgColor: 'bg-green-50',
-    filters: [{
-      key: 'fileType',
-      type: 'in',
-      value: ['submission']
-    }]
-  },
-  {
-    id: 'letters',
-    title: 'Letters',
-    description: 'All letter documents',
-    icon: 'mail',
-    iconColor: 'text-purple-500',
-    bgColor: 'bg-purple-50',
-    filters: [{
-      key: 'fileType',
-      type: 'in',
-      value: ['letter']
-    }]
-  },
-  {
-    id: 'pdf-docs',
-    title: 'PDF Documents',
-    description: 'All PDF files',
-    icon: 'file',
-    iconColor: 'text-amber-500',
-    bgColor: 'bg-amber-50',
-    filters: [{
-      key: 'contentType',
-      type: 'in',
-      value: ['application/pdf']
-    }]
-  }
-];
- 
 export const FilterPanel: React.FC<FilterPanelProps> = ({
   currentFilters = {},
   onFilterChange,
@@ -144,10 +86,6 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
     }
     return initialFilters;
   });
- 
-  // State for smart suggestions
-  const [showSuggestions, setShowSuggestions] = useState(true);
-  const [suggestionsMinimized, setSuggestionsMinimized] = useState(false);
   
   // State for active filter and interaction
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
@@ -478,31 +416,6 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
   // Ref for debouncing text input
   const inputDebounceRef = useRef<any>(null);
  
-  // Apply a smart suggestion
-  const applySmartSuggestion = (suggestion: typeof smartSuggestions[0]) => {
-    // Get existing filters without conflicting ones
-    let newFilters = queryFilters.filter(filter => {
-      // Check if this filter conflicts with any in the suggestion
-      return !suggestion.filters.some((sugFilter: QueryFilter) => sugFilter.key === filter.key);
-    });
-    
-    // Add the suggestion filters
-    newFilters = [...newFilters, ...suggestion.filters];
-    
-    setQueryFilters(newFilters);
-    
-    // Convert for parent component
-    const filterObject = newFilters.reduce((acc, filter) => {
-      acc[filter.key] = filter.value;
-      return acc;
-    }, {} as Record<string, any>);
-    
-    onFilterChange(filterObject);
-    
-    // Track that we used this suggestion for future smart suggestions
-    setFilterUsageHistory(prev => [suggestion.id, ...prev.filter(id => id !== suggestion.id).slice(0, 9)]);
-  };
- 
   // Remove a filter from the query
   const removeFilter = (index: number) => {
     const newFilters = [...queryFilters];
@@ -540,27 +453,6 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
   // Helper for conditional classes
   const classNames = (...classes: (string | boolean)[]) => {
     return classes.filter(Boolean).join(' ');
-  };
- 
-  // Get smart suggestions that don't conflict with current filters
-  const getRelevantSuggestions = () => {
-    return smartSuggestions.filter(suggestion => {
-      // Don't show suggestions that would conflict with current filters
-      return !suggestion.filters.some((sugFilter: QueryFilter) => {
-        return queryFilters.some(filter => filter.key === sugFilter.key);
-      });
-    }).slice(0, 3); // Limit to 3 suggestions
-  };
-  
-  const relevantSuggestions = getRelevantSuggestions();
- 
-  // Toggle suggestions visibility directly with the header
-  const toggleSuggestions = () => {
-    if (suggestionsMinimized) {
-      setSuggestionsMinimized(false);
-    } else {
-      setSuggestionsMinimized(!suggestionsMinimized);
-    }
   };
  
   // Check if a specific filter is applied
@@ -910,65 +802,6 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
                   >
                     Apply
                   </button>
-                </div>
-              )}
-            </div>
-          )}
-          
-          {/* Smart Suggestions */}
-          {showSuggestions && relevantSuggestions.length > 0 && (
-            <div className="border border-gray-200 rounded-lg shadow-sm overflow-hidden">
-              <button
-                type="button"
-                onClick={toggleSuggestions}
-                className="w-full px-3 py-2 border-b border-gray-200 bg-gray-50 flex items-center justify-between text-left"
-              >
-                <h4 className="text-xs font-medium text-gray-700 flex items-center">
-                  <Lightbulb size={12} className="mr-1.5 text-amber-500" />
-                  Quick Filter Suggestions
-                </h4>
-                <div className="text-gray-400">
-                  {suggestionsMinimized ? <ChevronDown size={16} /> : <ChevronUp size={16} />}
-                </div>
-              </button>
-              
-              {!suggestionsMinimized && (
-                <div className="p-2">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-                    {relevantSuggestions.map((suggestion) => {
-                      // Map icon string to component
-                      let IconComponent;
-                      switch(suggestion.icon) {
-                        case 'clock': IconComponent = Clock; break;
-                        case 'file-text': IconComponent = FileText; break;
-                        case 'mail': IconComponent = Mail; break;
-                        case 'file': IconComponent = File; break;
-                        default: IconComponent = Lightbulb;
-                      }
-                      
-                      return (
-                        <button
-                          key={suggestion.id}
-                          type="button"
-                          onClick={() => applySmartSuggestion(suggestion)}
-                          className={`flex items-center p-2 rounded-md border border-gray-100 hover:bg-blue-50 hover:border-blue-100 transition-colors text-left group`}
-                        >
-                          <div className={`${suggestion.bgColor || 'bg-gray-100'} p-2 rounded-full mr-3`}>
-                            <IconComponent className={`w-4 h-4 ${suggestion.iconColor || 'text-gray-500'}`} />
-                          </div>
-                          <div className="flex-1">
-                            <p className="text-sm font-medium text-gray-800 group-hover:text-blue-700">
-                              {suggestion.title}
-                            </p>
-                            <p className="text-xs text-gray-500">
-                              {suggestion.description}
-                            </p>
-                          </div>
-                          <ArrowRight size={14} className="text-gray-400 group-hover:text-blue-500 ml-2" />
-                        </button>
-                      );
-                    })}
-                  </div>
                 </div>
               )}
             </div>
