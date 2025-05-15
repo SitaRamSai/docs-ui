@@ -160,7 +160,7 @@ export const AdvancedSearchFileBrowser: React.FC<AdvancedSearchFileBrowserProps>
       'filename': 'like',
       'contentType': 'in',
       'fileType': 'in',
-      'clientId': 'matches',
+      'clientId': 'like',
       'createdAt': 'range',
       'sourceSystem': 'matches'
     };
