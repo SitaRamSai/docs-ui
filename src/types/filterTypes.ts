@@ -1,8 +1,8 @@
 export type QueryType = 'matches' | 'like' | 'in' | 'range';
 
 export interface DateRange {
-  start?: string;
-  end?: string;
+  from?: string;
+  to?: string;
 }
 
 export interface FilterOption {

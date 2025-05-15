@@ -150,12 +150,12 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
   const getFilterValueDisplay = (key: string, filter: any) => {
     const value = filter.value;
     if (filter.type === 'range' && value && typeof value === 'object') {
-      if (value.start && value.end) {
-        return `${value.start} to ${value.end}`;
-      } else if (value.start) {
-        return `after ${value.start}`;
-      } else if (value.end) {
-        return `before ${value.end}`;
+      if (value.from && value.to) {
+        return `${value.from} to ${value.to}`;
+      } else if (value.from) {
+        return `from ${value.from}`;
+      } else if (value.to) {
+        return `to ${value.to}`;
       }
       return '';
     }
@@ -267,7 +267,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
   };
 
   // Handle date range change
-  const handleDateRangeChange = (part: 'start' | 'end', value: string) => {
+  const handleDateRangeChange = (part: 'from' | 'to', value: string) => {
     // Just update the date range state, don't apply yet
     const newDateRange = { ...dateRange, [part]: value };
     setDateRange(newDateRange);
@@ -285,7 +285,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
     // Process value based on query type
     if (option.queryType === 'range') {
       // Only add if at least one date is set
-      if (!dateRange.start && !dateRange.end) {
+      if (!dateRange.from && !dateRange.to) {
         setActiveFilter(null);
         setActiveFilterButton(null);
         return;
@@ -661,13 +661,13 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
                     <>
                       <div className="grid grid-cols-2 gap-3">
                         <div>
-                          <label className="block text-xs text-gray-600 mb-1">After</label>
+                          <label className="block text-xs text-gray-600 mb-1">From</label>
                           <input
-                            id={`${activeFilter}-start`}
+                            id={`${activeFilter}-from`}
                             type="date"
-                            value={dateRange.start || ''}
+                            value={dateRange.from || ''}
                             onChange={(e) => {
-                              handleDateRangeChange('start', e.target.value);
+                              handleDateRangeChange('from', e.target.value);
                             }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-white transition text-sm"
                             ref={inputRef}
@@ -675,13 +675,13 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
                           />
                         </div>
                         <div>
-                          <label className="block text-xs text-gray-600 mb-1">Before</label>
+                          <label className="block text-xs text-gray-600 mb-1">To</label>
                           <input
-                            id={`${activeFilter}-end`}
+                            id={`${activeFilter}-to`}
                             type="date"
-                            value={dateRange.end || ''}
+                            value={dateRange.to || ''}
                             onChange={(e) => {
-                              handleDateRangeChange('end', e.target.value);
+                              handleDateRangeChange('to', e.target.value);
                             }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-white transition text-sm"
                           />
