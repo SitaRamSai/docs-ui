@@ -1,6 +1,10 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState, useCallback, useRef } from "react";
 import { SearchParams, SearchResponse } from "../types/search";
+import { ApiService } from "../services/api";
+
+// Create API service instance
+const apiService = new ApiService();
 
 // Mock data for development
 const MOCK_DATA: SearchResponse = {
@@ -61,7 +65,7 @@ export function useSearch(initialParams: SearchParams) {
 
   const fetchSearch = useCallback(
     async ({ signal }: { signal?: AbortSignal }) => {
-      // In development, return mock data
+      // Comment out the development mode check to make real API calls
       // if (import.meta.env.DEV) {
       //   await new Promise(resolve => setTimeout(resolve, 500)); // Simulate network delay
       //   return {
@@ -82,23 +86,15 @@ export function useSearch(initialParams: SearchParams) {
       //   };
       // }
 
-      const response = await fetch(
-        `https://api.alliedworld.dev/api/v1/docsville/search `,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(params),
-          signal,
+      try {
+        // Use the API service to fetch search results
+        return await apiService.searchDocuments(params);
+      } catch (error) {
+        if (error instanceof Error && error.name !== 'AbortError') {
+          console.error("Search API error:", error);
         }
-      );
-
-      if (!response.ok) {
-        throw new Error("Search request failed");
+        throw error;
       }
-
-      return response.json() as Promise<SearchResponse>;
     },
     [params]
   );
@@ -106,7 +102,7 @@ export function useSearch(initialParams: SearchParams) {
   const { data, error, isLoading, isFetching } = useQuery({
     queryKey: ["search", params],
     queryFn: ({ signal }) => fetchSearch({ signal }),
-    enabled: enabled, // Only run the query when enabled is true
+    enabled, // Only run the query when enabled is true
     staleTime: 30000, // Consider data fresh for 30 seconds
     gcTime: 5 * 60 * 1000, // Keep unused data in cache for 5 minutes
   });
@@ -137,10 +133,9 @@ export function useSearch(initialParams: SearchParams) {
       queryClient.prefetchQuery({
         queryKey: ["search", nextPageParams],
         queryFn: ({ signal }) => fetchSearch({ signal }),
-        enabled: enabled,
       });
     }
-  }, [data, params, queryClient, fetchSearch, enabled]);
+  }, [data, params, queryClient, fetchSearch]);
 
   return {
     data,
