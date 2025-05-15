@@ -60,9 +60,6 @@ export const ContentSearchBar: React.FC<ContentSearchBarProps> = ({
               claim form
             </button>
           </div>
-          <div className="text-xs text-gray-500">
-            Use quotation marks for exact phrase: <span className="font-mono bg-gray-100 px-1.5 py-0.5 rounded">"annual report"</span>
-          </div>
         </div>
       </div>
     </form>

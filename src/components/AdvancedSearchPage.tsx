@@ -5,6 +5,7 @@ import { AdvancedSearchFileBrowser } from './AdvancedSearchFileBrowser';
 import { FilterPanel } from './AdvancedSearchFileBrowser/FilterPanel';
 import { ContentSearchBar } from './ContentSearchBar';
 import { apiService } from '../services/api';
+import ContentSearchResults from './ContentSearchResults';
 
 // Available source systems
 const SOURCE_SYSTEMS = [
@@ -26,6 +27,11 @@ const AdvancedSearchPage: React.FC = () => {
     const [hasSearchedContent, setHasSearchedContent] = useState(false);
     // Track if metadata search has been executed
     const [hasSearchedMetadata, setHasSearchedMetadata] = useState(false);
+
+    // Content search results state
+    const [contentSearchResults, setContentSearchResults] = useState<any[]>([]);
+    const [isContentSearchLoading, setIsContentSearchLoading] = useState(false);
+    const [contentSearchError, setContentSearchError] = useState<Error | null>(null);
 
     // --- Advanced Search Filter/Results State ---
     const [filters, setFilters] = useState<Record<string, string>>({ sourceSystem });
@@ -57,15 +63,25 @@ const AdvancedSearchPage: React.FC = () => {
     };
 
     // Handler for content search
-    const handleContentSearch = () => {
+    const handleContentSearch = async () => {
         if (!tempContentSearchQuery.trim()) return; // Don't search if empty
         
-        setIsLoading(true);
+        setIsContentSearchLoading(true);
         setContentSearchQuery(tempContentSearchQuery);
         setHasSearchedContent(true);
+        setContentSearchError(null);
         
-        // Give the UI time to update before showing results
-        setTimeout(() => setIsLoading(false), 500); // Simulate async
+        try {
+            // Call the content search API
+            const results = await apiService.searchContent(tempContentSearchQuery, 5);
+            setContentSearchResults(results.results || []);
+        } catch (error) {
+            console.error('Content search error:', error);
+            setContentSearchError(error instanceof Error ? error : new Error('Unknown error occurred'));
+            setContentSearchResults([]);
+        } finally {
+            setIsContentSearchLoading(false);
+        }
     };
 
     // Reset search state when changing tabs
@@ -197,40 +213,28 @@ const AdvancedSearchPage: React.FC = () => {
     <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
       {hasSearchedContent ? (
         <>
-          <div className="border-b border-gray-200 pb-4 mb-4">
-            <div className="flex items-center">
-              <div className="p-2 bg-green-100 rounded-full mr-3">
-                <Search className="w-4 h-4 text-green-600" />
-              </div>
-              <div>
-                <h3 className="text-sm font-medium text-gray-900">Search Results</h3>
-                <p className="text-xs text-gray-500">
-                  Showing documents containing "<span className="font-medium">{contentSearchQuery}</span>"
-                </p>
+          {contentSearchError ? (
+            <div className="bg-red-50 p-4 rounded-md">
+              <div className="flex">
+                <div className="shrink-0">
+                  <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div className="ml-3">
+                  <h3 className="text-sm font-medium text-red-800">Error searching content</h3>
+                  <p className="text-sm text-red-700 mt-2">{contentSearchError.message}</p>
+                </div>
               </div>
             </div>
-          </div>
-          <AdvancedSearchFileBrowser
-            initialQuery={{
-              query: [
-                {
-                  key: "sourceSystem",
-                  type: "matches",
-                  value: sourceSystem
-                },
-                ...(contentSearchQuery ? [{ key: "content", type: "matches", value: contentSearchQuery }] : []),
-              ],
-              count: 10,
-              offset: 0,
-              projection: ["id", "filename", "contentType", "createdAt", "clientId", "fileType", "sourceSystem"]
-            }}
-            onFileSelect={file => console.log("Selected file:", file)}
-            onPageChange={offset => console.log("Page changed:", offset)}
-            itemsPerPage={10}
-            showFilters={false}
-            enableMultiSelect={true}
-            className="h-[calc(100vh-350px)]"
-          />
+          ) : (
+            <ContentSearchResults
+              results={contentSearchResults}
+              query={contentSearchQuery}
+              isLoading={isContentSearchLoading}
+              onResultSelect={(result) => console.log("Selected content result:", result)}
+            />
+          )}
         </>
       ) : (
         <div className="flex flex-col items-center justify-center text-center h-[calc(100vh-350px)]">

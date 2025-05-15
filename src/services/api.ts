@@ -314,6 +314,50 @@ export class ApiService {
       throw error;
     }
   }
+
+  async searchContent(query: string, k: number = 5): Promise<any> {
+    try {
+      console.log("Content Search API - Request params:", {query, k});
+      
+      // Hard-code the authorization header exactly as in the cURL example
+      const headers = {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer .\.Z5z3--23Mm--Y4xSpIN3HdMj_piNqbBikZj1--33JMSqkixLTYhtGgIrxd2Tsq88mIoFxdYUefy-Eur6VXWJpbnVXhX5JloA",
+        "x-clientid": "20052"
+      };
+
+      // Get the correct API URL from the logs
+      const apiUrl = "https://pyfcjbg9f5.execute-api.us-east-1.amazonaws.com/Dev/api/v1/docsville/content/search";
+      
+      console.log("Content Search API - Making fetch request to:", apiUrl);
+      console.log("Content Search API - Headers:", JSON.stringify(headers, null, 2));
+      console.log("Content Search API - Request body:", JSON.stringify({query, k}, null, 2));
+
+      const response = await fetch(
+        apiUrl,
+        {
+          method: "POST",
+          headers: headers,
+          body: JSON.stringify({query, k}),
+        }
+      );
+
+      console.log("Content Search API - Response status:", response.status);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Content Search API - Error response:", errorText);
+        throw new Error(`Content search request failed: ${errorText}`);
+      }
+
+      const data = await this.handleResponse(response);
+      console.log("Content Search API - Response data:", JSON.stringify(data, null, 2));
+      return data;
+    } catch (error) {
+      console.error("Error searching content:", error);
+      throw error;
+    }
+  }
 }
 
 export const apiService = new ApiService();
