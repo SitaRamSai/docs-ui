@@ -1,127 +1,11 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
-import { useVirtualizer } from '@tanstack/react-virtual';
-import { format } from 'date-fns';
-import { File as FileIcon, FileText, Image, Search } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { cn } from '../../utils/cn';
 import { useSearch } from '../../hooks/useSearch';
-import type { AdvancedSearchFileBrowserProps, Column, SearchResult } from '../../types/search';
-import { LoadingPlaceholder } from './LoadingPlaceholder';
-import { ErrorState } from './ErrorState';
+import type { AdvancedSearchFileBrowserProps, SearchResult } from '../../types/search';
 import { EmptyState } from './EmptyState';
 import { FilterPanel } from './FilterPanel';
-
-const defaultColumns: Column[] = [
-  {
-    id: 'filename',
-    label: 'Name',
-    accessor: (item: SearchResult) => {
-      // Determine icon based on contentType
-      let Icon = FileIcon;
-      if (item.contentType?.includes('image')) {
-        Icon = Image;
-      } else if (item.contentType?.includes('pdf') || item.contentType?.includes('word')) {
-        Icon = FileText;
-      }
-      
-      return (
-        <div className="flex items-center gap-2">
-          <div className="flex-shrink-0 p-1.5 rounded-md bg-blue-50">
-            <Icon className="w-4 h-4 text-blue-600" />
-          </div>
-          <span className="truncate font-medium">{item.filename}</span>
-        </div>
-      );
-    },
-    sortable: true,
-    width: '40%',
-    minWidth: '200px',
-  },
-  {
-    id: 'contentType',
-    label: 'Type',
-    accessor: (item: SearchResult) => {
-      // Format content type to be more readable
-      let type = item.contentType || '';
-      if (type.includes('pdf')) return 'PDF';
-      if (type.includes('jpeg') || type.includes('jpg')) return 'JPEG';
-      if (type.includes('png')) return 'PNG';
-      if (type.includes('word')) return 'Word';
-      if (type.includes('excel')) return 'Excel';
-      if (type.includes('spreadsheetml.sheet')) return 'Excel';
-      if (type.includes('openxmlformats-officedocument.spreadsheetml')) return 'Excel';
-      if (type.includes('text')) return 'Text';
-      // Truncate long content types
-      const splitType = type.split('/').pop() || type;
-      return splitType.length > 15 ? splitType.substring(0, 12) + '...' : splitType;
-    },
-    sortable: true,
-    width: '15%',
-    minWidth: '100px',
-  },
-  {
-    id: 'fileType',
-    label: 'Category',
-    accessor: (item: SearchResult) => (
-      <div>
-        {item.fileType ? (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-            {item.fileType.charAt(0).toUpperCase() + item.fileType.slice(1)}
-          </span>
-        ) : (
-          <span className="text-gray-400">-</span>
-        )}
-      </div>
-    ),
-    sortable: true,
-    width: '15%',
-    minWidth: '100px',
-  },
-  {
-    id: 'createdAt',
-    label: 'Created',
-    accessor: (item: SearchResult) => {
-      try {
-        // Handle numeric timestamp in milliseconds (as string)
-        const timestamp = parseInt(item.createdAt, 10);
-        if (!isNaN(timestamp)) {
-          return format(new Date(timestamp), 'MMM d, yyyy');
-        }
-        
-        // Try to parse as ISO date string
-        return format(new Date(item.createdAt), 'MMM d, yyyy');
-      } catch (error) {
-        console.log('Error formatting date:', item.createdAt);
-        return 'Invalid date';
-      }
-    },
-    sortable: true,
-    width: '15%',
-    minWidth: '120px',
-  },
-  {
-    id: 'sourceSystem',
-    label: 'Source',
-    accessor: (item: SearchResult) => {
-      const sourceSystemColors: Record<string, {bg: string, text: string}> = {
-        'genius': { bg: 'bg-purple-100', text: 'text-purple-800' },
-        'dragon': { bg: 'bg-green-100', text: 'text-green-800' },
-        'ebao': { bg: 'bg-yellow-100', text: 'text-yellow-800' },
-        'ivos': { bg: 'bg-red-100', text: 'text-red-800' },
-      };
-      
-      const color = sourceSystemColors[item.sourceSystem.toLowerCase()] || { bg: 'bg-gray-100', text: 'text-gray-800' };
-      
-      return (
-        <div className={`inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium ${color.bg} ${color.text}`}>
-          {item.sourceSystem}
-        </div>
-      );
-    },
-    sortable: true,
-    width: '15%',
-    minWidth: '100px',
-  },
-];
+import SearchResultsTable from '../SearchResultsTable';
 
 export const AdvancedSearchFileBrowser: React.FC<AdvancedSearchFileBrowserProps> = ({
   initialQuery,
@@ -131,7 +15,6 @@ export const AdvancedSearchFileBrowser: React.FC<AdvancedSearchFileBrowserProps>
   itemsPerPage = 20,
   showFilters = true,
   enableMultiSelect = true,
-  customFileTypeIcons,
   dateFormat = 'PPp',
   loadingPlaceholderCount = 5,
 }) => {
@@ -147,13 +30,6 @@ export const AdvancedSearchFileBrowser: React.FC<AdvancedSearchFileBrowserProps>
     executeSearch();
     setHasSearched(true);
   }, [initialQuery]);
-
-  const rowVirtualizer = useVirtualizer({
-    count: data?.results.length ?? 0,
-    getScrollElement: () => parentRef.current,
-    estimateSize: () => 40,
-    overscan: 5,
-  });
 
   const handleSort = useCallback((columnId: string) => {
     updateParams({
@@ -204,8 +80,8 @@ export const AdvancedSearchFileBrowser: React.FC<AdvancedSearchFileBrowserProps>
     setHasSearched(true);
   }, [filters, updateParams, executeSearch, initialQuery.query]);
 
-  const handleFileClick = useCallback((file: SearchResult, event: React.MouseEvent) => {
-    if (enableMultiSelect && (event.ctrlKey || event.metaKey)) {
+  const handleFileClick = useCallback((file: SearchResult) => {
+    if (enableMultiSelect) {
       setSelectedFiles(prev => {
         const newSelection = new Set(prev);
         if (newSelection.has(file.id)) {
@@ -221,26 +97,16 @@ export const AdvancedSearchFileBrowser: React.FC<AdvancedSearchFileBrowserProps>
     }
   }, [enableMultiSelect, onFileSelect]);
 
-  useEffect(() => {
-    if (data?.pagination.currentOffset !== undefined && onPageChange) {
-      onPageChange(data.pagination.currentOffset);
+  const handlePageChange = useCallback((offset: number) => {
+    updateParams({
+      offset: offset
+    });
+    executeSearch();
+    
+    if (onPageChange) {
+      onPageChange(offset);
     }
-  }, [data?.pagination.currentOffset, onPageChange]);
-
-  useEffect(() => {
-    const scrollElement = parentRef.current;
-    if (!scrollElement) return;
-
-    const handleScroll = () => {
-      const { scrollTop, scrollHeight, clientHeight } = scrollElement;
-      if (scrollHeight - scrollTop - clientHeight < 200) {
-        prefetchNextPage();
-      }
-    };
-
-    scrollElement.addEventListener('scroll', handleScroll);
-    return () => scrollElement.removeEventListener('scroll', handleScroll);
-  }, [prefetchNextPage]);
+  }, [updateParams, executeSearch, onPageChange]);
 
   // Add useEffect to log any errors
   useEffect(() => {
@@ -255,12 +121,6 @@ export const AdvancedSearchFileBrowser: React.FC<AdvancedSearchFileBrowserProps>
       console.log('Search data received:', data);
     }
   }, [data]);
-  
-  // Don't execute search on mount automatically
-  // useEffect(() => {
-  //   console.log('Executing search on mount with params:', initialQuery);
-  //   executeSearch();
-  // }, [executeSearch]);
 
   return (
     <div className={cn('flex flex-col h-full', className)}>
@@ -278,74 +138,36 @@ export const AdvancedSearchFileBrowser: React.FC<AdvancedSearchFileBrowserProps>
       {hasSearched || data ? (
         <div
           ref={parentRef}
-          className="flex-1 overflow-auto border border-gray-200 rounded-lg bg-white shadow-sm"
+          className="flex-1 overflow-auto"
         >
-          <div className="min-w-full table">
-            <div className="sticky top-0 bg-gray-50 border-b border-gray-200 shadow-sm z-10">
-              <div className="flex">
-                {defaultColumns.map((column) => (
-                  <div
-                    key={column.id}
-                    className={cn(
-                      'px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider',
-                      column.sortable && 'cursor-pointer hover:bg-gray-100',
-                    )}
-                    style={{ width: column.width, minWidth: column.minWidth }}
-                    onClick={() => column.sortable && handleSort(column.id)}
-                  >
-                    <div className="flex items-center space-x-1">
-                      <span>{column.label}</span>
-                      {initialQuery.query.some(q => q.key === 'sortBy' && q.value === column.id) && (
-                        <span className="ml-1.5 text-blue-600">↓</span>
-                      )}
-                    </div>
-                  </div>
-                ))}
+          {error ? (
+            <div className="flex flex-col items-center justify-center h-64 text-center p-6 border-t border-gray-100">
+              <div className="bg-red-50 p-4 rounded-full mb-4">
+                <Search className="w-10 h-10 text-red-500" />
               </div>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">Error loading files</h3>
+              <p className="text-sm text-red-500 mb-1 font-medium">{error.message}</p>
+              <p className="text-xs text-gray-500">Please try again or contact support if the problem persists</p>
             </div>
-
-            {isLoading ? (
-              <LoadingPlaceholder count={loadingPlaceholderCount} columns={defaultColumns} />
-            ) : !data ? (
-              <EmptyState />
-            ) : data.results.length === 0 ? (
-              <EmptyState />
-            ) : (
-              <div
-                className="relative"
-                style={{ height: `${rowVirtualizer.getTotalSize()}px` }}
-              >
-                {rowVirtualizer.getVirtualItems().map((virtualRow) => {
-                  const item = data.results[virtualRow.index];
-                  return (
-                    <div
-                      key={item.id}
-                      className={cn(
-                        'absolute top-0 left-0 w-full',
-                        'flex hover:bg-blue-50 cursor-pointer border-b border-gray-100',
-                        selectedFiles.has(item.id) && 'bg-blue-50',
-                      )}
-                      style={{
-                        height: `${virtualRow.size}px`,
-                        transform: `translateY(${virtualRow.start}px)`,
-                      }}
-                      onClick={(e) => handleFileClick(item, e)}
-                    >
-                      {defaultColumns.map((column) => (
-                        <div
-                          key={column.id}
-                          className="px-6 py-4 whitespace-nowrap text-sm text-gray-700"
-                          style={{ width: column.width, minWidth: column.minWidth }}
-                        >
-                          {column.accessor(item)}
-                        </div>
-                      ))}
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
+          ) : (
+            <SearchResultsTable
+              results={data?.results || []}
+              pagination={data?.pagination || {
+                total: 0,
+                pageSize: itemsPerPage,
+                currentOffset: 0,
+                nextOffset: null,
+                previousOffset: null,
+                hasMore: false,
+                totalPages: 0,
+                currentPage: 1
+              }}
+              isLoading={isLoading}
+              onPageChange={handlePageChange}
+              onFileSelect={handleFileClick}
+              selectedFiles={selectedFiles}
+            />
+          )}
         </div>
       ) : (
         showFilters ? null : (
