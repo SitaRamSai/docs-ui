@@ -141,6 +141,13 @@ export const AdvancedSearchFileBrowser: React.FC<AdvancedSearchFileBrowserProps>
   const parentRef = useRef<HTMLDivElement>(null);
   const { data, error, isLoading, isFetching, updateParams, executeSearch, prefetchNextPage } = useSearch(initialQuery);
 
+  // Trigger new search when initialQuery prop changes
+  useEffect(() => {
+    updateParams(initialQuery);
+    executeSearch();
+    setHasSearched(true);
+  }, [initialQuery]);
+
   const rowVirtualizer = useVirtualizer({
     count: data?.results.length ?? 0,
     getScrollElement: () => parentRef.current,
@@ -341,15 +348,17 @@ export const AdvancedSearchFileBrowser: React.FC<AdvancedSearchFileBrowserProps>
           </div>
         </div>
       ) : (
-        <div className="flex-1 flex flex-col items-center justify-center p-10 border border-gray-200 rounded-lg bg-white shadow-sm">
-          <div className="p-4 bg-gray-50 rounded-full mb-4">
-            <Search className="w-10 h-10 text-gray-400" />
+        showFilters ? null : (
+          <div className="flex-1 flex flex-col items-center justify-center p-10 border border-gray-200 rounded-lg bg-white shadow-sm">
+            <div className="p-4 bg-gray-50 rounded-full mb-4">
+              <Search className="w-10 h-10 text-gray-400" />
+            </div>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">Ready to search</h3>
+            <p className="text-sm text-gray-500 text-center max-w-md">
+              Use the filters above to search for documents. Select filters and click the search button when you're ready.
+            </p>
           </div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">Ready to search</h3>
-          <p className="text-sm text-gray-500 text-center max-w-md">
-            Use the filters above to search for documents. Select filters and click the search button when you're ready.
-          </p>
-        </div>
+        )
       )}
 
       {isFetching && !isLoading && (
