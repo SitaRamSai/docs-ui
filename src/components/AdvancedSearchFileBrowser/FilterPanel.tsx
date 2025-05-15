@@ -390,11 +390,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
   // Helper function to directly apply a filter with a value
   const applyFilterWithValue = (key: string, type: QueryType, newValue: any) => {
     // Check if this filter already exists
-    const existingIndex = queryFilters.findIndex(f => f.key === key);
-    
-    // No need to force 'like' here as it's already defined in filterOptions
-    
-    let newFilters = [...queryFilters];
+    const existingIndex = queryFilters.findIndex(f => f.key === key);    let newFilters = [...queryFilters];
     if (existingIndex >= 0) {
       // Update existing filter
       newFilters[existingIndex] = {
@@ -428,10 +424,11 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
     setDateRange({});
     setSelectedChips([]);
     
-    // If autoApplyFilters is enabled, trigger a search
-    if (autoApplyFilters) {
-      onSearch();
-    }
+    // IMPORTANT: Remove the auto-search after applying filters
+    // Only execute search when explicitly requested
+    // if (autoApplyFilters) {
+    //   onSearch();
+    // }
   };
  
   // Handle the filter popup portal creation and positioning

@@ -47,8 +47,12 @@ const defaultColumns: Column[] = [
       if (type.includes('png')) return 'PNG';
       if (type.includes('word')) return 'Word';
       if (type.includes('excel')) return 'Excel';
+      if (type.includes('spreadsheetml.sheet')) return 'Excel';
+      if (type.includes('openxmlformats-officedocument.spreadsheetml')) return 'Excel';
       if (type.includes('text')) return 'Text';
-      return type.split('/').pop() || type;
+      // Truncate long content types
+      const splitType = type.split('/').pop() || type;
+      return splitType.length > 15 ? splitType.substring(0, 12) + '...' : splitType;
     },
     sortable: true,
     width: '15%',
@@ -260,7 +264,6 @@ export const AdvancedSearchFileBrowser: React.FC<AdvancedSearchFileBrowserProps>
             onFilterChange={setFilters}
             onSearch={handleSearch}
             isLoading={isLoading}
-            autoApplyFilters={true}
           />
         </div>
       )}
