@@ -24,14 +24,14 @@ const AdvancedSearchPage: React.FC = () => {
     const [sourceSystem, setSourceSystem] = useState('genius');
     // Track if content search has been executed
     const [hasSearchedContent, setHasSearchedContent] = useState(false);
+    // Track if metadata search has been executed
+    const [hasSearchedMetadata, setHasSearchedMetadata] = useState(false);
 
     // --- Advanced Search Filter/Results State ---
     const [filters, setFilters] = useState<Record<string, string>>({ sourceSystem });
     const [isLoading, setIsLoading] = useState(false);
     const [searchQuery, setSearchQuery] = useState<any>({
-        query: [
-            { key: 'sourceSystem', type: 'matches', value: sourceSystem }
-        ],
+        query: [],
         count: 10,
         offset: 0,
         projection: ["id", "filename", "contentType", "createdAt", "clientId", "fileType", "sourceSystem"]
@@ -51,10 +51,22 @@ const AdvancedSearchPage: React.FC = () => {
             offset: 0,
             projection: ["id", "filename", "contentType", "createdAt", "clientId", "fileType", "sourceSystem"]
         });
+        setHasSearchedMetadata(true);
         // Optionally, you could trigger a loading spinner here
         setTimeout(() => setIsLoading(false), 500); // Simulate async
     };
 
+    // Handler for content search
+    const handleContentSearch = () => {
+        if (!tempContentSearchQuery.trim()) return; // Don't search if empty
+        
+        setIsLoading(true);
+        setContentSearchQuery(tempContentSearchQuery);
+        setHasSearchedContent(true);
+        
+        // Give the UI time to update before showing results
+        setTimeout(() => setIsLoading(false), 500); // Simulate async
+    };
 
     // Reset search state when changing tabs
     useEffect(() => {
@@ -142,15 +154,27 @@ const AdvancedSearchPage: React.FC = () => {
     {/* Results Section */}
     <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
       <h2 className="text-lg font-semibold text-gray-900 mb-2">Results</h2>
-      <AdvancedSearchFileBrowser
-        initialQuery={searchQuery}
-        onFileSelect={(file) => console.log("Selected file:", file)}
-        onPageChange={(offset) => console.log("Page changed:", offset)}
-        itemsPerPage={10}
-        showFilters={false}
-        enableMultiSelect={true}
-        className="h-[calc(100vh-350px)]"
-      />
+      {hasSearchedMetadata ? (
+        <AdvancedSearchFileBrowser
+          initialQuery={searchQuery}
+          onFileSelect={(file) => console.log("Selected file:", file)}
+          onPageChange={(offset) => console.log("Page changed:", offset)}
+          itemsPerPage={10}
+          showFilters={false}
+          enableMultiSelect={true}
+          className="h-[calc(100vh-350px)]"
+        />
+      ) : (
+        <div className="flex flex-col items-center justify-center text-center h-[calc(100vh-350px)]">
+          <div className="p-4 bg-blue-50 rounded-full mb-4">
+            <Search className="w-10 h-10 text-blue-400" />
+          </div>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">Select filters and click search</h3>
+          <p className="text-sm text-gray-500 text-center max-w-md mb-4">
+            Use the filters above to narrow down your search criteria and click the Search button.
+          </p>
+        </div>
+      )}
     </div>
   </div>
 )}
