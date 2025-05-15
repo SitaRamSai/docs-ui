@@ -47,10 +47,10 @@ export const ContentSearchBar: React.FC<ContentSearchBarProps> = ({
             <span className="text-gray-400">Examples:</span>
             <button 
               type="button" 
-              onClick={() => onChange("insurance policy")}
+              onClick={() => onChange("Allied World")}
               className="ml-2 text-blue-600 hover:text-blue-800 hover:underline"
             >
-              insurance policy
+              Allied World
             </button>
             <button 
               type="button" 

@@ -247,11 +247,7 @@ const AdvancedSearchPage: React.FC = () => {
           </p>
           <div className="flex justify-center">
             <div className="text-xs text-gray-500 flex items-center bg-gray-50 px-3 py-1.5 rounded-full">
-              <Clock className="w-3 h-3 mr-1.5 text-gray-400" />
-              <span>Current system: </span>
-              <span className="ml-1 text-blue-600 font-medium">
-                {SOURCE_SYSTEMS.find(s => s.id === sourceSystem)?.name || sourceSystem}
-              </span>
+              
             </div>
           </div>
         </div>

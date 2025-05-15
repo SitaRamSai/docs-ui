@@ -50,7 +50,10 @@ const commonContentTypes = [
 // Common file types
 const commonFileTypes = [
   { value: 'submission', label: 'Submission' },
-  { value: 'letter', label: 'Letter' }
+  { value: 'letter', label: 'Letter' },
+  { value: 'claim', label: 'Claim' },
+  { value: 'notice_and_acknowledgement', label: 'Notice & Acknowledgement' },
+  { value: 'adjuster_emails', label: 'Adjuster Emails' },
 ];
 
 // Common source systems
@@ -502,7 +505,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
             </div>
  
             {/* Grid of filter buttons */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2.5 mb-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-2 mb-3">
               {filterOptions.map(option => {
                 const isApplied = isFilterApplied(option.key);
                 const isActive = activeFilterButton === option.key;
@@ -546,7 +549,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
                           <div className="font-medium text-xs">{option.label}</div>
                           <div className="text-xs flex items-center">
                             <span className="font-medium">=</span>
-                            <span className="ml-1 truncate" title={displayValue || ''}>
+                            <span className="ml-1 truncate max-w-[120px]" title={displayValue || ''}>
                               {displayValue}
                             </span>
                           </div>

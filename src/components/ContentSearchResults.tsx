@@ -20,18 +20,6 @@ interface ContentSearchResultsProps {
   onResultSelect?: (result: ContentSearchResult) => void;
 }
 
-// Extract file name from source path
-const getFileName = (source: string): string => {
-  if (!source) return 'Unknown document';
-  const parts = source.split('/');
-  return parts[parts.length - 1] || 'Unknown document';
-};
-
-// Format score as percentage
-const formatScore = (score: number): string => {
-  return `${Math.round(score * 100)}%`;
-};
-
 // Highlight query matches in text
 const HighlightedText = ({ text, query }: { text: string; query: string }) => {
   if (!query.trim()) return <>{text}</>;
@@ -52,6 +40,20 @@ const HighlightedText = ({ text, query }: { text: string; query: string }) => {
       )}
     </>
   );
+};
+
+// Extract a simpler file name from source path
+const getSimpleFileName = (source: string): string => {
+  if (!source) return 'Unknown document';
+  
+  // Extract just the filename from the path
+  const parts = source.split('/');
+  let fileName = parts[parts.length - 1] || 'Unknown document';
+  
+  // Only remove the .txt extension from extracted text files
+  fileName = fileName.replace(/\.txt$/, ''); 
+  
+  return fileName;
 };
 
 const ContentSearchResults: React.FC<ContentSearchResultsProps> = ({
@@ -86,7 +88,7 @@ const ContentSearchResults: React.FC<ContentSearchResultsProps> = ({
     <div className="bg-white shadow overflow-hidden rounded-lg divide-y divide-gray-200">
       <div className="px-4 py-5 sm:px-6">
         <h3 className="text-lg leading-6 font-medium text-gray-900">
-          Results
+          Content Search Results
         </h3>
         <p className="mt-1 max-w-2xl text-sm text-gray-500">
           Found {results.length} results matching "{query}"
@@ -110,7 +112,7 @@ const ContentSearchResults: React.FC<ContentSearchResultsProps> = ({
                     <File className="h-5 w-5 text-blue-500" />
                   </div>
                   <div className="mt-2 text-xs font-medium text-gray-500">
-                    Match: <span className="text-blue-600">{formatScore(result.score)}</span>
+                    Relevance: <span className="text-blue-600">{Math.round(result.score * 100)}%</span>
                   </div>
                 </div>
               </div>
@@ -118,17 +120,23 @@ const ContentSearchResults: React.FC<ContentSearchResultsProps> = ({
               {/* Right side - content */}
               <div className="flex-1 min-w-0">
                 {/* Source file */}
-                <div className="text-sm font-medium text-gray-900 truncate mb-2">
-                  {getFileName(result.document.metadata.source)}
+                <div className="flex flex-col mb-3">
+                  <div className="text-xs text-gray-500">Source Document</div>
+                  <div className="text-sm font-medium text-gray-900 break-all">
+                    {getSimpleFileName(result.document.metadata.source)}
+                  </div>
                 </div>
                 
                 {/* Text content with highlighting */}
-                <div className="bg-gray-50 p-3 rounded-md text-sm text-gray-800 whitespace-pre-wrap break-words">
-                  <HighlightedText text={result.document.text} query={query} />
+                <div className="flex flex-col">
+                  <div className="text-xs text-gray-500 mb-1">Matching text</div>
+                  <div className="bg-gray-50 p-3 rounded-md border border-gray-100 text-sm text-gray-800 whitespace-pre-wrap break-words">
+                    <HighlightedText text={result.document.text} query={query} />
+                  </div>
                 </div>
                 
                 {/* Action button */}
-                <div className="mt-2 flex justify-end">
+                <div className="mt-3 flex justify-end">
                   <button 
                     className="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                   >

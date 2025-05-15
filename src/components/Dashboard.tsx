@@ -7,13 +7,8 @@ import {
   AlertCircle, 
   Server, 
   ChevronRight, 
-  Search, 
-  FileText, 
   Clock, 
-  BarChart3,
-  Layers, 
-  Database, 
-  Shield
+  Layers
 } from 'lucide-react';
 import { apiService } from '../services/api';
 import type { SourceSystemConfig } from '../services/api';
@@ -49,10 +44,6 @@ const Dashboard: React.FC = () => {
 
   const handleCardClick = (config: SourceSystemConfig) => {
     navigate(`/policy/${config.sourceSystem}`);
-  };
-
-  const handleAdvancedSearch = () => {
-    navigate('/advanced-search');
   };
 
   // Extract the items from the response for easier access
@@ -136,16 +127,6 @@ const Dashboard: React.FC = () => {
             >
               Favorites
             </button>
-            <button
-              onClick={() => setActiveTab('analytics')}
-              className={`py-2 px-1 border-b-2 font-medium text-sm whitespace-nowrap ${
-                activeTab === 'analytics'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              Analytics
-            </button>
           </nav>
         </div>
       </div>
@@ -202,29 +183,6 @@ const Dashboard: React.FC = () => {
                 ))}
               </div>
             )}
-          </div>
-
-          {/* Quick Actions */}
-          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-100 p-6">
-            <h2 className="text-lg font-medium text-gray-900 mb-4">Quick Actions</h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-              {[
-                { name: 'Search All', icon: Search, color: 'bg-blue-100 text-blue-600', onClick: () => navigate('/advanced-search') },
-                { name: 'Recent Activity', icon: Clock, color: 'bg-purple-100 text-purple-600', onClick: () => setActiveTab('recent') },
-                { name: 'Analytics', icon: BarChart3, color: 'bg-amber-100 text-amber-600', onClick: () => setActiveTab('analytics') }
-              ].map((action, index) => (
-                <button
-                  key={index}
-                  onClick={action.onClick}
-                  className="bg-white rounded-lg shadow-sm p-4 flex flex-col items-center hover:shadow-md transition-shadow duration-200"
-                >
-                  <div className={`rounded-full p-3 ${action.color} mb-3`}>
-                    <action.icon className="w-5 h-5" />
-                  </div>
-                  <span className="text-sm font-medium text-gray-700">{action.name}</span>
-                </button>
-              ))}
-            </div>
           </div>
         </>
       )}
