@@ -55,7 +55,7 @@ const commonFileTypes = [
   { value: 'notice_and_acknowledgement', label: 'Notice & Acknowledgement' },
   { value: 'adjuster_emails', label: 'Adjuster Emails' },
 ];
-
+ 
 // Common source systems
 const commonSourceSystems = [
   { value: 'genius', label: 'Genius' },
@@ -192,7 +192,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
       setDateRange({});
       return;
     }
-
+ 
     // Get the button position immediately before updating state
     const buttonEl = filterButtonRefs.current[key];
     const containerEl = filterContainerRef.current;
@@ -220,7 +220,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
         positionAbove: shouldPositionAbove
       });
     }
-
+ 
     // Update state after position calculation
     setActiveFilterButton(key);
     setActiveFilter(key);
@@ -247,13 +247,13 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
     // Track usage for smart suggestions
     setFilterUsageHistory(prev => [key, ...prev.filter(k => k !== key).slice(0, 9)]);
   };
-
+ 
   // Auto-apply sourceSystem when selected
   const handleSourceSystemSelect = (value: string) => {
     // Only update the input state, don't apply yet
     setFilterInput(value);
   };
-
+ 
   // Handle toggle of a chip selection
   const handleChipToggle = (value: string) => {
     // Regular behavior without auto-apply - just update the UI state
@@ -265,14 +265,14 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
       }
     });
   };
-
+ 
   // Handle date range change
   const handleDateRangeChange = (part: 'from' | 'to', value: string) => {
     // Just update the date range state, don't apply yet
     const newDateRange = { ...dateRange, [part]: value };
     setDateRange(newDateRange);
   };
-
+ 
   // Process the current filter input and add to filters
   const handleFilterConfirm = () => {
     if (!activeFilter) return;
@@ -285,7 +285,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
     // Process value based on query type
     if (option.queryType === 'range') {
       // Only add if at least one date is set
-      if (!dateRange.from && !dateRange.to) {
+      if (!dateRange.from && !dateRange.end) {
         setActiveFilter(null);
         setActiveFilterButton(null);
         return;
@@ -320,13 +320,13 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
     
     applyFilterWithValue(activeFilter, option.queryType, newValue);
   };
-
+ 
   // Handle text input change
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     // Simply update the input value state, don't process or apply
     setFilterInput(e.target.value);
   };
-
+ 
   // Handle key press in filter input
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Escape') {
@@ -337,7 +337,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
       setSelectedChips([]);
     }
   };
-
+ 
   // Ref for debouncing text input
   const inputDebounceRef = useRef<any>(null);
  
@@ -495,7 +495,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
           </button>
         )}
       </div>
-
+ 
       <div className="pt-3 pb-3 px-3 bg-white" ref={filterContainerRef}>
         <form onSubmit={handleSearch} className="space-y-4">
           {/* All filter options shown upfront */}
@@ -532,7 +532,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
                       return { bg: 'bg-gray-50', text: 'text-gray-700', icon: 'text-gray-500', border: 'border-gray-200', hover: 'hover:bg-gray-100' };
                   }
                 };
-
+ 
                 const colors = getFilterColorClasses(option.key);
                 
                 // If this filter is applied, show it as a chip
@@ -604,7 +604,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
               }}
             ></div>
           )}
-
+ 
           {/* Floating filter edit UI */}
           {activeFilter && (
             <div 
@@ -860,4 +860,5 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
     </div>
   );
 };
+ 
 

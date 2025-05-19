@@ -12,12 +12,12 @@ import {
 } from 'lucide-react';
 import { apiService } from '../services/api';
 import type { SourceSystemConfig } from '../services/api';
-
+ 
 // Interface to match the API response format
 interface SourceSystemResponse {
   Items: SourceSystemConfig[];
 }
-
+ 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('overview');
@@ -41,14 +41,14 @@ const Dashboard: React.FC = () => {
     staleTime: 5 * 60 * 1000,
     gcTime: 30 * 60 * 1000, // Modern replacement for cacheTime
   });
-
+ 
   const handleCardClick = (config: SourceSystemConfig) => {
-    navigate(`/policy/${config.sourceSystem}`);
+    navigate(`/${config.sourceSystem}`);
   };
-
+ 
   // Extract the items from the response for easier access
   const sourceSystemItems = response?.Items || [];
-
+ 
   // Get the time of day for an appropriate greeting
   const getTimeBasedGreeting = () => {
     const hour = new Date().getHours();
@@ -56,7 +56,7 @@ const Dashboard: React.FC = () => {
     if (hour < 18) return 'Good afternoon';
     return 'Good evening';
   };
-
+ 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -67,7 +67,7 @@ const Dashboard: React.FC = () => {
       </div>
     );
   }
-
+ 
   if (error) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -81,9 +81,9 @@ const Dashboard: React.FC = () => {
       </div>
     );
   }
-
+ 
   const hasSourceSystems = sourceSystemItems.length > 0;
-
+ 
   return (
     <div className="space-y-6">
       {/* Header styled to match other boxes */}
@@ -130,7 +130,7 @@ const Dashboard: React.FC = () => {
           </nav>
         </div>
       </div>
-
+ 
       {activeTab === 'overview' && (
         <>
           {/* Source Systems */}
@@ -142,7 +142,7 @@ const Dashboard: React.FC = () => {
                 Each system contains documents from its originating platform, allowing you to access everything from a single interface.
               </p>
             </div>
-
+ 
             {!hasSourceSystems ? (
               <div className="flex items-center justify-center min-h-[200px]">
                 <div className="text-center text-gray-500">
@@ -164,9 +164,17 @@ const Dashboard: React.FC = () => {
                         <Layers className={`w-5 h-5 text-${index % 6 === 0 ? 'blue' : index % 6 === 1 ? 'green' : index % 6 === 2 ? 'purple' : index % 6 === 3 ? 'amber' : index % 6 === 4 ? 'emerald' : 'cyan'}-600`} />
                       </div>
                       <div className="flex-1">
-                        <h3 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600">
+                        <h3 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600 capitalize">
                           {config.sourceSystem}
                         </h3>
+                        <div className="absolute bottom-full left-0 transform -translate-y-1 mb-1 hidden group-hover:block z-10">
+                          <div className="bg-white text-xs rounded shadow-lg max-w-xs text-gray-600 border border-gray-200">
+                            <p className="px-4 py-2 text-sm">
+                              {config.sourceSystemDescription || config.sourceSystem}
+                            </p>
+                          </div>
+                          <div className="absolute top-full left-4 transform -translate-x-1/2 border-4 border-gray-900 border-t-0 border-l-transparent border-r-transparent h-0 w-0 rotate-180 bg-white"></div>
+                        </div>
                         {config.description && (
                           <p className="mt-2 text-sm text-gray-600">
                             {config.description}
@@ -186,7 +194,7 @@ const Dashboard: React.FC = () => {
           </div>
         </>
       )}
-
+ 
       {activeTab === 'recent' && (
         <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
           <h2 className="text-lg font-medium text-gray-900 mb-4">Recent Activity</h2>
@@ -215,5 +223,5 @@ const Dashboard: React.FC = () => {
     </div>
   );
 };
-
+ 
 export default Dashboard; 

@@ -12,11 +12,11 @@ const Breadcrumbs: React.FC = () => {
         },
         sourceSystem && {
             label: sourceSystem.charAt(0).toUpperCase() + sourceSystem.slice(1),
-            path: `/policy/${sourceSystem}`,
+            path: `/${sourceSystem}`,
         },
         clientId && {
             label: `Client ${clientId}`,
-            path: `/policy/${sourceSystem}/${clientId}`,
+            path: `/${sourceSystem}/${clientId}`,
         },
     ].filter(Boolean);
 

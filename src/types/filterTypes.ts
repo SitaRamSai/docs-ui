@@ -1,23 +1,23 @@
 export type QueryType = 'matches' | 'like' | 'in' | 'range';
-
+ 
 export interface DateRange {
-  from?: string;
-  to?: string;
+  start?: string;
+  end?: string;
 }
-
+ 
 export interface FilterOption {
   key: string;
   label: string;
   placeholder: string;
   queryType: QueryType;
 }
-
+ 
 export interface QueryFilter {
   key: string;
   type: string;
   value: any;
 }
-
+ 
 export interface SmartSuggestion {
   id: string;
   title: string;
@@ -25,7 +25,7 @@ export interface SmartSuggestion {
   icon: string;
   filters: QueryFilter[];
 }
-
+ 
 export interface FilterPanelProps {
   currentFilters: Record<string, any>;
   onFilterChange: (filters: Record<string, any>) => void;

@@ -41,7 +41,7 @@ export const ContentSearchBar: React.FC<ContentSearchBarProps> = ({
             <span>Search Content</span>
           </button>
         </div>
-
+ 
         <div className="w-full flex items-center justify-between px-1">
           <div className="text-xs text-gray-500 flex items-center">
             <span className="text-gray-400">Examples:</span>
@@ -65,4 +65,5 @@ export const ContentSearchBar: React.FC<ContentSearchBarProps> = ({
     </form>
   );
 };
+ 
 

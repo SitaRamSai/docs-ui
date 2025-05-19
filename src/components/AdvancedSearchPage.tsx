@@ -4,9 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import { AdvancedSearchFileBrowser } from './AdvancedSearchFileBrowser';
 import { FilterPanel } from './AdvancedSearchFileBrowser/FilterPanel';
 import { ContentSearchBar } from './ContentSearchBar';
-import { apiService } from '../services/api';
+import { openSearchApi } from '../services/openSearchAPI'
 import ContentSearchResults from './ContentSearchResults';
-
+ 
 // Available source systems
 const SOURCE_SYSTEMS = [
     { id: 'genius', name: 'Genius' },
@@ -14,7 +14,7 @@ const SOURCE_SYSTEMS = [
     { id: 'ebao', name: 'eBao' },
     { id: 'ivos', name: 'IVOS' }
 ];
-
+ 
 const AdvancedSearchPage: React.FC = () => {
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState<'metadata' | 'content'>('metadata');
@@ -27,12 +27,12 @@ const AdvancedSearchPage: React.FC = () => {
     const [hasSearchedContent, setHasSearchedContent] = useState(false);
     // Track if metadata search has been executed
     const [hasSearchedMetadata, setHasSearchedMetadata] = useState(false);
-
+ 
     // Content search results state
     const [contentSearchResults, setContentSearchResults] = useState<any[]>([]);
     const [isContentSearchLoading, setIsContentSearchLoading] = useState(false);
     const [contentSearchError, setContentSearchError] = useState<Error | null>(null);
-
+ 
     // --- Advanced Search Filter/Results State ---
     const [filters, setFilters] = useState<Record<string, string>>({ sourceSystem });
     const [isLoading, setIsLoading] = useState(false);
@@ -42,7 +42,7 @@ const AdvancedSearchPage: React.FC = () => {
         offset: 0,
         projection: ["id", "filename", "contentType", "createdAt", "clientId", "fileType", "sourceSystem"]
     });
-
+ 
     // Handler to trigger search from FilterPanel
     const handleSearch = () => {
         setIsLoading(true);
@@ -61,7 +61,7 @@ const AdvancedSearchPage: React.FC = () => {
         // Optionally, you could trigger a loading spinner here
         setTimeout(() => setIsLoading(false), 500); // Simulate async
     };
-
+ 
     // Handler for content search
     const handleContentSearch = async () => {
         if (!tempContentSearchQuery.trim()) return; // Don't search if empty
@@ -73,7 +73,7 @@ const AdvancedSearchPage: React.FC = () => {
         
         try {
             // Call the content search API
-            const results = await apiService.searchContent(tempContentSearchQuery, 5);
+            const results = await openSearchApi.searchContent(tempContentSearchQuery, 5);
             setContentSearchResults(results.results || []);
         } catch (error) {
             console.error('Content search error:', error);
@@ -83,7 +83,7 @@ const AdvancedSearchPage: React.FC = () => {
             setIsContentSearchLoading(false);
         }
     };
-
+ 
     // Reset search state when changing tabs
     useEffect(() => {
         if (activeTab === 'metadata') {
@@ -154,7 +154,7 @@ const AdvancedSearchPage: React.FC = () => {
                             </nav>
                         </div>
                     </div>
-
+ 
                     {/* Content */}
                     {activeTab === 'metadata' && (
   <div className="space-y-6">
@@ -262,3 +262,4 @@ const AdvancedSearchPage: React.FC = () => {
 };
  
 export default AdvancedSearchPage;
+

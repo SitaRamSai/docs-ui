@@ -13,12 +13,13 @@ import AdvancedSearchPage from './components/AdvancedSearchPage';
 import Login from './components/Login';
 import ClientList from './components/ClientList';
 import Dashboard from './components/Dashboard';
+import { ToastContainer } from 'react-toastify'
 
 const oktaAuth = new OktaAuth({
   issuer: OKTA_CONFIG.issuer,
   clientId: OKTA_CONFIG.clientId,
   redirectUri: OKTA_CONFIG.redirectUri,
-  scopes: ['openid', 'profile', 'email'], // Default scopes needed for auth
+  scopes: OKTA_CONFIG.scopes,
   pkce: true,
   tokenManager: {
     autoRenew: true,
@@ -99,12 +100,14 @@ function App() {
           <Route path="/" element={<SecureRoute><DashboardLayout /></SecureRoute>} />
           <Route path="/login" element={<Login />} />
           <Route path="/login/callback" element={<OktaLoginCallback />} />
-          <Route path="/policy/:sourceSystem/:clientId" element={<FileBrowserLayout />} />
-          <Route path="/policy/:sourceSystem" element={<ClientListLayout />} />
+          <Route path="/:sourceSystem" element={<ClientListLayout />} />
+          <Route path="/:sourceSystem/:clientId" element={<FileBrowserLayout />} />
+          <Route path="/:documentType/:sourceSystem/:clientId" element={<FileBrowserLayout />} />
           <Route path="/advanced-search" element={<AdvancedSearchPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Security>
+      <ToastContainer autoClose={2000} hideProgressBar={true} />
     </Router>
   );
 }

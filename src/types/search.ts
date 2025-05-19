@@ -3,14 +3,14 @@ export interface SearchQuery {
   type: string;
   value: string;
 }
-
+ 
 export interface SearchParams {
   query: SearchQuery[];
   count: number;
   offset: number;
   projection: string[];
 }
-
+ 
 export interface SearchPagination {
   total: number;
   pageSize: number;
@@ -21,7 +21,7 @@ export interface SearchPagination {
   totalPages: number;
   currentPage: number;
 }
-
+ 
 export interface SearchResult {
   id: string;
   sourceSystem: string;
@@ -31,12 +31,12 @@ export interface SearchResult {
   fileType?: string;
   clientId?: string;
 }
-
+ 
 export interface SearchResponse {
   pagination: SearchPagination;
   results: SearchResult[];
 }
-
+ 
 export interface AdvancedSearchFileBrowserProps {
   initialQuery: SearchParams;
   onFileSelect?: (file: SearchResult) => void;
@@ -49,7 +49,7 @@ export interface AdvancedSearchFileBrowserProps {
   dateFormat?: string;
   loadingPlaceholderCount?: number;
 }
-
+ 
 export interface Column {
   id: string;
   label: string;

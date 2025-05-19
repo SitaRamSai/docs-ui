@@ -15,7 +15,7 @@ const SourceSystemGrid: React.FC = () => {
     });
 
     const handleCardClick = (config: SourceSystemConfig) => {
-        navigate(`/policy/${config.sourceSystem}`);
+        navigate(`/${config.sourceSystem}`);
     };
 
     if (isLoading) {

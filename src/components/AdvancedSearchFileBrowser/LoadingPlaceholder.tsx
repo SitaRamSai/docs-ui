@@ -1,11 +1,11 @@
 import React from 'react';
 import type { Column } from '../../types/search';
-
+ 
 interface LoadingPlaceholderProps {
   count: number;
   columns: Column[];
 }
-
+ 
 export const LoadingPlaceholder: React.FC<LoadingPlaceholderProps> = ({ count, columns }) => {
   return (
     <div className="animate-pulse">

@@ -1,9 +1,9 @@
 import { getEnvConfig } from "../config/env";
 import { OktaAuth } from "@okta/okta-auth-js";
 import { OKTA_CONFIG } from "../auth/AuthConfig";
-
+ 
 const config = getEnvConfig();
-
+ 
 export interface Document {
   filename: string;
   metadata: Record<string, any>;
@@ -19,16 +19,16 @@ export interface Document {
   url: string;
   inlineUrl: string;
 }
-
+ 
 export interface SourceSystemConfig {
   id: string;
   name: string;
   sourceSystem: string;
-  description?: string;
+  sourceSystemDescription?: string;
   enabled: boolean;
   lastUpdated: string;
 }
-
+ 
 export interface Client {
   id: string;
   clientId: string;
@@ -36,9 +36,10 @@ export interface Client {
   type: string;
   lastUpdated: string;
 }
-
+ 
 export class ApiService {
   private baseUrl: string;
+  private cdnUrl: string;
   private isDevelopment: boolean;
   private oktaAuth: OktaAuth;
   private configCache: {
@@ -48,21 +49,22 @@ export class ApiService {
     data: null,
     timestamp: 0,
   };
-
+ 
   constructor() {
     this.baseUrl = config.api_url;
+    this.cdnUrl = config.cdn_url;
     this.isDevelopment = import.meta.env.DEV;
     this.oktaAuth = new OktaAuth({
       issuer: OKTA_CONFIG.issuer,
       clientId: OKTA_CONFIG.clientId,
     });
   }
-
+ 
   private async getAuthHeaders(): Promise<HeadersInit> {
     const headers: HeadersInit = {
       "Content-Type": "application/json",
     };
-
+ 
     if (OKTA_CONFIG.isEnabled) {
       try {
         const accessToken = await this.oktaAuth.getAccessToken();
@@ -73,10 +75,10 @@ export class ApiService {
         console.error("Error getting access token:", error);
       }
     }
-
+ 
     return headers;
   }
-
+ 
   private async handleResponse<T>(response: Response): Promise<T> {
     if (!response.ok) {
       const error = await response.json().catch(() => ({}));
@@ -84,11 +86,11 @@ export class ApiService {
     }
     return response.json();
   }
-
+ 
   private delay(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
-
+ 
   async getSourceSystemConfigs(): Promise<SourceSystemConfig[]> {
     const now = Date.now();
     if (
@@ -97,7 +99,7 @@ export class ApiService {
     ) {
       return this.configCache.data;
     }
-
+ 
     try {
       // if (this.isDevelopment) {
       //   await this.delay(1000);
@@ -125,28 +127,29 @@ export class ApiService {
       //   };
       //   return mockConfigs;
       // }
-
+ 
       const headers = await this.getAuthHeaders();
       const response = await fetch(
-        `https://dmsv2-api.alliedworld.dev/v2/docsville/getAllConfig`,
+        // `https://dmsv2-api.alliedworld.dev/v2/docsville/getAllConfig`,
+        `${this.baseUrl}/v2/docsville/get-config`,
         {
           headers,
         }
       );
       const configs = await this.handleResponse<SourceSystemConfig[]>(response);
-
+ 
       this.configCache = {
         data: configs,
         timestamp: now,
       };
-
+ 
       return configs;
     } catch (error) {
       console.error("Error fetching source system configs:", error);
       throw error;
     }
   }
-
+ 
   async getClientList(sourceSystem: string): Promise<Client[]> {
     try {
       // if (this.isDevelopment) {
@@ -175,10 +178,10 @@ export class ApiService {
       //     },
       //   ];
       // }
-
+ 
       const headers = await this.getAuthHeaders();
       const response = await fetch(
-        `${this.baseUrl}/${sourceSystem}/client-list`,
+        `${this.baseUrl}/v1/${sourceSystem}/client-list`,
         {
           headers,
         }
@@ -189,7 +192,7 @@ export class ApiService {
       throw error;
     }
   }
-
+ 
   async getDocuments(
     sourceSystem: string,
     clientId?: string
@@ -215,13 +218,13 @@ export class ApiService {
       //     },
       //   ];
       // }
-
+ 
       const headers = await this.getAuthHeaders();
-      console.log("checking...", sourceSystem, clientId);
+      const clientIdEncoded = encodeURIComponent(clientId);
       const url = clientId
-        ? `${this.baseUrl}/${sourceSystem}/${clientId}/documents`
-        : `${this.baseUrl}/${sourceSystem}/documents`;
-
+        ? `${this.baseUrl}/v1/${sourceSystem}/${clientIdEncoded}/documents`
+        : `${this.baseUrl}/v1/${sourceSystem}/documents`;
+ 
       const response = await fetch(url, {
         headers,
       });
@@ -231,7 +234,7 @@ export class ApiService {
       throw error;
     }
   }
-
+ 
   async deleteDocument(
     sourceSystem: string,
     documentId: string
@@ -241,7 +244,7 @@ export class ApiService {
         await this.delay(500);
         return;
       }
-
+ 
       const headers = await this.getAuthHeaders();
       const response = await fetch(
         `${this.baseUrl}/v1/${sourceSystem}/documents/${documentId}`,
@@ -259,7 +262,7 @@ export class ApiService {
       throw error;
     }
   }
-
+ 
   async searchDocuments(searchParams: any): Promise<any> {
     try {
       console.log("API Search - Request params:", JSON.stringify(searchParams, null, 2));
@@ -267,28 +270,28 @@ export class ApiService {
       // Ensure sourceSystem is always included in the query
       const hasSourceSystem = searchParams.query.some((q: any) => q.key === 'sourceSystem');
       if (!hasSourceSystem) {
-        // Default to dragon if not specified
         searchParams.query.push({ 
           key: 'sourceSystem', 
           type: 'matches', 
-          value: 'dragon'  // Default source system
+          value: 'genius' 
         });
       }
-
+ 
       // Hard-code the authorization header exactly as in the cURL example
       const headers = {
         "Content-Type": "application/json",
-        "Authorization": "Bearer .\.Z5z3--23Mm--Y4xSpIN3HdMj_piNqbBikZj1--33JMSqkixLTYhtGgIrxd2Tsq88mIoFxdYUefy-Eur6VXWJpbnVXhX5JloA",
-        "x-clientid": "20052"
+        "Authorization": "Bearer .\.Z5z3--23Mm--Y4xSpIN3HdMj_piNqbBikZj1--33JMSqkixLTYhtGgIrxd2Tsq88mIoFxdYUefy-Eur6VXWJpbnVXhX5JloA"
+        // ,
+        // "x-clientid": "20052"
       };
-
+ 
       // Get the correct API URL from the logs
       const apiUrl = "https://pyfcjbg9f5.execute-api.us-east-1.amazonaws.com/Dev/api/v1/docsville/search";
       
       console.log("API Search - Making fetch request to:", apiUrl);
       console.log("API Search - Headers:", JSON.stringify(headers, null, 2));
       console.log("API Search - Request body:", JSON.stringify(searchParams, null, 2));
-
+ 
       const response = await fetch(
         apiUrl,
         {
@@ -297,7 +300,7 @@ export class ApiService {
           body: JSON.stringify(searchParams),
         }
       );
-
+ 
       console.log("API Search - Response status:", response.status);
       
       if (!response.ok) {
@@ -305,7 +308,7 @@ export class ApiService {
         console.error("API Search - Error response:", errorText);
         throw new Error(`Search request failed: ${errorText}`);
       }
-
+ 
       const data = await this.handleResponse(response);
       console.log("API Search - Response data:", JSON.stringify(data, null, 2));
       return data;
@@ -321,18 +324,16 @@ export class ApiService {
       
       // Hard-code the authorization header exactly as in the cURL example
       const headers = {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer .\.Z5z3--23Mm--Y4xSpIN3HdMj_piNqbBikZj1--33JMSqkixLTYhtGgIrxd2Tsq88mIoFxdYUefy-Eur6VXWJpbnVXhX5JloA",
-        "x-clientid": "20052"
+        "Content-Type": "application/json"
       };
-
+ 
       // Get the correct API URL from the logs
       const apiUrl = "https://pyfcjbg9f5.execute-api.us-east-1.amazonaws.com/Dev/api/v1/docsville/content/search";
       
       console.log("Content Search API - Making fetch request to:", apiUrl);
       console.log("Content Search API - Headers:", JSON.stringify(headers, null, 2));
       console.log("Content Search API - Request body:", JSON.stringify({query, k}, null, 2));
-
+ 
       const response = await fetch(
         apiUrl,
         {
@@ -341,7 +342,7 @@ export class ApiService {
           body: JSON.stringify({query, k}),
         }
       );
-
+ 
       console.log("Content Search API - Response status:", response.status);
       
       if (!response.ok) {
@@ -349,7 +350,7 @@ export class ApiService {
         console.error("Content Search API - Error response:", errorText);
         throw new Error(`Content search request failed: ${errorText}`);
       }
-
+ 
       const data = await this.handleResponse(response);
       console.log("Content Search API - Response data:", JSON.stringify(data, null, 2));
       return data;
@@ -360,4 +361,7 @@ export class ApiService {
   }
 }
 
+export const APIService = ApiService
+ 
 export const apiService = new ApiService();
+

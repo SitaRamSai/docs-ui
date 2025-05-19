@@ -2,10 +2,10 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState, useCallback, useRef } from "react";
 import { SearchParams, SearchResponse } from "../types/search";
 import { ApiService } from "../services/api";
-
+ 
 // Create API service instance
 const apiService = new ApiService();
-
+ 
 // Mock data for development
 const MOCK_DATA: SearchResponse = {
   pagination: {
@@ -56,13 +56,13 @@ const MOCK_DATA: SearchResponse = {
     },
   ],
 };
-
+ 
 export function useSearch(initialParams: SearchParams) {
   const [params, setParams] = useState<SearchParams>(initialParams);
   const [enabled, setEnabled] = useState(false);
   const abortControllerRef = useRef<AbortController | null>(null);
   const queryClient = useQueryClient();
-
+ 
   const fetchSearch = useCallback(
     async ({ signal }: { signal?: AbortSignal }) => {
       // Comment out the development mode check to make real API calls
@@ -85,7 +85,7 @@ export function useSearch(initialParams: SearchParams) {
       //     }
       //   };
       // }
-
+ 
       try {
         // Use the API service to fetch search results
         return await apiService.searchDocuments(params);
@@ -98,7 +98,7 @@ export function useSearch(initialParams: SearchParams) {
     },
     [params]
   );
-
+ 
   const { data, error, isLoading, isFetching } = useQuery({
     queryKey: ["search", params],
     queryFn: ({ signal }) => fetchSearch({ signal }),
@@ -106,37 +106,37 @@ export function useSearch(initialParams: SearchParams) {
     staleTime: 30000, // Consider data fresh for 30 seconds
     gcTime: 5 * 60 * 1000, // Keep unused data in cache for 5 minutes
   });
-
+ 
   const updateParams = useCallback((newParams: Partial<SearchParams>) => {
     // Cancel previous request if it exists
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
     }
-
+ 
     // Create new abort controller for this request
     abortControllerRef.current = new AbortController();
-
+ 
     setParams((prev) => ({ ...prev, ...newParams }));
   }, []);
-
+ 
   const executeSearch = useCallback(() => {
     setEnabled(true);
   }, []);
-
+ 
   const prefetchNextPage = useCallback(() => {
     if (data?.pagination.hasMore) {
       const nextPageParams = {
         ...params,
         offset: data.pagination.nextOffset!,
       };
-
+ 
       queryClient.prefetchQuery({
         queryKey: ["search", nextPageParams],
         queryFn: ({ signal }) => fetchSearch({ signal }),
       });
     }
   }, [data, params, queryClient, fetchSearch]);
-
+ 
   return {
     data,
     error,
@@ -148,3 +148,4 @@ export function useSearch(initialParams: SearchParams) {
     currentParams: params,
   };
 }
+

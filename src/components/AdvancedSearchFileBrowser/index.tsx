@@ -6,7 +6,7 @@ import type { AdvancedSearchFileBrowserProps, SearchResult } from '../../types/s
 import { EmptyState } from './EmptyState';
 import { FilterPanel } from './FilterPanel';
 import SearchResultsTable from '../SearchResultsTable';
-
+ 
 export const AdvancedSearchFileBrowser: React.FC<AdvancedSearchFileBrowserProps> = ({
   initialQuery,
   onFileSelect,
@@ -23,14 +23,14 @@ export const AdvancedSearchFileBrowser: React.FC<AdvancedSearchFileBrowserProps>
   const [hasSearched, setHasSearched] = useState<boolean>(false);
   const parentRef = useRef<HTMLDivElement>(null);
   const { data, error, isLoading, isFetching, updateParams, executeSearch, prefetchNextPage } = useSearch(initialQuery);
-
+ 
   // Trigger new search when initialQuery prop changes
   useEffect(() => {
     updateParams(initialQuery);
     executeSearch();
     setHasSearched(true);
   }, [initialQuery]);
-
+ 
   const handleSort = useCallback((columnId: string) => {
     updateParams({
       query: [
@@ -40,7 +40,7 @@ export const AdvancedSearchFileBrowser: React.FC<AdvancedSearchFileBrowserProps>
     });
     executeSearch();
   }, [initialQuery.query, updateParams, executeSearch]);
-
+ 
   const handleSearch = useCallback(() => {
     // Get filter types from FilterPanel's filterOptions
     const filterTypesMap: Record<string, string> = {
@@ -51,27 +51,27 @@ export const AdvancedSearchFileBrowser: React.FC<AdvancedSearchFileBrowserProps>
       'createdAt': 'range',
       'sourceSystem': 'matches'
     };
-
+ 
     // Map filters to search queries with correct types
     const searchQueries = Object.entries(filters).map(([key, value]) => ({
       key,
       type: filterTypesMap[key] || 'matches', // Use defined type or default to 'matches'
       value
     }));
-
+ 
     // Check if sourceSystem is already in the filters
     const hasSourceSystem = searchQueries.some(query => query.key === 'sourceSystem');
     
     // Get the sourceSystem from the initialQuery if it exists
     const sourceSystemFromInitial = initialQuery.query.find(q => q.key === 'sourceSystem')?.value || 'genius';
-
+ 
     // Create new query array with sourceSystem always included
     const queryArray = [
       // Add sourceSystem if not already present in searchQueries
       ...(!hasSourceSystem ? [{ key: 'sourceSystem', type: 'matches', value: sourceSystemFromInitial }] : []),
       ...searchQueries
     ];
-
+ 
     updateParams({
       query: queryArray,
       offset: 0 // Reset to first page on new search
@@ -79,7 +79,7 @@ export const AdvancedSearchFileBrowser: React.FC<AdvancedSearchFileBrowserProps>
     executeSearch();
     setHasSearched(true);
   }, [filters, updateParams, executeSearch, initialQuery.query]);
-
+ 
   const handleFileClick = useCallback((file: SearchResult) => {
     if (enableMultiSelect) {
       setSelectedFiles(prev => {
@@ -96,7 +96,7 @@ export const AdvancedSearchFileBrowser: React.FC<AdvancedSearchFileBrowserProps>
       onFileSelect?.(file);
     }
   }, [enableMultiSelect, onFileSelect]);
-
+ 
   const handlePageChange = useCallback((offset: number) => {
     updateParams({
       offset: offset
@@ -107,21 +107,21 @@ export const AdvancedSearchFileBrowser: React.FC<AdvancedSearchFileBrowserProps>
       onPageChange(offset);
     }
   }, [updateParams, executeSearch, onPageChange]);
-
+ 
   // Add useEffect to log any errors
   useEffect(() => {
     if (error) {
       console.error('Search error:', error);
     }
   }, [error]);
-
+ 
   // Add useEffect to log data when it changes
   useEffect(() => {
     if (data) {
       console.log('Search data received:', data);
     }
   }, [data]);
-
+ 
   return (
     <div className={cn('flex flex-col h-full', className)}>
       {showFilters && (
@@ -182,7 +182,7 @@ export const AdvancedSearchFileBrowser: React.FC<AdvancedSearchFileBrowserProps>
           </div>
         )
       )}
-
+ 
       {isFetching && !isLoading && (
         <div className="absolute bottom-4 right-4 bg-white px-4 py-2 rounded-full shadow-lg flex items-center text-blue-700 border border-blue-100">
           <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">

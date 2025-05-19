@@ -273,7 +273,8 @@ const FilePreview: React.FC<FilePreviewProps> = ({ file, isOpen, onClose }) => {
         if (fileType.includes('word') || fileType.includes('document')) {
             return (
                 <iframe
-                    src={`https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(url)}`}
+                    // src={`https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(url)}`}
+                    src={`https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`}
                     width="100%"
                     height="600px"
                     frameBorder="0"

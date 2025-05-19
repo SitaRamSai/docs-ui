@@ -7,6 +7,7 @@ import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import useFileStore from '../store/fileStore';
 import { OKTA_CONFIG } from '../auth/AuthConfig';
 import { formatDate } from '../utlis';
+import awLogo from '../assets/images/aw-logo.png'
 
 const Header: React.FC = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -54,7 +55,7 @@ const Header: React.FC = () => {
                         <div className="flex items-center space-x-4">
 
                             <Link to="/" className="flex items-center">
-                                <Database className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600" />
+                                <img src={awLogo} className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600" alt='Allied World Logo' />
                                 <span className="ml-2 text-lg sm:text-xl font-semibold text-gray-900">Docsville</span>
                             </Link>
                         </div>

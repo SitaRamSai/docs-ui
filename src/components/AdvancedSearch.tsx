@@ -6,8 +6,8 @@ interface FilterState {
     author: string;
     fileType: string;
     dateRange: {
-        from: string;
-        to: string;
+        start: string;
+        end: string;
     };
     size: {
         min: string;
@@ -23,8 +23,8 @@ const AdvancedSearch: React.FC = () => {
         author: '',
         fileType: '',
         dateRange: {
-            from: '',
-            to: '',
+            start: '',
+            end: '',
         },
         size: {
             min: '',
@@ -44,8 +44,8 @@ const AdvancedSearch: React.FC = () => {
             author: '',
             fileType: '',
             dateRange: {
-                from: '',
-                to: '',
+                start: '',
+                end: '',
             },
             size: {
                 min: '',
@@ -136,22 +136,22 @@ const AdvancedSearch: React.FC = () => {
                                 <div className="flex space-x-2">
                                     <input
                                         type="date"
-                                        value={filters.dateRange.from}
+                                        value={filters.dateRange.start}
                                         onChange={(e) =>
                                             setFilters({
                                                 ...filters,
-                                                dateRange: { ...filters.dateRange, from: e.target.value },
+                                                dateRange: { ...filters.dateRange, start: e.target.value },
                                             })
                                         }
                                         className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
                                     />
                                     <input
                                         type="date"
-                                        value={filters.dateRange.to}
+                                        value={filters.dateRange.end}
                                         onChange={(e) =>
                                             setFilters({
                                                 ...filters,
-                                                dateRange: { ...filters.dateRange, to: e.target.value },
+                                                dateRange: { ...filters.dateRange, end: e.target.value },
                                             })
                                         }
                                         className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"

@@ -1,7 +1,7 @@
 import React from 'react';
 import { ChevronRight, File, FileText } from 'lucide-react';
 import { cn } from '../utils/cn';
-
+ 
 interface ContentSearchResult {
   score: number;
   document: {
@@ -12,21 +12,21 @@ interface ContentSearchResult {
     id: string;
   };
 }
-
+ 
 interface ContentSearchResultsProps {
   results: ContentSearchResult[];
   query: string;
   isLoading: boolean;
   onResultSelect?: (result: ContentSearchResult) => void;
 }
-
+ 
 // Highlight query matches in text
 const HighlightedText = ({ text, query }: { text: string; query: string }) => {
   if (!query.trim()) return <>{text}</>;
-
+ 
   const regex = new RegExp(`(${query.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
   const parts = text.split(regex);
-
+ 
   return (
     <>
       {parts.map((part, index) => 
@@ -41,7 +41,7 @@ const HighlightedText = ({ text, query }: { text: string; query: string }) => {
     </>
   );
 };
-
+ 
 // Extract a simpler file name from source path
 const getSimpleFileName = (source: string): string => {
   if (!source) return 'Unknown document';
@@ -55,7 +55,7 @@ const getSimpleFileName = (source: string): string => {
   
   return fileName;
 };
-
+ 
 const ContentSearchResults: React.FC<ContentSearchResultsProps> = ({
   results,
   query,
@@ -69,7 +69,7 @@ const ContentSearchResults: React.FC<ContentSearchResultsProps> = ({
       </div>
     );
   }
-
+ 
   if (!results || results.length === 0) {
     return (
       <div className="bg-white shadow rounded-lg p-6 text-center">
@@ -83,7 +83,7 @@ const ContentSearchResults: React.FC<ContentSearchResultsProps> = ({
       </div>
     );
   }
-
+ 
   return (
     <div className="bg-white shadow overflow-hidden rounded-lg divide-y divide-gray-200">
       <div className="px-4 py-5 sm:px-6">
@@ -151,5 +151,5 @@ const ContentSearchResults: React.FC<ContentSearchResultsProps> = ({
     </div>
   );
 };
-
+ 
 export default ContentSearchResults; 

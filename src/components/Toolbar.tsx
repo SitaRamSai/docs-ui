@@ -1,8 +1,10 @@
 import React from 'react';
-import { Upload, FolderPlus, Trash2, Share2, Search } from 'lucide-react';
+import { Upload, FolderPlus, Trash2, Share2, Search, X as ClearIcon } from 'lucide-react';
 import useFileStore from '../store/fileStore';
+import { useParams } from 'react-router-dom';
 
 const Toolbar: React.FC = () => {
+    const { clientId } = useParams<{ sourceSystem: string; clientId: string, documentType?: string }>();
     const { selectedFiles, deleteFiles, addFile, currentFolder, searchQuery, setSearchQuery } = useFileStore();
 
     const handleUpload = () => {
@@ -63,10 +65,11 @@ const Toolbar: React.FC = () => {
                         type="text"
                         value={searchQuery}
                         onChange={handleSearch}
-                        placeholder="Search files..."
+                        placeholder={`Search ${clientId ? clientId : ''}`}
                         className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                     <Search className="absolute left-3 top-2.5 w-5 h-5 text-gray-400" />
+                    <ClearIcon className='absolute right-2 top-2.5 h-5 w-5 text-gray-400 cursor-pointer hover:text-red-500' onClick={() => setSearchQuery('')} />
                 </div>
             </div>
         </div>

@@ -17,7 +17,7 @@ import {
 } from 'lucide-react';
 import { cn } from '../utils/cn';
 import { SearchResult, SearchPagination } from '../types/search';
-
+ 
 interface SearchResultsTableProps {
   results: SearchResult[];
   pagination: SearchPagination;
@@ -26,7 +26,7 @@ interface SearchResultsTableProps {
   onFileSelect: (file: SearchResult) => void;
   selectedFiles: Set<string>;
 }
-
+ 
 // File type icon mapping
 const getFileIcon = (contentType: string): React.ReactNode => {
   if (!contentType) return <File className="w-4 h-4 text-gray-600" />;
@@ -46,7 +46,7 @@ const getFileIcon = (contentType: string): React.ReactNode => {
   
   return <FileIcon className="w-4 h-4 text-gray-600" />;
 };
-
+ 
 // Format date helper
 const formatDate = (dateStr: string) => {
   try {
@@ -62,7 +62,7 @@ const formatDate = (dateStr: string) => {
     return 'Invalid date';
   }
 };
-
+ 
 // Format content type for display
 const formatContentType = (contentType: string): string => {
   if (!contentType) return 'Unknown';
@@ -90,7 +90,7 @@ const formatContentType = (contentType: string): string => {
   
   return contentType;
 };
-
+ 
 const ContentTypeBadge = ({ contentType }: { contentType: string }) => {
   // Set colors based on content type category
   let bgColor = 'bg-gray-100';
@@ -133,7 +133,7 @@ const ContentTypeBadge = ({ contentType }: { contentType: string }) => {
     </div>
   );
 };
-
+ 
 // File type badge helper
 const FileTypeBadge = ({ type }: { type: string }) => {
   if (!type) return null;
@@ -144,7 +144,7 @@ const FileTypeBadge = ({ type }: { type: string }) => {
     </span>
   );
 };
-
+ 
 // System source badge helper
 const SystemBadge = ({ system }: { system: string }) => {
   const sourceSystemColors: Record<string, {bg: string, text: string}> = {
@@ -162,7 +162,7 @@ const SystemBadge = ({ system }: { system: string }) => {
     </div>
   );
 };
-
+ 
 // Pagination component
 const PaginationControls: React.FC<{
   pagination: SearchPagination;
@@ -315,7 +315,7 @@ const PaginationControls: React.FC<{
     </div>
   );
 };
-
+ 
 const SearchResultsTable: React.FC<SearchResultsTableProps> = ({
   results,
   pagination,
@@ -432,5 +432,5 @@ const SearchResultsTable: React.FC<SearchResultsTableProps> = ({
     </div>
   );
 };
-
+ 
 export default SearchResultsTable; 
