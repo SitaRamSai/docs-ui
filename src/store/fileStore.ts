@@ -11,11 +11,10 @@ const useFileStore = create<FileStore>()(
       selectedFiles: new Set(),
       isLoading: false,
       error: null,
+      searchQuery: '',
+      filteredFiles: [],
 
-      fetchDocuments: async (
-        sourceSystem: string = "Dragon",
-        clientId?: string
-      ) => {
+      fetchDocuments: async (sourceSystem?: string, clientId?: string) => {
         set({ isLoading: true, error: null });
         try {
           const documents = await apiService.getDocuments(
@@ -56,6 +55,7 @@ const useFileStore = create<FileStore>()(
           set({
             files: [rootFolder, ...files],
             isLoading: false,
+            filteredFiles: [rootFolder, ...files]
           });
         } catch (error) {
           set({ error: (error as Error).message, isLoading: false });
@@ -67,7 +67,7 @@ const useFileStore = create<FileStore>()(
       },
 
       getFilteredFiles: () => {
-        return get().files;
+        return get().filteredFiles;
       },
 
       addFile: (file) =>
@@ -75,24 +75,24 @@ const useFileStore = create<FileStore>()(
           files: [...state.files, { ...file, id: crypto.randomUUID() }],
         })),
 
-      deleteFiles: async (ids: string[]) => {
-        set({ isLoading: true, error: null });
-        try {
-          for (const id of ids) {
-            const file = get().files.find((f) => f.id === id);
-            if (file?.metadata?.sourceSystem) {
-              await apiService.deleteDocument(file.metadata.sourceSystem, id);
-            }
-          }
-          set((state) => ({
-            files: state.files.filter((file) => !ids.includes(file.id)),
-            selectedFiles: new Set(),
-            isLoading: false,
-          }));
-        } catch (error) {
-          set({ error: (error as Error).message, isLoading: false });
-        }
-      },
+      // deleteFiles: async (ids: string[]) => {
+      //   set({ isLoading: true, error: null });
+      //   try {
+      //     for (const id of ids) {
+      //       const file = get().files.find((f) => f.id === id);
+      //       if (file?.metadata?.sourceSystem) {
+      //         await apiService.deleteDocument(file.metadata.sourceSystem, id);
+      //       }
+      //     }
+      //     set((state) => ({
+      //       files: state.files.filter((file) => !ids.includes(file.id)),
+      //       selectedFiles: new Set(),
+      //       isLoading: false,
+      //     }));
+      //   } catch (error) {
+      //     set({ error: (error as Error).message, isLoading: false });
+      //   }
+      // },
 
       renameFile: (id, newName) =>
         set((state) => ({
@@ -122,6 +122,12 @@ const useFileStore = create<FileStore>()(
         set({
           selectedFiles: new Set(),
         }),
+      setSearchQuery: (inputText: string) => {
+        set((state) => ({
+          filteredFiles: !inputText ? [...state.files] : state.files.filter((file: FileItem) => file.name.match(new RegExp(inputText, 'i'))),
+          searchQuery: inputText
+        }))
+      }
     }),
     {
       name: "file-store",

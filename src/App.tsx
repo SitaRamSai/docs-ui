@@ -11,9 +11,9 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import AdvancedSearchPage from './components/AdvancedSearchPage';
 import Login from './components/Login';
-import LoginCallback from './components/LoginCallback';
-import SourceSystemGrid from './components/SourceSystemGrid';
 import ClientList from './components/ClientList';
+import Dashboard from './components/Dashboard';
+import { ToastContainer } from 'react-toastify'
 
 const oktaAuth = new OktaAuth({
   issuer: OKTA_CONFIG.issuer,
@@ -40,8 +40,9 @@ function FileBrowserLayout() {
               </h1>
             </div>
             <Breadcrumbs />
-            <Toolbar />
+
             <div className="overflow-x-auto">
+              <Toolbar />
               <FileList />
             </div>
           </div>
@@ -52,20 +53,13 @@ function FileBrowserLayout() {
   );
 }
 
-function SourceSystemsLayout() {
+function DashboardLayout() {
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Header />
       <main className="flex-1">
         <div className="w-full max-w-7xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
-          <div className="bg-white rounded-lg shadow">
-            <div className="px-3 py-4 sm:px-4 md:px-6 border-b border-gray-200">
-              <h1 className="text-lg font-medium leading-6 text-gray-900">
-                Source Systems
-              </h1>
-            </div>
-            <SourceSystemGrid />
-          </div>
+          <Dashboard />
         </div>
       </main>
       <Footer />
@@ -103,15 +97,17 @@ function App() {
     <Router>
       <Security oktaAuth={oktaAuth} restoreOriginalUri={restoreOriginalUri}>
         <Routes>
+          <Route path="/" element={<SecureRoute><DashboardLayout /></SecureRoute>} />
           <Route path="/login" element={<Login />} />
           <Route path="/login/callback" element={<OktaLoginCallback />} />
-          <Route path="/policy/:sourceSystem/:clientId" element={<FileBrowserLayout />} />
-          <Route path="/policy/:sourceSystem" element={<ClientListLayout />} />
+          <Route path="/:sourceSystem" element={<ClientListLayout />} />
+          <Route path="/:sourceSystem/:clientId" element={<FileBrowserLayout />} />
+          <Route path="/:documentType/:sourceSystem/:clientId" element={<FileBrowserLayout />} />
           <Route path="/advanced-search" element={<AdvancedSearchPage />} />
-          <Route path="/" element={<SourceSystemsLayout />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Security>
+      <ToastContainer autoClose={2000} hideProgressBar={true} />
     </Router>
   );
 }
