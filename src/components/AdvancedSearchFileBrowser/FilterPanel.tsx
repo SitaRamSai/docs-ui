@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { Search, X, ChevronDown, ChevronUp, Plus, Filter, Check, Sliders, ArrowRight, Lightbulb, AlertCircle, Tag, Edit, Database, FileText, File, User, Calendar, Clock, Mail } from 'lucide-react';
+import { Search, X, ChevronDown, ChevronUp, Plus, Filter, Check, Sliders, ArrowRight, Lightbulb, AlertCircle, Tag, Edit, Database, FileText, File, User, Calendar, Clock, Mail, Key } from 'lucide-react';
 import { FilterPanelProps, FilterOption, QueryType, QueryFilter, DateRange } from '../../types/filterTypes';
 import { formatKey, classNames, isFilterApplied, getAppliedFilter } from '../../utils/filterUtils';
  
@@ -10,7 +10,8 @@ const filterOptions: FilterOption[] = [
   { key: 'contentType', label: 'Content Type', placeholder: 'Select content types', queryType: 'in' as QueryType, icon: File },
   { key: 'fileType', label: 'File Type', placeholder: 'Select file types', queryType: 'in' as QueryType, icon: Tag },
   { key: 'clientId', label: 'Client ID', placeholder: 'e.g., CS00', queryType: 'like' as QueryType, icon: FileText },
-  { key: 'createdAt', label: 'Created Date', placeholder: 'Select date range', queryType: 'range' as QueryType, icon: Calendar }
+  { key: 'createdAt', label: 'Created Date', placeholder: 'Select date range', queryType: 'range' as QueryType, icon: Calendar },
+  { key: 'custom', label: 'Custom Filter', placeholder: 'Add custom key and value', queryType: 'matches' as QueryType, icon: Sliders }
 ];
  
 // Map of query types to UI behaviors
@@ -75,18 +76,34 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
   const [queryFilters, setQueryFilters] = useState<QueryFilter[]>(() => {
     // Convert incoming filters to query format if any
     const initialFilters: QueryFilter[] = [];
+    
     if (currentFilters && typeof currentFilters === 'object') {
+      // First, extract the standard filters defined in our filterOptions
+      const standardFilterKeys = filterOptions.map(opt => opt.key);
+      
       Object.entries(currentFilters).forEach(([key, value]) => {
+        // Check if this is a standard filter
         const option = filterOptions.find(opt => opt.key === key);
+        
         if (option) {
+          // This is a standard filter
           initialFilters.push({
             key,
             type: option.queryType,
             value
           });
+        } else if (key !== 'custom') {
+          // This is a custom filter - not in our predefined filterOptions
+          initialFilters.push({
+            key, 
+            type: 'matches', // Default to matches, might be overridden later
+            value,
+            isCustom: true
+          });
         }
       });
     }
+    
     return initialFilters;
   });
   
@@ -95,6 +112,11 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
   const [filterInput, setFilterInput] = useState('');
   const [selectedChips, setSelectedChips] = useState<string[]>([]);
   const [dateRange, setDateRange] = useState<DateRange>({});
+  
+  // Custom filter state
+  const [customFilterKey, setCustomFilterKey] = useState('');
+  const [customFilterValue, setCustomFilterValue] = useState('');
+  const [customFilterType, setCustomFilterType] = useState<QueryType>('matches');
   
   // Ref for detecting clicks outside the active filter section
   const activeFilterRef = useRef<HTMLDivElement>(null);
@@ -148,6 +170,47 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
  
   // Get the filter value display format for a given filter
   const getFilterValueDisplay = (key: string, filter: any) => {
+    // Special handling for custom filters
+    if (key === 'custom' || filter.isCustom) {
+      // Format the display value based on filter type
+      let displayValue;
+      if (filter.type === 'matches') {
+        displayValue = filter.value;
+      } else if (filter.type === 'like') {
+        displayValue = `contains: ${filter.value}`;
+      } else if (filter.type === 'in' && Array.isArray(filter.value)) {
+        displayValue = `in: ${filter.value.join(', ')}`;
+      } else {
+        displayValue = `${filter.type}: ${filter.value}`;
+      }
+      return `${filter.key}: ${displayValue}`;
+    }
+    
+    // Special handling for non-standard custom filters (from previous state)
+    if (key !== 'sourceSystem' && key !== 'filename' && 
+        key !== 'contentType' && key !== 'fileType' && 
+        key !== 'clientId' && key !== 'createdAt' && 
+        key !== 'custom') {
+      // This is a custom filter
+      if (filter.type === 'range' && typeof filter.value === 'object') {
+        const value = filter.value;
+        if (value.from && value.to) {
+          return `${value.from} to ${value.to}`;
+        } else if (value.from) {
+          return `from ${value.from}`;
+        } else if (value.to) {
+          return `to ${value.to}`;
+        }
+      }
+      
+      if (filter.type === 'in' && Array.isArray(filter.value)) {
+        return filter.value.join(', ');
+      }
+      
+      return `${filter.type}: ${String(filter.value)}`;
+    }
+    
+    // Standard filters
     const value = filter.value;
     if (filter.type === 'range' && value && typeof value === 'object') {
       if (value.from && value.to) {
@@ -190,9 +253,16 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
       setFilterInput('');
       setSelectedChips([]);
       setDateRange({});
+      
+      // Also reset custom filter state if applicable
+      if (key === 'custom') {
+        setCustomFilterKey('');
+        setCustomFilterValue('');
+        setCustomFilterType('matches');
+      }
       return;
     }
- 
+
     // Get the button position immediately before updating state
     const buttonEl = filterButtonRefs.current[key];
     const containerEl = filterContainerRef.current;
@@ -220,7 +290,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
         positionAbove: shouldPositionAbove
       });
     }
- 
+
     // Update state after position calculation
     setActiveFilterButton(key);
     setActiveFilter(key);
@@ -232,15 +302,23 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
     setSelectedChips([]);
     setDateRange({});
     
-    // Initialize selection for existing filter
-    const existingFilter = queryFilters.find(f => f.key === key);
-    if (existingFilter) {
-      if (existingFilter.type === 'in' && Array.isArray(existingFilter.value)) {
-        setSelectedChips([...existingFilter.value]);
-      } else if (existingFilter.type !== 'range') {
-        setFilterInput(String(existingFilter.value));
-      } else if (existingFilter.type === 'range' && typeof existingFilter.value === 'object') {
-        setDateRange({ ...existingFilter.value });
+    // Custom filter doesn't need to initialize from existing filters
+    // That's handled separately when clicking on a custom filter chip
+    if (key === 'custom' && !customFilterKey) {
+      setCustomFilterKey('');
+      setCustomFilterValue('');
+      setCustomFilterType('matches');
+    } else {
+      // Initialize selection for existing filter
+      const existingFilter = queryFilters.find(f => f.key === key);
+      if (existingFilter) {
+        if (existingFilter.type === 'in' && Array.isArray(existingFilter.value)) {
+          setSelectedChips([...existingFilter.value]);
+        } else if (existingFilter.type !== 'range') {
+          setFilterInput(String(existingFilter.value));
+        } else if (existingFilter.type === 'range' && typeof existingFilter.value === 'object') {
+          setDateRange({ ...existingFilter.value });
+        }
       }
     }
     
@@ -273,9 +351,64 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
     setDateRange(newDateRange);
   };
  
+  // Handle change of custom filter type
+  const handleCustomFilterTypeChange = (type: QueryType) => {
+    setCustomFilterType(type);
+  };
+ 
   // Process the current filter input and add to filters
   const handleFilterConfirm = () => {
     if (!activeFilter) return;
+    
+    // Special handling for custom filter
+    if (activeFilter === 'custom') {
+      if (!customFilterKey || !customFilterValue) {
+        setActiveFilter(null);
+        setActiveFilterButton(null);
+        return;
+      }
+      
+      // Process value based on type
+      let processedValue: string | string[] = customFilterValue;
+      if (customFilterType === 'in') {
+        // Convert comma-separated string to array for 'in' type
+        processedValue = customFilterValue.split(',').map(item => item.trim()).filter(Boolean);
+      }
+      
+      // Remove any existing custom filters
+      let newFilters = queryFilters.filter(f => !f.isCustom);
+      
+      // Add the new custom filter
+      newFilters.push({
+        key: customFilterKey,
+        type: customFilterType,
+        value: processedValue,
+        isCustom: true
+      });
+      
+      setQueryFilters(newFilters);
+      
+      // Convert to format for parent component
+      const filterObject = newFilters.reduce((acc, filter) => {
+        if (filter.isCustom) {
+          // Don't add the _customFilter suffix for the API, just pass the real key
+          acc[filter.key] = filter.value;
+        } else {
+          acc[filter.key] = filter.value;
+        }
+        return acc;
+      }, {} as Record<string, any>);
+      
+      onFilterChange(filterObject);
+      
+      // Reset state
+      setActiveFilter(null);
+      setActiveFilterButton(null);
+      setCustomFilterKey('');
+      setCustomFilterValue('');
+      setCustomFilterType('matches');
+      return;
+    }
     
     const option = filterOptions.find(opt => opt.key === activeFilter);
     if (!option) return;
@@ -285,7 +418,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
     // Process value based on query type
     if (option.queryType === 'range') {
       // Only add if at least one date is set
-      if (!dateRange.from && !dateRange.end) {
+      if (!dateRange.from && !dateRange.to) {
         setActiveFilter(null);
         setActiveFilterButton(null);
         return;
@@ -348,9 +481,13 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
     
     setQueryFilters(newFilters);
     
-    // Convert for parent component
+    // Convert for parent component with the same special handling for custom filters
     const filterObject = newFilters.reduce((acc, filter) => {
-      acc[filter.key] = filter.value;
+      if (filter.isCustom) {
+        acc[filter.key] = filter.value;
+      } else {
+        acc[filter.key] = filter.value;
+      }
       return acc;
     }, {} as Record<string, any>);
     
@@ -382,18 +519,30 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
  
   // Check if a specific filter is applied
   const isFilterApplied = (key: string) => {
-    return queryFilters.some(f => f.key === key);
+    if (key === 'custom') {
+      // Check if there's a custom filter applied
+      return queryFilters.some(f => f.isCustom);
+    }
+    
+    // For normal filters, check if they exist in our filter array
+    return queryFilters.some(f => f.key === key && !f.isCustom);
   };
  
   // Get the applied filter for a key
   const getAppliedFilter = (key: string) => {
-    return queryFilters.find(f => f.key === key);
+    if (key === 'custom') {
+      // Return the first custom filter - this will display in the chip
+      return queryFilters.find(f => f.isCustom);
+    }
+    return queryFilters.find(f => f.key === key && !f.isCustom);
   };
  
   // Helper function to directly apply a filter with a value
   const applyFilterWithValue = (key: string, type: QueryType, newValue: any) => {
     // Check if this filter already exists
-    const existingIndex = queryFilters.findIndex(f => f.key === key);    let newFilters = [...queryFilters];
+    const existingIndex = queryFilters.findIndex(f => f.key === key);
+    let newFilters = [...queryFilters];
+    
     if (existingIndex >= 0) {
       // Update existing filter
       newFilters[existingIndex] = {
@@ -414,7 +563,12 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
     
     // Convert the filter array to the format expected by the parent component
     const filterObject = newFilters.reduce((acc, filter) => {
-      acc[filter.key] = filter.value;
+      if (filter.isCustom) {
+        // Don't add the _customFilter suffix for the API, just pass the real key
+        acc[filter.key] = filter.value;
+      } else {
+        acc[filter.key] = filter.value;
+      }
       return acc;
     }, {} as Record<string, any>);
     
@@ -426,12 +580,6 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
     setFilterInput('');
     setDateRange({});
     setSelectedChips([]);
-    
-    // IMPORTANT: Remove the auto-search after applying filters
-    // Only execute search when explicitly requested
-    // if (autoApplyFilters) {
-    //   onSearch();
-    // }
   };
  
   // Handle the filter popup portal creation and positioning
@@ -506,11 +654,12 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
  
             {/* Grid of filter buttons */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-2 mb-3">
+              {/* Standard filter buttons/chips */}
               {filterOptions.map(option => {
                 const isApplied = isFilterApplied(option.key);
                 const isActive = activeFilterButton === option.key;
                 const appliedFilter = getAppliedFilter(option.key);
-                const displayValue = appliedFilter ? getFilterValueDisplay(appliedFilter.key, appliedFilter) : null;
+                const displayValue = appliedFilter ? getFilterValueDisplay(option.key, appliedFilter) : null;
                 const IconComponent = option.icon || Filter;
                 
                 // Color mappings for different filter types
@@ -528,6 +677,8 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
                       return { bg: 'bg-cyan-50', text: 'text-cyan-700', icon: 'text-cyan-500', border: 'border-cyan-200', hover: 'hover:bg-cyan-100' };
                     case 'createdAt':
                       return { bg: 'bg-red-50', text: 'text-red-700', icon: 'text-red-500', border: 'border-red-200', hover: 'hover:bg-red-100' };
+                    case 'custom':
+                      return { bg: 'bg-indigo-50', text: 'text-indigo-700', icon: 'text-indigo-500', border: 'border-indigo-200', hover: 'hover:bg-indigo-100' };
                     default:
                       return { bg: 'bg-gray-50', text: 'text-gray-700', icon: 'text-gray-500', border: 'border-gray-200', hover: 'hover:bg-gray-100' };
                   }
@@ -541,7 +692,15 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
                     <div
                       key={option.key}
                       className={`px-3 py-2 rounded-md text-sm border ${colors.border} ${colors.bg} ${colors.text} ${colors.hover} flex items-center justify-between group cursor-pointer transition-colors shadow-sm`}
-                      onClick={() => handleFilterSelect(option.key)}
+                      onClick={() => {
+                        // For custom filter, we need to set the custom filter fields
+                        if (option.key === 'custom' && appliedFilter) {
+                          setCustomFilterKey(appliedFilter.key);
+                          setCustomFilterValue(Array.isArray(appliedFilter.value) ? appliedFilter.value.join(', ') : String(appliedFilter.value));
+                          setCustomFilterType(appliedFilter.type as QueryType);
+                        }
+                        handleFilterSelect(option.key);
+                      }}
                     >
                       <div className="flex-1 min-w-0 flex items-center">
                         <IconComponent size={14} className={`${colors.icon} mr-2 flex-shrink-0`} />
@@ -559,8 +718,14 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
                         type="button"
                         onClick={(e) => {
                           e.stopPropagation(); // Prevent triggering the parent's onClick
-                          const index = queryFilters.findIndex(f => f.key === option.key);
-                          if (index >= 0) removeFilter(index);
+                          // For custom filter, we need to find the custom filter
+                          if (option.key === 'custom') {
+                            const index = queryFilters.findIndex(f => f.isCustom);
+                            if (index >= 0) removeFilter(index);
+                          } else {
+                            const index = queryFilters.findIndex(f => f.key === option.key);
+                            if (index >= 0) removeFilter(index);
+                          }
                         }}
                         className="text-gray-400 hover:text-red-500 p-1 rounded-full ml-2"
                         title="Remove filter"
@@ -788,6 +953,85 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
                           autoFocus
                         />
                       </div>
+                      {/* Apply button */}
+                      <div className="flex justify-end mt-4">
+                        <button
+                          type="button"
+                          onClick={handleFilterConfirm}
+                          className="px-3 py-1.5 bg-blue-600 text-white border border-blue-600 rounded-md text-xs font-medium hover:bg-blue-700 transition-colors"
+                        >
+                          Apply
+                        </button>
+                      </div>
+                    </>
+                  );
+                }
+                
+                // Add a special case for the custom filter
+                if (activeFilter === 'custom') {
+                  return (
+                    <>
+                      <div className="space-y-4">
+                        <div>
+                          <label className="block text-xs text-gray-600 mb-1">Custom Key</label>
+                          <div className="flex">
+                            <input
+                              type="text"
+                              value={customFilterKey}
+                              onChange={(e) => setCustomFilterKey(e.target.value)}
+                              placeholder="Enter property name"
+                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-white transition text-sm"
+                              ref={inputRef}
+                              autoFocus
+                              onKeyDown={handleKeyPress}
+                            />
+                          </div>
+                        </div>
+                        
+                        <div>
+                          <label className="block text-xs text-gray-600 mb-1">Filter Type</label>
+                          <div className="grid grid-cols-2 gap-2">
+                            {(['matches', 'like', 'in'] as QueryType[]).map((type) => (
+                              <button
+                                key={type}
+                                type="button"
+                                onClick={() => handleCustomFilterTypeChange(type)}
+                                className={`
+                                  px-2 py-1.5 text-xs font-medium border rounded
+                                  ${customFilterType === type
+                                    ? 'bg-blue-100 text-blue-800 border-blue-300'
+                                    : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'}
+                                  transition-colors flex items-center justify-center
+                                `}
+                              >
+                                {type === 'matches' && 'Exact Match'}
+                                {type === 'like' && 'Contains'}
+                                {type === 'in' && 'Multiple Values'}
+                                {customFilterType === type && (
+                                  <Check size={12} className="ml-1 text-blue-600" />
+                                )}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                        
+                        <div>
+                          <label className="block text-xs text-gray-600 mb-1">Value</label>
+                          <div className="flex">
+                            <input
+                              type="text"
+                              value={customFilterValue}
+                              onChange={(e) => setCustomFilterValue(e.target.value)}
+                              placeholder={customFilterType === 'in' 
+                                ? "Comma-separated values" 
+                                : "Enter value"}
+                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-white transition text-sm"
+                              onKeyDown={handleKeyPress}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      
                       {/* Apply button */}
                       <div className="flex justify-end mt-4">
                         <button

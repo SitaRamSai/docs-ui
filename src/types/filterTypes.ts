@@ -1,8 +1,8 @@
 export type QueryType = 'matches' | 'like' | 'in' | 'range';
  
 export interface DateRange {
-  start?: string;
-  end?: string;
+  from?: string;
+  to?: string;
 }
  
 export interface FilterOption {
@@ -10,12 +10,14 @@ export interface FilterOption {
   label: string;
   placeholder: string;
   queryType: QueryType;
+  icon?: React.ElementType;
 }
  
 export interface QueryFilter {
   key: string;
   type: string;
-  value: any;
+  value: any; // Can be string, string[], or object
+  isCustom?: boolean;
 }
  
 export interface SmartSuggestion {
@@ -31,4 +33,5 @@ export interface FilterPanelProps {
   onFilterChange: (filters: Record<string, any>) => void;
   onSearch: () => void;
   isLoading?: boolean;
+  autoApplyFilters?: boolean;
 } 
