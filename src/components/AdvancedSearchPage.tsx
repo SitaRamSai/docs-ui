@@ -167,21 +167,24 @@ const AdvancedSearchPage: React.FC = () => {
         isLoading={isLoading}
       />
     </div>
+    
     {/* Results Section */}
-    <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
-      <h2 className="text-lg font-semibold text-gray-900 mb-2">Results</h2>
+    <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+      <h2 className="text-xl font-semibold text-gray-900 p-6 border-b border-gray-200">Results</h2>
       {hasSearchedMetadata ? (
-        <AdvancedSearchFileBrowser
-          initialQuery={searchQuery}
-          onFileSelect={(file) => console.log("Selected file:", file)}
-          onPageChange={(offset) => console.log("Page changed:", offset)}
-          itemsPerPage={10}
-          showFilters={false}
-          enableMultiSelect={true}
-          className="h-[calc(100vh-350px)]"
-        />
+        <div className="bg-gray-50">
+          <AdvancedSearchFileBrowser
+            initialQuery={searchQuery}
+            onFileSelect={(file) => console.log("Selected file:", file)}
+            onPageChange={(offset) => console.log("Page changed:", offset)}
+            itemsPerPage={10}
+            showFilters={false}
+            enableMultiSelect={true}
+            className="min-h-[400px] flex flex-col"
+          />
+        </div>
       ) : (
-        <div className="flex flex-col items-center justify-center text-center h-[calc(100vh-350px)]">
+        <div className="flex flex-col items-center justify-center text-center h-[calc(100vh-350px)] p-6 bg-gray-50">
           <div className="p-4 bg-blue-50 rounded-full mb-4">
             <Search className="w-10 h-10 text-blue-400" />
           </div>

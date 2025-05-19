@@ -18,7 +18,9 @@ import {
   Download,
   Share2,
   Pencil,
-  Info
+  Info,
+  LayoutList,
+  LayoutGrid
 } from 'lucide-react';
 import { cn } from '../utils/cn';
 import { SearchResult, SearchPagination } from '../types/search';
@@ -184,7 +186,7 @@ const SystemBadge = ({ system }: { system: string }) => {
   const color = sourceSystemColors[system.toLowerCase()] || { bg: 'bg-gray-100', text: 'text-gray-800' };
   
   return (
-    <div className={`inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium ${color.bg} ${color.text}`}>
+    <div className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${color.bg} ${color.text}`}>
       {system}
     </div>
   );
@@ -197,147 +199,91 @@ const PaginationControls: React.FC<{
 }> = ({ pagination, onPageChange }) => {
   const { currentPage, totalPages, pageSize, total, currentOffset, nextOffset, previousOffset } = pagination;
   
+  console.log("PaginationControls rendering with:", { currentPage, totalPages, pageSize, total });
+  
   // Calculate start and end item numbers
   const startItem = currentOffset + 1;
   const endItem = Math.min(currentOffset + pageSize, total);
   
-  // Generate page numbers with ellipsis
-  const getPageNumbers = () => {
-    const pages = [];
-    
-    // Always show first page
-    pages.push(1);
-    
-    // Calculate range around current page
-    let startPage = Math.max(2, currentPage - 1);
-    let endPage = Math.min(totalPages - 1, currentPage + 1);
-    
-    // Add ellipsis after first page if needed
-    if (startPage > 2) {
-      pages.push('ellipsis-start');
-    }
-    
-    // Add pages around current page
-    for (let i = startPage; i <= endPage; i++) {
-      pages.push(i);
-    }
-    
-    // Add ellipsis before last page if needed
-    if (endPage < totalPages - 1) {
-      pages.push('ellipsis-end');
-    }
-    
-    // Always show last page if more than one page
-    if (totalPages > 1) {
-      pages.push(totalPages);
-    }
-    
-    return pages;
-  };
-  
   return (
-    <div className="flex flex-col md:flex-row justify-between items-center gap-4 py-3 px-2 border-t border-gray-200">
-      {/* Results counter */}
-      <div className="text-sm text-gray-700">
-        Showing <span className="font-medium">{startItem}</span> to{' '}
-        <span className="font-medium">{endItem}</span> of{' '}
-        <span className="font-medium">{total}</span> results
-      </div>
-      
-      {/* Pagination controls */}
-      <div className="flex items-center space-x-2">
-        {/* First page button */}
-        <button
-          onClick={() => onPageChange(0)}
-          disabled={currentPage === 1}
-          className={cn(
-            "relative inline-flex items-center px-2 py-1.5 rounded-md text-sm font-medium",
-            currentPage === 1
-              ? "text-gray-400 cursor-not-allowed"
-              : "text-gray-700 hover:bg-gray-50"
-          )}
-        >
-          <ChevronFirst className="h-4 w-4" />
-        </button>
-        
-        {/* Previous page button */}
+    <div className="px-6 py-4 flex items-center justify-between border-t border-gray-200 bg-gray-50">
+      {/* Mobile view */}
+      <div className="flex-1 flex justify-between sm:hidden">
         <button
           onClick={() => previousOffset !== null && onPageChange(previousOffset)}
           disabled={previousOffset === null}
-          className={cn(
-            "relative inline-flex items-center px-2 py-1.5 rounded-md text-sm font-medium",
-            previousOffset === null
-              ? "text-gray-400 cursor-not-allowed"
-              : "text-gray-700 hover:bg-gray-50"
-          )}
+          className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <ChevronLeft className="h-4 w-4" />
+          Previous
         </button>
-        
-        {/* Page numbers */}
-        <div className="hidden md:flex">
-          {getPageNumbers().map((page, index) => {
-            if (page === 'ellipsis-start' || page === 'ellipsis-end') {
-              return (
-                <span
-                  key={`ellipsis-${index}`}
-                  className="relative inline-flex items-center px-3 py-1.5 text-sm text-gray-700"
-                >
-                  ...
-                </span>
-              );
-            }
-            
-            const pageNum = page as number;
-            return (
-              <button
-                key={pageNum}
-                onClick={() => onPageChange((pageNum - 1) * pageSize)}
-                className={cn(
-                  "relative inline-flex items-center px-3 py-1.5 rounded-md text-sm font-medium",
-                  currentPage === pageNum
-                    ? "z-10 bg-blue-50 border-blue-500 text-blue-600"
-                    : "text-gray-700 hover:bg-gray-50"
-                )}
-              >
-                {pageNum}
-              </button>
-            );
-          })}
-        </div>
-        
-        {/* Current page indicator (mobile) */}
-        <span className="md:hidden text-sm text-gray-700">
-          Page {currentPage} of {totalPages}
-        </span>
-        
-        {/* Next page button */}
         <button
           onClick={() => nextOffset !== null && onPageChange(nextOffset)}
           disabled={nextOffset === null}
-          className={cn(
-            "relative inline-flex items-center px-2 py-1.5 rounded-md text-sm font-medium",
-            nextOffset === null
-              ? "text-gray-400 cursor-not-allowed"
-              : "text-gray-700 hover:bg-gray-50"
-          )}
+          className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <ChevronRight className="h-4 w-4" />
+          Next
         </button>
-        
-        {/* Last page button */}
-        <button
-          onClick={() => onPageChange((totalPages - 1) * pageSize)}
-          disabled={currentPage === totalPages}
-          className={cn(
-            "relative inline-flex items-center px-2 py-1.5 rounded-md text-sm font-medium",
-            currentPage === totalPages
-              ? "text-gray-400 cursor-not-allowed"
-              : "text-gray-700 hover:bg-gray-50"
-          )}
-        >
-          <ChevronLast className="h-4 w-4" />
-        </button>
+      </div>
+      
+      {/* Desktop view */}
+      <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+        <div>
+          <p className="text-sm text-gray-700">
+            Showing <span className="font-medium">{startItem}</span> to{' '}
+            <span className="font-medium">{endItem}</span> of{' '}
+            <span className="font-medium">{total}</span> results
+          </p>
+        </div>
+        <div>
+          <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+            {/* First page button */}
+            <button
+              onClick={() => onPageChange(0)}
+              disabled={currentPage === 1}
+              className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <span className="sr-only">First</span>
+              <ChevronLeft className="h-5 w-5" />
+              <ChevronLeft className="h-5 w-5 -ml-2" />
+            </button>
+            
+            {/* Previous page button */}
+            <button
+              onClick={() => previousOffset !== null && onPageChange(previousOffset)}
+              disabled={previousOffset === null}
+              className="relative inline-flex items-center px-2 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <span className="sr-only">Previous</span>
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+            
+            {/* Current page indicator */}
+            <span className="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">
+              Page {currentPage} of {totalPages || 1}
+            </span>
+            
+            {/* Next page button */}
+            <button
+              onClick={() => nextOffset !== null && onPageChange(nextOffset)}
+              disabled={nextOffset === null}
+              className="relative inline-flex items-center px-2 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <span className="sr-only">Next</span>
+              <ChevronRight className="h-5 w-5" />
+            </button>
+            
+            {/* Last page button */}
+            <button
+              onClick={() => onPageChange((totalPages - 1) * pageSize)}
+              disabled={currentPage === totalPages || totalPages === 0}
+              className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <span className="sr-only">Last</span>
+              <ChevronRight className="h-5 w-5" />
+              <ChevronRight className="h-5 w-5 -ml-2" />
+            </button>
+          </nav>
+        </div>
       </div>
     </div>
   );
@@ -357,6 +303,11 @@ const SearchResultsTable: React.FC<SearchResultsTableProps> = ({
   const [showMetadata, setShowMetadata] = React.useState<SearchResult | null>(null);
   const [openMetaData, setOpenMetaData] = React.useState<boolean>(false);
   const [fileForAction, setFileForAction] = React.useState<SearchResult | null>(null);
+
+  // Log pagination data for debugging
+  React.useEffect(() => {
+    console.log("SearchResultsTable received pagination:", pagination);
+  }, [pagination]);
 
   // Action handlers
   const handlePreview = (file: SearchResult, e: React.MouseEvent) => {
@@ -395,6 +346,9 @@ const SearchResultsTable: React.FC<SearchResultsTableProps> = ({
     setOpenMetaData(true);
   };
 
+  // Determine source system from the first result if available
+  const sourceSystem = results.length > 0 ? results[0].sourceSystem : 'Unknown';
+
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center p-12">
@@ -417,48 +371,47 @@ const SearchResultsTable: React.FC<SearchResultsTableProps> = ({
   }
   
   return (
-    <div className="flex flex-col">
-      {/* Results counter and view mode switcher */}
-      <div className="flex justify-between items-center mb-4">
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-blue-50 text-blue-700">
-          {pagination.total} {pagination.total === 1 ? 'result' : 'results'} found
-        </span>
-        
+    <div className="flex flex-col bg-gray-50">
+      {/* View mode and info bar */}
+      <div className="px-6 py-3 border-b border-gray-200 flex justify-between items-center bg-white">
+        <div className="flex items-center space-x-6 text-sm text-gray-600">
+          <div className="flex items-center">
+            <File className="w-5 h-5 mr-2 text-gray-400" />
+            <span className="font-medium">{pagination.total} files</span>
+          </div>
+          <div className="flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 mr-2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
+            </svg>
+            <span className="font-medium">Source: {sourceSystem}</span>
+          </div>
+        </div>
         <div className="flex space-x-2">
           <button
             onClick={() => setViewMode('list')}
             className={`p-2 rounded-md ${viewMode === 'list'
               ? 'bg-blue-100 text-blue-600'
               : 'text-gray-500 hover:bg-gray-100'
-            }`}
+              }`}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="3" y1="6" x2="21" y2="6"></line>
-              <line x1="3" y1="12" x2="21" y2="12"></line>
-              <line x1="3" y1="18" x2="21" y2="18"></line>
-            </svg>
+            <LayoutList className="w-5 h-5" />
           </button>
           <button
             onClick={() => setViewMode('grid')}
             className={`p-2 rounded-md ${viewMode === 'grid'
               ? 'bg-blue-100 text-blue-600'
               : 'text-gray-500 hover:bg-gray-100'
-            }`}
+              }`}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="3" y="3" width="7" height="7"></rect>
-              <rect x="14" y="3" width="7" height="7"></rect>
-              <rect x="14" y="14" width="7" height="7"></rect>
-              <rect x="3" y="14" width="7" height="7"></rect>
-            </svg>
+            <LayoutGrid className="w-5 h-5" />
           </button>
         </div>
       </div>
-      
+
       {/* Table View */}
       {viewMode === 'list' ? (
-        <div className="overflow-hidden border border-gray-200 rounded-lg">
-          <div className="overflow-x-auto">
+        <div className="overflow-hidden flex flex-col">
+          <div className="overflow-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
@@ -563,7 +516,7 @@ const SearchResultsTable: React.FC<SearchResultsTableProps> = ({
             </table>
           </div>
           
-          {/* Pagination */}
+          {/* Pagination - outside the overflow container */}
           <PaginationControls 
             pagination={pagination} 
             onPageChange={onPageChange} 
@@ -571,76 +524,87 @@ const SearchResultsTable: React.FC<SearchResultsTableProps> = ({
         </div>
       ) : (
         /* Grid View */
-        <div className="border border-gray-200 rounded-lg p-4">
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-            {results.map((result) => (
-              <div
-                key={result.id}
-                className={`relative group cursor-pointer p-4 rounded-lg border transition-all duration-200 ${
-                  selectedFiles.has(result.id)
-                    ? 'border-gray-200 bg-gray-100'
-                    : 'border-gray-150 hover:border-gray-300 hover:shadow-lg'
-                }`}
-                onClick={() => onFileSelect(result)}
-              >
-                <div className="flex flex-col items-center">
-                  <div className="w-12 h-12 flex items-center justify-center mb-2">
-                    {getFileIcon(result.contentType || '')}
+        <div className="flex flex-col bg-gray-50">
+          <div className="p-4 overflow-auto">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+              {results.map((result) => (
+                <div
+                  key={result.id}
+                  className={`relative group cursor-pointer p-4 rounded-lg border transition-all duration-200 ${
+                    selectedFiles.has(result.id)
+                      ? 'border-gray-200 bg-gray-100'
+                      : 'border-gray-150 hover:border-gray-300 hover:shadow-lg bg-white'
+                  }`}
+                  onClick={() => onFileSelect(result)}
+                >
+                  <div className="absolute top-2 left-2">
+                    <input
+                      type="checkbox"
+                      className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      checked={selectedFiles.has(result.id)}
+                      onChange={(e) => {
+                        e.stopPropagation();
+                        onFileSelect(result);
+                      }}
+                    />
                   </div>
-                  <span className="text-sm text-gray-900 text-center truncate w-full">
-                    {result.filename}
-                  </span>
-                  <span className="text-xs text-gray-500 mt-1">
-                    {result.clientId || '-'}
-                  </span>
-                  <span className="text-xs text-gray-500">
-                    {formatDate(result.createdAt)}
-                  </span>
-                  <span className="mt-2">
-                    <SystemBadge system={result.sourceSystem} />
-                  </span>
+                  <div className="flex flex-col items-center">
+                    <div className="w-12 h-12 flex items-center justify-center mb-2">
+                      {getFileIcon(result.contentType || '')}
+                    </div>
+                    <span className="text-sm text-gray-900 text-center truncate w-full font-medium">
+                      {result.filename}
+                    </span>
+                    <span className="text-xs text-gray-500 mt-1">
+                      {result.id || '-'}
+                    </span>
+                    <span className="text-xs text-gray-500">
+                      {formatDate(result.createdAt)}
+                    </span>
+                    <div className="mt-2">
+                      <SystemBadge system={result.sourceSystem} />
+                    </div>
+                  </div>
+                  <div className="absolute inset-x-0 bottom-0 p-2 bg-white border-t border-gray-200 opacity-0 group-hover:opacity-100 transition-opacity flex justify-center space-x-1">
+                    <button
+                      className="p-1 rounded-full hover:bg-gray-100 text-gray-600 hover:text-blue-600 transition-colors"
+                      title="Preview"
+                      onClick={(e) => handlePreview(result, e)}
+                    >
+                      <Eye className="w-4 h-4" />
+                    </button>
+                    <button
+                      className="p-1 rounded-full hover:bg-gray-100 text-gray-600 hover:text-blue-600 transition-colors"
+                      title="Download"
+                      onClick={(e) => handleDownload(result, e)}
+                    >
+                      <Download className="w-4 h-4" />
+                    </button>
+                    <button
+                      className="p-1 rounded-full hover:bg-gray-100 text-gray-600 hover:text-blue-600 transition-colors"
+                      title="Share"
+                      onClick={(e) => handleShare(result, e)}
+                    >
+                      <Share2 className="w-4 h-4" />
+                    </button>
+                    <button
+                      className="p-1 rounded-full hover:bg-gray-100 text-gray-600 hover:text-blue-600 transition-colors"
+                      title="Info"
+                      onClick={(e) => handleMetadata(result, e)}
+                    >
+                      <Info className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
-                <div className="absolute inset-x-0 bottom-0 p-2 bg-white border-t border-gray-200 opacity-0 group-hover:opacity-100 transition-opacity flex justify-center space-x-1">
-                  <button
-                    className="p-1 rounded-full hover:bg-gray-100 text-gray-600 hover:text-blue-600 transition-colors"
-                    title="Preview"
-                    onClick={(e) => handlePreview(result, e)}
-                  >
-                    <Eye className="w-4 h-4" />
-                  </button>
-                  <button
-                    className="p-1 rounded-full hover:bg-gray-100 text-gray-600 hover:text-blue-600 transition-colors"
-                    title="Download"
-                    onClick={(e) => handleDownload(result, e)}
-                  >
-                    <Download className="w-4 h-4" />
-                  </button>
-                  <button
-                    className="p-1 rounded-full hover:bg-gray-100 text-gray-600 hover:text-blue-600 transition-colors"
-                    title="Share"
-                    onClick={(e) => handleShare(result, e)}
-                  >
-                    <Share2 className="w-4 h-4" />
-                  </button>
-                  <button
-                    className="p-1 rounded-full hover:bg-gray-100 text-gray-600 hover:text-blue-600 transition-colors"
-                    title="Info"
-                    onClick={(e) => handleMetadata(result, e)}
-                  >
-                    <Info className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
           
-          {/* Pagination for grid view */}
-          <div className="mt-4">
-            <PaginationControls 
-              pagination={pagination} 
-              onPageChange={onPageChange} 
-            />
-          </div>
+          {/* Pagination for grid view - outside the overflow container */}
+          <PaginationControls 
+            pagination={pagination} 
+            onPageChange={onPageChange} 
+          />
         </div>
       )}
 

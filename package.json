@@ -9,7 +9,7 @@
   },
   "scripts": {
     "build": "vite build",
-    "dev": "dotenvx run --env-file=.development.env -- vite",
+    "dev": "dotenvx run --env-file=.development.env -- vite --port 5173",
     "test": "dotenvx run --env-file=.staging.env -- vite",
     "build-development": "dotenvx run --env-file=.development.env -- vite build",
     "build-staging": "dotenvx run --env-file=.staging.env -- vite build",
