@@ -17,13 +17,17 @@ export const AdvancedSearchFileBrowser: React.FC<AdvancedSearchFileBrowserProps>
   enableMultiSelect = true,
   dateFormat = 'PPp',
   loadingPlaceholderCount = 5,
+  viewMode: externalViewMode,
 }) => {
   const [selectedFiles, setSelectedFiles] = useState<Set<string>>(new Set());
   const [filters, setFilters] = useState<Record<string, string>>({});
   const [hasSearched, setHasSearched] = useState<boolean>(false);
-  const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
+  const [internalViewMode, setInternalViewMode] = useState<'list' | 'grid'>('list');
   const parentRef = useRef<HTMLDivElement>(null);
   const { data, error, isLoading, isFetching, updateParams, executeSearch, prefetchNextPage } = useSearch(initialQuery);
+  
+  // Use external viewMode if provided, otherwise use internal state
+  const viewMode = externalViewMode || internalViewMode;
  
   // Trigger new search when initialQuery prop changes
   useEffect(() => {
@@ -184,6 +188,7 @@ export const AdvancedSearchFileBrowser: React.FC<AdvancedSearchFileBrowserProps>
             onPageChange={handlePageChange}
             onFileSelect={handleFileClick}
             selectedFiles={selectedFiles}
+            viewMode={viewMode}
           />
         )}
       </div>

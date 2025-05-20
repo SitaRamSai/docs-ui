@@ -36,6 +36,7 @@ interface SearchResultsTableProps {
   onPageChange: (offset: number) => void;
   onFileSelect: (file: SearchResult) => void;
   selectedFiles: Set<string>;
+  viewMode?: 'list' | 'grid';
 }
  
 // Extend SearchResult to work with ActionButtons component
@@ -295,9 +296,10 @@ const SearchResultsTable: React.FC<SearchResultsTableProps> = ({
   isLoading,
   onPageChange,
   onFileSelect,
-  selectedFiles
+  selectedFiles,
+  viewMode = 'list'
 }) => {
-  const [viewMode, setViewMode] = React.useState<'list' | 'grid'>('list');
+  type ViewMode = 'list' | 'grid';
   const [previewFile, setPreviewFile] = React.useState<SearchResult | null>(null);
   const [showShareDialog, setShowShareDialog] = React.useState<boolean>(false);
   const [showMetadata, setShowMetadata] = React.useState<SearchResult | null>(null);
@@ -372,42 +374,6 @@ const SearchResultsTable: React.FC<SearchResultsTableProps> = ({
   
   return (
     <div className="flex flex-col bg-gray-50">
-      {/* View mode and info bar */}
-      <div className="px-6 py-3 border-b border-gray-200 flex justify-between items-center bg-white">
-        <div className="flex items-center space-x-6 text-sm text-gray-600">
-          <div className="flex items-center">
-            <File className="w-5 h-5 mr-2 text-gray-400" />
-            <span className="font-medium">{pagination.total} files</span>
-          </div>
-          <div className="flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 mr-2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
-            </svg>
-            <span className="font-medium">Source: {sourceSystem}</span>
-          </div>
-        </div>
-        <div className="flex space-x-2">
-          <button
-            onClick={() => setViewMode('list')}
-            className={`p-2 rounded-md ${viewMode === 'list'
-              ? 'bg-blue-100 text-blue-600'
-              : 'text-gray-500 hover:bg-gray-100'
-              }`}
-          >
-            <LayoutList className="w-5 h-5" />
-          </button>
-          <button
-            onClick={() => setViewMode('grid')}
-            className={`p-2 rounded-md ${viewMode === 'grid'
-              ? 'bg-blue-100 text-blue-600'
-              : 'text-gray-500 hover:bg-gray-100'
-              }`}
-          >
-            <LayoutGrid className="w-5 h-5" />
-          </button>
-        </div>
-      </div>
-
       {/* Table View */}
       {viewMode === 'list' ? (
         <div className="overflow-hidden flex flex-col">

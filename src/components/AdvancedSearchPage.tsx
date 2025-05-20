@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Database, Search, FileText, Filter, Clock } from 'lucide-react';
+import { ArrowLeft, Database, Search, FileText, Filter, Clock, LayoutList, LayoutGrid } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { AdvancedSearchFileBrowser } from './AdvancedSearchFileBrowser';
 import { FilterPanel } from './AdvancedSearchFileBrowser/FilterPanel';
@@ -26,6 +26,8 @@ const AdvancedSearchPage: React.FC = () => {
     const navigate = useNavigate();
     const query = useQuery();
     const [activeTab, setActiveTab] = useState<'metadata' | 'content'>('metadata');
+    // Add view mode state
+    const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
     // State for content search bar
     const [contentSearchQuery, setContentSearchQuery] = useState('');
     const [tempContentSearchQuery, setTempContentSearchQuery] = useState('');
@@ -239,7 +241,26 @@ const AdvancedSearchPage: React.FC = () => {
     
     {/* Results Section */}
     <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
-      <h2 className="text-xl font-semibold text-gray-900 p-6 border-b border-gray-200">Results</h2>
+      <div className="flex justify-between items-center p-6">
+        <h2 className="text-xl font-semibold text-gray-900">Results</h2>
+        <div className="flex items-center space-x-2">
+          <span className="text-sm text-gray-500 mr-2">View:</span>
+          <div className="flex space-x-1">
+            <button 
+              onClick={() => setViewMode('list')} 
+              className={`p-1.5 rounded-md ${viewMode === 'list' ? 'bg-blue-100 text-blue-600' : 'text-gray-500 hover:bg-gray-100'}`}
+            >
+              <LayoutList className="w-5 h-5" />
+            </button>
+            <button 
+              onClick={() => setViewMode('grid')} 
+              className={`p-1.5 rounded-md ${viewMode === 'grid' ? 'bg-blue-100 text-blue-600' : 'text-gray-500 hover:bg-gray-100'}`}
+            >
+              <LayoutGrid className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+      </div>
       {hasSearchedMetadata ? (
         <div className="bg-gray-50">
           <AdvancedSearchFileBrowser
@@ -250,6 +271,7 @@ const AdvancedSearchPage: React.FC = () => {
             showFilters={false}
             enableMultiSelect={true}
             className="min-h-[400px] flex flex-col"
+            viewMode={viewMode}
           />
         </div>
       ) : (

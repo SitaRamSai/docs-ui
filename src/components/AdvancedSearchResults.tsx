@@ -21,7 +21,6 @@ import {
     Copy,
     Check
 } from 'lucide-react';
-import { useParams } from 'react-router-dom';
 import * as Dialog from '@radix-ui/react-dialog';
 import useFileStore from '../store/fileStore';
 import { FileItem } from '../types';
@@ -61,10 +60,10 @@ const AdvancedSearchResults: React.FC<AdvancedSearchResultsProps> = ({
     searchQuery,
     searchFilters
 }) => {
-    const { sourceSystem, clientId } = useParams<{ sourceSystem: string; clientId: string }>();
     const { selectedFiles, toggleFileSelection, files } = useFileStore();
 
-    const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
+    type ViewMode = 'list' | 'grid';
+    const [viewMode, setViewMode] = useState<ViewMode>('list');
     const [previewFile, setPreviewFile] = useState<FileItem | null>(null);
     const [sortField, setSortField] = useState<string>('relevance');
     const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
@@ -205,7 +204,6 @@ const AdvancedSearchResults: React.FC<AdvancedSearchResultsProps> = ({
                             <Search className="w-5 h-5 text-gray-400" />
                             <h2 className="text-lg font-semibold text-gray-900">Search Results for: <span className="text-primary">{searchQuery}</span></h2>
                         </div>
-                        <p className="text-sm text-gray-500 mt-1">Found {searchResults.length} results in {sourceSystem} for {clientId}</p>
                     </div>
                     {
                         selectedFiles.size ? <div className="flex flex-row gap-2">
@@ -235,15 +233,12 @@ const AdvancedSearchResults: React.FC<AdvancedSearchResultsProps> = ({
                         <Filter className="w-4 h-4 mr-1 text-gray-400" />
                         <span>Filters Applied: {Object.keys(searchFilters || {}).length || 'None'}</span>
                     </div>
-                    <div className="flex items-center">
-                        <File className="w-4 h-4 mr-1 text-gray-400" />
-                        <span>{searchResults.length} results</span>
-                    </div>
                 </div>
-                <div className="flex space-x-2">
+                <div className="flex items-center space-x-2">
+                    <span className="text-sm font-medium text-gray-500">View:</span>
                     <button
                         onClick={() => setViewMode('list')}
-                        className={`p-2 rounded-md ${viewMode === 'list'
+                        className={`p-1.5 rounded-md ${viewMode === 'list'
                             ? 'bg-blue-100 text-blue-600'
                             : 'text-gray-500 hover:bg-gray-100'
                             }`}
@@ -252,7 +247,7 @@ const AdvancedSearchResults: React.FC<AdvancedSearchResultsProps> = ({
                     </button>
                     <button
                         onClick={() => setViewMode('grid')}
-                        className={`p-2 rounded-md ${viewMode === 'grid'
+                        className={`p-1.5 rounded-md ${viewMode === 'grid'
                             ? 'bg-blue-100 text-blue-600'
                             : 'text-gray-500 hover:bg-gray-100'
                             }`}
