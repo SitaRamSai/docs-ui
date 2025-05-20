@@ -27,6 +27,11 @@ export interface SmartSuggestion {
   icon: string;
   filters: QueryFilter[];
 }
+
+export interface SourceSystem {
+  id: string;
+  name: string;
+}
  
 export interface FilterPanelProps {
   currentFilters: Record<string, any>;
@@ -34,4 +39,5 @@ export interface FilterPanelProps {
   onSearch: () => void;
   isLoading?: boolean;
   autoApplyFilters?: boolean;
+  availableSourceSystems?: SourceSystem[];
 } 

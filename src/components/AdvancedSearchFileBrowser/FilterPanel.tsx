@@ -59,10 +59,10 @@ const commonFileTypes = [
  
 // Common source systems
 const commonSourceSystems = [
-  { value: 'genius', label: 'Genius' },
-  { value: 'dragon', label: 'Dragon' },
-  { value: 'ebao', label: 'eBao' },
-  { value: 'ivos', label: 'IVOS' }
+  { id: 'genius', name: 'Genius' },
+  { id: 'dragon', name: 'Dragon' },
+  { id: 'ebao', name: 'eBao' },
+  { id: 'ivos', name: 'IVOS' }
 ];
  
 export const FilterPanel: React.FC<FilterPanelProps> = ({
@@ -71,6 +71,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
   onSearch,
   isLoading = false,
   autoApplyFilters = false,
+  availableSourceSystems = commonSourceSystems,
 }) => {
   // State for the query being built - array of filter objects like the API requires
   const [queryFilters, setQueryFilters] = useState<QueryFilter[]>(() => {
@@ -164,6 +165,13 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
       inputRef.current.focus();
     }
   }, [activeFilter]);
+ 
+  // Automatically set filterInput for sourceSystem if it's in currentFilters
+  useEffect(() => {
+    if (currentFilters.sourceSystem) {
+      setFilterInput(currentFilters.sourceSystem);
+    }
+  }, [currentFilters.sourceSystem]);
  
   // Check if we have any active filters
   const hasActiveFilters = queryFilters.length > 0;
@@ -319,6 +327,9 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
         } else if (existingFilter.type === 'range' && typeof existingFilter.value === 'object') {
           setDateRange({ ...existingFilter.value });
         }
+      } else if (key === 'sourceSystem' && currentFilters.sourceSystem) {
+        // Special handling for sourceSystem from currentFilters
+        setFilterInput(currentFilters.sourceSystem);
       }
     }
     
@@ -328,8 +339,12 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
  
   // Auto-apply sourceSystem when selected
   const handleSourceSystemSelect = (value: string) => {
-    // Only update the input state, don't apply yet
-    setFilterInput(value);
+    if (activeFilter === 'sourceSystem') {
+      setFilterInput(value);
+      applyFilterWithValue('sourceSystem', 'matches', value);
+      setActiveFilter(null);
+      setActiveFilterButton(null);
+    }
   };
  
   // Handle toggle of a chip selection
@@ -524,6 +539,11 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
       return queryFilters.some(f => f.isCustom);
     }
     
+    // Special case for sourceSystem - check both queryFilters and currentFilters
+    if (key === 'sourceSystem' && currentFilters.sourceSystem) {
+      return true;
+    }
+    
     // For normal filters, check if they exist in our filter array
     return queryFilters.some(f => f.key === key && !f.isCustom);
   };
@@ -534,6 +554,22 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
       // Return the first custom filter - this will display in the chip
       return queryFilters.find(f => f.isCustom);
     }
+    
+    // Special case for sourceSystem - check both queryFilters and currentFilters
+    if (key === 'sourceSystem' && currentFilters.sourceSystem) {
+      // Return a synthetic filter if it's only in currentFilters
+      const existingFilter = queryFilters.find(f => f.key === key && !f.isCustom);
+      if (existingFilter) {
+        return existingFilter;
+      }
+      
+      return {
+        key: 'sourceSystem',
+        type: 'matches',
+        value: currentFilters.sourceSystem
+      };
+    }
+    
     return queryFilters.find(f => f.key === key && !f.isCustom);
   };
  
@@ -918,43 +954,40 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
                   return (
                     <>
                       <div className="mb-3">
-                        <p className="text-xs text-gray-500 mb-2">Select a source system:</p>
+                        <p className="text-xs text-gray-500 mb-2">Select source system:</p>
                         <div className="flex flex-wrap gap-2">
-                          {commonSourceSystems.map(option => (
-                            <button
-                              key={option.value}
-                              type="button"
-                              onClick={() => handleSourceSystemSelect(option.value)}
-                              className={`
-                                px-2 py-1.5 rounded-full text-xs font-medium border 
-                                ${filterInput === option.value 
-                                  ? 'bg-blue-100 text-blue-800 border-blue-300' 
-                                  : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'}
-                                transition-colors flex items-center
-                              `}
-                            >
-                              {option.label}
-                              {filterInput === option.value && (
-                                <Check size={12} className="ml-1 text-blue-600" />
-                              )}
-                            </button>
-                          ))}
+                          {availableSourceSystems.map(system => {
+                            // Check if this system is already selected either from filterInput or currentFilters
+                            const isSelected = filterInput === system.id || currentFilters.sourceSystem === system.id;
+                            
+                            return (
+                              <button
+                                key={system.id}
+                                type="button"
+                                onClick={() => handleSourceSystemSelect(system.id)}
+                                className={`
+                                  px-2 py-1.5 rounded-full text-xs font-medium border 
+                                  ${isSelected
+                                    ? 'bg-blue-100 text-blue-800 border-blue-300' 
+                                    : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'}
+                                  transition-colors flex items-center
+                                `}
+                              >
+                                {system.name}
+                                {isSelected && (
+                                  <Check size={12} className="ml-1 text-blue-600" />
+                                )}
+                              </button>
+                            );
+                          })}
                         </div>
                       </div>
-                      <div>
-                        <input
-                          type="text"
-                          value={filterInput}
-                          onChange={handleInputChange}
-                          placeholder={option.placeholder}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-white transition"
-                          ref={inputRef}
-                          onKeyDown={handleKeyPress}
-                          autoFocus
-                        />
+                      <div className="text-xs text-gray-500 flex items-center mb-3">
+                        <Database size={12} className="mr-1" />
+                        <span>{filterInput || currentFilters.sourceSystem ? "1 selected" : "None selected"}</span>
                       </div>
                       {/* Apply button */}
-                      <div className="flex justify-end mt-4">
+                      <div className="flex justify-end">
                         <button
                           type="button"
                           onClick={handleFilterConfirm}
