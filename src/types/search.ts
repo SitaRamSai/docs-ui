@@ -48,6 +48,7 @@ export interface AdvancedSearchFileBrowserProps {
   customFileTypeIcons?: Record<string, React.ReactNode>;
   dateFormat?: string;
   loadingPlaceholderCount?: number;
+  viewMode?: 'list' | 'grid';
 }
  
 export interface Column {

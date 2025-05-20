@@ -1,28 +1,41 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Database, Search, FileText, Filter, Clock } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { ArrowLeft, Database, Search, FileText, Filter, Clock, LayoutList, LayoutGrid } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { AdvancedSearchFileBrowser } from './AdvancedSearchFileBrowser';
 import { FilterPanel } from './AdvancedSearchFileBrowser/FilterPanel';
 import { ContentSearchBar } from './ContentSearchBar';
 import { openSearchApi } from '../services/openSearchAPI'
+import { apiService } from '../services/api'
 import ContentSearchResults from './ContentSearchResults';
+import { SourceSystem } from '../types/filterTypes';
  
-// Available source systems
-const SOURCE_SYSTEMS = [
-    { id: 'genius', name: 'Genius' },
-    { id: 'dragon', name: 'Dragon' },
-    { id: 'ebao', name: 'eBao' },
-    { id: 'ivos', name: 'IVOS' }
-];
+// Function to parse query parameters
+const useQuery = () => {
+  return new URLSearchParams(useLocation().search);
+};
+
+interface ConfigResponse {
+  Items?: Array<{
+    sourceSystem: string;
+    [key: string]: any;
+  }>;
+  [key: string]: any;
+}
  
 const AdvancedSearchPage: React.FC = () => {
     const navigate = useNavigate();
+    const query = useQuery();
     const [activeTab, setActiveTab] = useState<'metadata' | 'content'>('metadata');
+    // Add view mode state
+    const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
     // State for content search bar
     const [contentSearchQuery, setContentSearchQuery] = useState('');
     const [tempContentSearchQuery, setTempContentSearchQuery] = useState('');
-    // State for selected source system
-    const [sourceSystem, setSourceSystem] = useState('genius');
+    // State for available source systems
+    const [availableSourceSystems, setAvailableSourceSystems] = useState<SourceSystem[]>([]);
+    // State for selected source system - use URL param if available
+    const sourceSystemParam = query.get('sourceSystem');
+    const [sourceSystem, setSourceSystem] = useState(sourceSystemParam || '');
     // Track if content search has been executed
     const [hasSearchedContent, setHasSearchedContent] = useState(false);
     // Track if metadata search has been executed
@@ -34,7 +47,7 @@ const AdvancedSearchPage: React.FC = () => {
     const [contentSearchError, setContentSearchError] = useState<Error | null>(null);
  
     // --- Advanced Search Filter/Results State ---
-    const [filters, setFilters] = useState<Record<string, string>>({ sourceSystem });
+    const [filters, setFilters] = useState<Record<string, string>>({});
     const [isLoading, setIsLoading] = useState(false);
     const [searchQuery, setSearchQuery] = useState<any>({
         query: [],
@@ -42,6 +55,63 @@ const AdvancedSearchPage: React.FC = () => {
         offset: 0,
         projection: ["id", "filename", "contentType", "createdAt", "clientId", "fileType", "sourceSystem"]
     });
+ 
+    // Fetch available source systems from API
+    useEffect(() => {
+        const fetchSourceSystems = async () => {
+            try {
+                const configs: any = await apiService.getSourceSystemConfigs();
+                // Handle both array response and response with Items property
+                if (configs && Array.isArray(configs)) {
+                    const systems = configs.map(config => ({
+                        id: config.sourceSystem,
+                        name: config.sourceSystem
+                    }));
+                    setAvailableSourceSystems(systems);
+                } else if (configs && configs.Items && Array.isArray(configs.Items)) {
+                    const systems = configs.Items.map((config: any) => ({
+                        id: config.sourceSystem,
+                        name: config.sourceSystem
+                    }));
+                    setAvailableSourceSystems(systems);
+                }
+            } catch (error) {
+                console.error('Error fetching source systems:', error);
+                // Fallback to default systems if API fails
+                setAvailableSourceSystems([
+                    { id: 'genius', name: 'Genius' },
+                    { id: 'dragon', name: 'Dragon' },
+                    { id: 'ebao', name: 'eBao' },
+                    { id: 'ivos', name: 'IVOS' }
+                ]);
+            }
+        };
+        
+        fetchSourceSystems();
+    }, []);
+
+    // Initialize filters with sourceSystem if provided and trigger search immediately
+    useEffect(() => {
+        if (sourceSystemParam) {
+            // Update filters state
+            setFilters(prev => {
+                const updatedFilters = { ...prev };
+                updatedFilters.sourceSystem = sourceSystemParam;
+                return updatedFilters;
+            });
+            
+            // Immediately trigger search with the sourceSystem filter
+            setSearchQuery({
+                query: [{ key: 'sourceSystem', type: 'matches', value: sourceSystemParam }],
+                count: 10,
+                offset: 0,
+                projection: ["id", "filename", "contentType", "createdAt", "clientId", "fileType", "sourceSystem"]
+            });
+            
+            // Set search as executed
+            setHasSearchedMetadata(true);
+        }
+    }, [sourceSystemParam]);
  
     // Handler to trigger search from FilterPanel
     const handleSearch = () => {
@@ -165,23 +235,47 @@ const AdvancedSearchPage: React.FC = () => {
         onFilterChange={setFilters}
         onSearch={handleSearch}
         isLoading={isLoading}
+        availableSourceSystems={availableSourceSystems}
       />
     </div>
+    
     {/* Results Section */}
-    <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
-      <h2 className="text-lg font-semibold text-gray-900 mb-2">Results</h2>
+    <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+      <div className="flex justify-between items-center p-6">
+        <h2 className="text-xl font-semibold text-gray-900">Results</h2>
+        <div className="flex items-center space-x-2">
+          <span className="text-sm text-gray-500 mr-2">View:</span>
+          <div className="flex space-x-1">
+            <button 
+              onClick={() => setViewMode('list')} 
+              className={`p-1.5 rounded-md ${viewMode === 'list' ? 'bg-blue-100 text-blue-600' : 'text-gray-500 hover:bg-gray-100'}`}
+            >
+              <LayoutList className="w-5 h-5" />
+            </button>
+            <button 
+              onClick={() => setViewMode('grid')} 
+              className={`p-1.5 rounded-md ${viewMode === 'grid' ? 'bg-blue-100 text-blue-600' : 'text-gray-500 hover:bg-gray-100'}`}
+            >
+              <LayoutGrid className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+      </div>
       {hasSearchedMetadata ? (
-        <AdvancedSearchFileBrowser
-          initialQuery={searchQuery}
-          onFileSelect={(file) => console.log("Selected file:", file)}
-          onPageChange={(offset) => console.log("Page changed:", offset)}
-          itemsPerPage={10}
-          showFilters={false}
-          enableMultiSelect={true}
-          className="h-[calc(100vh-350px)]"
-        />
+        <div className="bg-gray-50">
+          <AdvancedSearchFileBrowser
+            initialQuery={searchQuery}
+            onFileSelect={(file) => console.log("Selected file:", file)}
+            onPageChange={(offset) => console.log("Page changed:", offset)}
+            itemsPerPage={10}
+            showFilters={false}
+            enableMultiSelect={true}
+            className="min-h-[400px] flex flex-col"
+            viewMode={viewMode}
+          />
+        </div>
       ) : (
-        <div className="flex flex-col items-center justify-center text-center h-[calc(100vh-350px)]">
+        <div className="flex flex-col items-center justify-center text-center h-[calc(100vh-350px)] p-6 bg-gray-50">
           <div className="p-4 bg-blue-50 rounded-full mb-4">
             <Search className="w-10 h-10 text-blue-400" />
           </div>
@@ -245,11 +339,6 @@ const AdvancedSearchPage: React.FC = () => {
           <p className="text-sm text-gray-500 text-center max-w-md mb-4">
             Enter your search query above to find documents containing specific text.
           </p>
-          <div className="flex justify-center">
-            <div className="text-xs text-gray-500 flex items-center bg-gray-50 px-3 py-1.5 rounded-full">
-              
-            </div>
-          </div>
         </div>
       )}
     </div>

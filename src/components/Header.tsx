@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Database, Menu, X, Search, Home, LogOut, Star } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useOktaAuth } from '@okta/okta-react';
 import * as Dialog from '@radix-ui/react-dialog';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
@@ -15,6 +15,11 @@ const Header: React.FC = () => {
     const { setCurrentFolder, getFavorites } = useFileStore();
     const navigate = useNavigate();
     const { oktaAuth, authState } = useOktaAuth();
+    const params = useParams<{ sourceSystem?: string }>();
+    const location = useLocation();
+
+    // Get current source system from URL parameters
+    const currentSourceSystem = params.sourceSystem;
 
     // const favorites = getFavorites();
 
@@ -38,6 +43,16 @@ const Header: React.FC = () => {
     const handleFavoriteClick = (id: string) => {
         setCurrentFolder(id);
         navigate('/');
+    };
+
+    // Handle navigation to advanced search with source system context
+    const handleAdvancedSearchClick = () => {
+        if (currentSourceSystem) {
+            navigate(`/advanced-search?sourceSystem=${currentSourceSystem}`);
+        } else {
+            navigate('/advanced-search');
+        }
+        setIsMenuOpen(false);
     };
 
     const userName = authState?.idToken?.claims?.name || 'Chandra P';
@@ -101,13 +116,13 @@ const Header: React.FC = () => {
                                 </DropdownMenu.Portal>
                             </DropdownMenu.Root> */}
 
-                            <Link
-                                to="/advanced-search"
+                            <button
+                                onClick={handleAdvancedSearchClick}
                                 className="hidden sm:flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100"
                             >
                                 <Search className="w-4 h-4 mr-2" />
                                 Advanced Search
-                            </Link>
+                            </button>
                             {OKTA_CONFIG.isEnabled && (
                                 <button
                                     onClick={() => setShowSignOutDialog(true)}
@@ -178,14 +193,13 @@ const Header: React.FC = () => {
                                 </DropdownMenu.Portal>
                             </DropdownMenu.Root>
 
-                            <Link
-                                to="/advanced-search"
-                                className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                onClick={() => setIsMenuOpen(false)}
+                            <button
+                                onClick={handleAdvancedSearchClick}
+                                className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                             >
                                 <Search className="w-4 h-4 mr-2" />
                                 Advanced Search
-                            </Link>
+                            </button>
                             {OKTA_CONFIG.isEnabled && (
                                 <button
                                     onClick={() => {

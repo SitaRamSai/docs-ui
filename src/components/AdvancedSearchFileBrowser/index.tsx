@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
-import { Search } from 'lucide-react';
+import { Search, LayoutGrid, LayoutList } from 'lucide-react';
 import { cn } from '../../utils/cn';
 import { useSearch } from '../../hooks/useSearch';
 import type { AdvancedSearchFileBrowserProps, SearchResult } from '../../types/search';
@@ -17,12 +17,17 @@ export const AdvancedSearchFileBrowser: React.FC<AdvancedSearchFileBrowserProps>
   enableMultiSelect = true,
   dateFormat = 'PPp',
   loadingPlaceholderCount = 5,
+  viewMode: externalViewMode,
 }) => {
   const [selectedFiles, setSelectedFiles] = useState<Set<string>>(new Set());
   const [filters, setFilters] = useState<Record<string, string>>({});
   const [hasSearched, setHasSearched] = useState<boolean>(false);
+  const [internalViewMode, setInternalViewMode] = useState<'list' | 'grid'>('list');
   const parentRef = useRef<HTMLDivElement>(null);
   const { data, error, isLoading, isFetching, updateParams, executeSearch, prefetchNextPage } = useSearch(initialQuery);
+  
+  // Use external viewMode if provided, otherwise use internal state
+  const viewMode = externalViewMode || internalViewMode;
  
   // Trigger new search when initialQuery prop changes
   useEffect(() => {
@@ -98,6 +103,7 @@ export const AdvancedSearchFileBrowser: React.FC<AdvancedSearchFileBrowserProps>
   }, [enableMultiSelect, onFileSelect]);
  
   const handlePageChange = useCallback((offset: number) => {
+    console.log("Changing page to offset:", offset);
     updateParams({
       offset: offset
     });
@@ -119,11 +125,40 @@ export const AdvancedSearchFileBrowser: React.FC<AdvancedSearchFileBrowserProps>
   useEffect(() => {
     if (data) {
       console.log('Search data received:', data);
+      console.log('Pagination data:', data.pagination);
     }
   }, [data]);
  
+  // Determine the source system and client ID if available
+  const sourceSystem = initialQuery.query.find(q => q.key === 'sourceSystem')?.value || 'Unknown';
+  const clientId = initialQuery.query.find(q => q.key === 'clientId')?.value || 'All Clients';
+  
+  if (isLoading && !data) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+  
+  // Get actual results
+  const results = data?.results || [];
+  const pagination = data?.pagination || {
+    total: 0,
+    pageSize: itemsPerPage,
+    currentOffset: 0,
+    nextOffset: null,
+    previousOffset: null,
+    hasMore: false,
+    totalPages: 0,
+    currentPage: 1
+  };
+
+  // Log the pagination data for debugging
+  console.log("Current pagination data:", pagination);
+  
   return (
-    <div className={cn('flex flex-col h-full', className)}>
+    <div className={cn('flex flex-col', className)} ref={parentRef}>
       {showFilters && (
         <div className="mb-4 bg-white border border-gray-200 rounded-lg shadow-sm">
           <FilterPanel
@@ -135,54 +170,29 @@ export const AdvancedSearchFileBrowser: React.FC<AdvancedSearchFileBrowserProps>
         </div>
       )}
       
-      {hasSearched || data ? (
-        <div
-          ref={parentRef}
-          className="flex-1 overflow-auto"
-        >
-          {error ? (
-            <div className="flex flex-col items-center justify-center h-64 text-center p-6 border-t border-gray-100">
-              <div className="bg-red-50 p-4 rounded-full mb-4">
-                <Search className="w-10 h-10 text-red-500" />
-              </div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Error loading files</h3>
-              <p className="text-sm text-red-500 mb-1 font-medium">{error.message}</p>
-              <p className="text-xs text-gray-500">Please try again or contact support if the problem persists</p>
+      <div className="bg-gray-50">
+        {error ? (
+          <div className="flex flex-col items-center justify-center h-64 text-center p-6 border-t border-gray-100">
+            <div className="bg-red-50 p-4 rounded-full mb-4">
+              <Search className="w-10 h-10 text-red-500" />
             </div>
-          ) : (
-            <SearchResultsTable
-              results={data?.results || []}
-              pagination={data?.pagination || {
-                total: 0,
-                pageSize: itemsPerPage,
-                currentOffset: 0,
-                nextOffset: null,
-                previousOffset: null,
-                hasMore: false,
-                totalPages: 0,
-                currentPage: 1
-              }}
-              isLoading={isLoading}
-              onPageChange={handlePageChange}
-              onFileSelect={handleFileClick}
-              selectedFiles={selectedFiles}
-            />
-          )}
-        </div>
-      ) : (
-        showFilters ? null : (
-          <div className="flex-1 flex flex-col items-center justify-center p-10 border border-gray-200 rounded-lg bg-white shadow-sm">
-            <div className="p-4 bg-gray-50 rounded-full mb-4">
-              <Search className="w-10 h-10 text-gray-400" />
-            </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">Ready to search</h3>
-            <p className="text-sm text-gray-500 text-center max-w-md">
-              Use the filters above to search for documents. Select filters and click the search button when you're ready.
-            </p>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">Error loading files</h3>
+            <p className="text-sm text-red-500 mb-1 font-medium">{error.message}</p>
+            <p className="text-xs text-gray-500">Please try again or contact support if the problem persists</p>
           </div>
-        )
-      )}
- 
+        ) : (
+          <SearchResultsTable
+            results={results}
+            pagination={pagination}
+            isLoading={isLoading}
+            onPageChange={handlePageChange}
+            onFileSelect={handleFileClick}
+            selectedFiles={selectedFiles}
+            viewMode={viewMode}
+          />
+        )}
+      </div>
+
       {isFetching && !isLoading && (
         <div className="absolute bottom-4 right-4 bg-white px-4 py-2 rounded-full shadow-lg flex items-center text-blue-700 border border-blue-100">
           <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
