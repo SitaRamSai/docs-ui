@@ -272,29 +272,28 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
     }
 
     // Get the button position immediately before updating state
+    // This section is for the initial click, but the useEffect for activeFilter
+    // will refine the position for fixed display.
     const buttonEl = filterButtonRefs.current[key];
-    const containerEl = filterContainerRef.current;
+    const containerEl = filterContainerRef.current; // Retained for this initial calculation if needed
     
     if (buttonEl && containerEl) {
       const buttonRect = buttonEl.getBoundingClientRect();
-      const containerRect = containerEl.getBoundingClientRect();
+      // const containerRect = containerEl.getBoundingClientRect(); // Original calculation used this for relative pos
       const windowHeight = window.innerHeight;
       
-      // Calculate available space below the button
       const spaceBelow = windowHeight - buttonRect.bottom;
-      // Estimate popover height (can be refined based on content)
       const estimatedPopoverHeight = 350; 
-      
-      // Determine if popover should appear above or below
       const shouldPositionAbove = spaceBelow < estimatedPopoverHeight;
       
-      // Calculate position relative to the container
+      // This initial calculation might differ from the final fixed position
+      // The useEffect for activeFilter recalculates for fixed positioning
       setSelectedButtonPosition({
         top: shouldPositionAbove 
-          ? buttonRect.top - containerRect.top - 5 // Position above with offset
-          : buttonRect.bottom - containerRect.top + 5, // Position below with offset
-        left: buttonRect.left - containerRect.left,
-        width: buttonRect.width,
+          ? buttonRect.top - 5 // Initial guess for fixed positioning
+          : buttonRect.bottom + 5, // Initial guess for fixed positioning
+        left: buttonRect.left, // Initial guess
+        width: buttonRect.width, // Button width, popover width is styled differently
         positionAbove: shouldPositionAbove
       });
     }
@@ -310,14 +309,11 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
     setSelectedChips([]);
     setDateRange({});
     
-    // Custom filter doesn't need to initialize from existing filters
-    // That's handled separately when clicking on a custom filter chip
     if (key === 'custom' && !customFilterKey) {
       setCustomFilterKey('');
       setCustomFilterValue('');
       setCustomFilterType('matches');
     } else {
-      // Initialize selection for existing filter
       const existingFilter = queryFilters.find(f => f.key === key);
       if (existingFilter) {
         if (existingFilter.type === 'in' && Array.isArray(existingFilter.value)) {
@@ -328,12 +324,10 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
           setDateRange({ ...existingFilter.value });
         }
       } else if (key === 'sourceSystem' && currentFilters.sourceSystem) {
-        // Special handling for sourceSystem from currentFilters
         setFilterInput(currentFilters.sourceSystem);
       }
     }
     
-    // Track usage for smart suggestions
     setFilterUsageHistory(prev => [key, ...prev.filter(k => k !== key).slice(0, 9)]);
   };
  
@@ -349,7 +343,6 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
  
   // Handle toggle of a chip selection
   const handleChipToggle = (value: string) => {
-    // Regular behavior without auto-apply - just update the UI state
     setSelectedChips(prev => {
       if (prev.includes(value)) {
         return prev.filter(v => v !== value);
@@ -361,7 +354,6 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
  
   // Handle date range change
   const handleDateRangeChange = (part: 'from' | 'to', value: string) => {
-    // Just update the date range state, don't apply yet
     const newDateRange = { ...dateRange, [part]: value };
     setDateRange(newDateRange);
   };
@@ -375,48 +367,29 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
   const handleFilterConfirm = () => {
     if (!activeFilter) return;
     
-    // Special handling for custom filter
     if (activeFilter === 'custom') {
       if (!customFilterKey || !customFilterValue) {
         setActiveFilter(null);
         setActiveFilterButton(null);
         return;
       }
-      
-      // Process value based on type
       let processedValue: string | string[] = customFilterValue;
       if (customFilterType === 'in') {
-        // Convert comma-separated string to array for 'in' type
         processedValue = customFilterValue.split(',').map(item => item.trim()).filter(Boolean);
       }
-      
-      // Remove any existing custom filters
       let newFilters = queryFilters.filter(f => !f.isCustom);
-      
-      // Add the new custom filter
       newFilters.push({
         key: customFilterKey,
         type: customFilterType,
         value: processedValue,
         isCustom: true
       });
-      
       setQueryFilters(newFilters);
-      
-      // Convert to format for parent component
       const filterObject = newFilters.reduce((acc, filter) => {
-        if (filter.isCustom) {
-          // Don't add the _customFilter suffix for the API, just pass the real key
-          acc[filter.key] = filter.value;
-        } else {
-          acc[filter.key] = filter.value;
-        }
+        acc[filter.key] = filter.value;
         return acc;
       }, {} as Record<string, any>);
-      
       onFilterChange(filterObject);
-      
-      // Reset state
       setActiveFilter(null);
       setActiveFilterButton(null);
       setCustomFilterKey('');
@@ -429,10 +402,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
     if (!option) return;
     
     let newValue: any;
-    
-    // Process value based on query type
     if (option.queryType === 'range') {
-      // Only add if at least one date is set
       if (!dateRange.from && !dateRange.to) {
         setActiveFilter(null);
         setActiveFilterButton(null);
@@ -440,7 +410,6 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
       }
       newValue = { ...dateRange };
     } else if (option.queryType === 'in') {
-      // For content type and file type, use selected chips
       if (activeFilter === 'contentType' || activeFilter === 'fileType') {
         if (selectedChips.length === 0) {
           setActiveFilter(null);
@@ -449,10 +418,8 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
         }
         newValue = [...selectedChips];
       } else if (filterInput) {
-        // Convert comma-separated string to array
         newValue = filterInput.split(',').map(item => item.trim()).filter(Boolean);
       } else {
-        // No value, don't add filter
         setActiveFilter(null);
         setActiveFilterButton(null);
         return;
@@ -460,7 +427,6 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
     } else if (filterInput) {
       newValue = filterInput;
     } else {
-      // No value, don't add filter
       setActiveFilter(null);
       setActiveFilterButton(null);
       return;
@@ -471,7 +437,6 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
  
   // Handle text input change
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // Simply update the input value state, don't process or apply
     setFilterInput(e.target.value);
   };
  
@@ -493,19 +458,11 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
   const removeFilter = (index: number) => {
     const newFilters = [...queryFilters];
     newFilters.splice(index, 1);
-    
     setQueryFilters(newFilters);
-    
-    // Convert for parent component with the same special handling for custom filters
     const filterObject = newFilters.reduce((acc, filter) => {
-      if (filter.isCustom) {
-        acc[filter.key] = filter.value;
-      } else {
-        acc[filter.key] = filter.value;
-      }
+      acc[filter.key] = filter.value;
       return acc;
     }, {} as Record<string, any>);
-    
     onFilterChange(filterObject);
   };
  
@@ -521,96 +478,33 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
     onSearch();
   };
  
-  // Helper to format keys for display
-  const formatKey = (key: string): string => {
-    const option = filterOptions.find(opt => opt.key === key);
-    return option ? option.label : key.charAt(0).toUpperCase() + key.slice(1);
-  };
+  // Helper to format keys for display (already imported from utils)
+  // const formatKey = (key: string): string => { ... }
  
-  // Helper for conditional classes
-  const classNames = (...classes: (string | boolean)[]) => {
-    return classes.filter(Boolean).join(' ');
-  };
+  // Helper for conditional classes (already imported from utils)
+  // const classNames = (...classes: (string | boolean)[]) => { ... }
  
-  // Check if a specific filter is applied
-  const isFilterApplied = (key: string) => {
-    if (key === 'custom') {
-      // Check if there's a custom filter applied
-      return queryFilters.some(f => f.isCustom);
-    }
-    
-    // Special case for sourceSystem - check both queryFilters and currentFilters
-    if (key === 'sourceSystem' && currentFilters.sourceSystem) {
-      return true;
-    }
-    
-    // For normal filters, check if they exist in our filter array
-    return queryFilters.some(f => f.key === key && !f.isCustom);
-  };
+  // Check if a specific filter is applied (already imported from utils)
+  // const isFilterApplied = (key: string) => { ... }
  
-  // Get the applied filter for a key
-  const getAppliedFilter = (key: string) => {
-    if (key === 'custom') {
-      // Return the first custom filter - this will display in the chip
-      return queryFilters.find(f => f.isCustom);
-    }
-    
-    // Special case for sourceSystem - check both queryFilters and currentFilters
-    if (key === 'sourceSystem' && currentFilters.sourceSystem) {
-      // Return a synthetic filter if it's only in currentFilters
-      const existingFilter = queryFilters.find(f => f.key === key && !f.isCustom);
-      if (existingFilter) {
-        return existingFilter;
-      }
-      
-      return {
-        key: 'sourceSystem',
-        type: 'matches',
-        value: currentFilters.sourceSystem
-      };
-    }
-    
-    return queryFilters.find(f => f.key === key && !f.isCustom);
-  };
+  // Get the applied filter for a key (already imported from utils)
+  // const getAppliedFilter = (key: string) => { ... }
  
   // Helper function to directly apply a filter with a value
   const applyFilterWithValue = (key: string, type: QueryType, newValue: any) => {
-    // Check if this filter already exists
     const existingIndex = queryFilters.findIndex(f => f.key === key);
     let newFilters = [...queryFilters];
-    
     if (existingIndex >= 0) {
-      // Update existing filter
-      newFilters[existingIndex] = {
-        key,
-        type,
-        value: newValue
-      };
+      newFilters[existingIndex] = { key, type, value: newValue };
     } else {
-      // Add new filter
-      newFilters.push({
-        key,
-        type,
-        value: newValue
-      });
+      newFilters.push({ key, type, value: newValue });
     }
-    
     setQueryFilters(newFilters);
-    
-    // Convert the filter array to the format expected by the parent component
     const filterObject = newFilters.reduce((acc, filter) => {
-      if (filter.isCustom) {
-        // Don't add the _customFilter suffix for the API, just pass the real key
-        acc[filter.key] = filter.value;
-      } else {
-        acc[filter.key] = filter.value;
-      }
+      acc[filter.key] = filter.value;
       return acc;
     }, {} as Record<string, any>);
-    
     onFilterChange(filterObject);
-    
-    // Reset state
     setActiveFilter(null);
     setActiveFilterButton(null);
     setFilterInput('');
@@ -618,38 +512,71 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
     setSelectedChips([]);
   };
  
-  // Handle the filter popup portal creation and positioning
+  // MODIFIED useEffect for popover positioning
   useEffect(() => {
     if (!activeFilter) return;
-    
-    // Get updated position of the button
+
     const buttonEl = filterButtonRefs.current[activeFilter];
-    const containerEl = filterContainerRef.current;
-    
-    if (buttonEl && containerEl) {
-      // Recalculate position to ensure it's correct
+    const popoverEl = activeFilterRef.current; // Ref to the popover DOM element itself
+
+    if (buttonEl && popoverEl) {
       const buttonRect = buttonEl.getBoundingClientRect();
-      const containerRect = containerEl.getBoundingClientRect();
+      const popoverRect = popoverEl.getBoundingClientRect(); 
+
       const windowHeight = window.innerHeight;
+      const windowWidth = window.innerWidth;
+      const viewportMargin = 16; 
+      const popoverOffset = 5;   
+
+      let actualPopoverHeight = popoverRect.height > 0 ? popoverRect.height : 350; 
       
-      // Calculate available space below the button
-      const spaceBelow = windowHeight - buttonRect.bottom;
-      const estimatedPopoverHeight = 350;
+      let calculatedPopoverWidth = Math.max(300, buttonRect.width * 1.5);
+      calculatedPopoverWidth = Math.min(calculatedPopoverWidth, windowWidth - (2 * viewportMargin));
+
+      const spaceBelow = windowHeight - buttonRect.bottom - viewportMargin; 
+      const spaceAbove = buttonRect.top - viewportMargin; 
+      let positionAbove = false;
+
+      if (spaceBelow < actualPopoverHeight) { 
+        if (spaceAbove >= actualPopoverHeight) { 
+          positionAbove = true;
+        } else {
+          positionAbove = (spaceAbove > spaceBelow) && (spaceAbove > 200); 
+        }
+      }
+
+      let newTop;
+      if (positionAbove) {
+        newTop = buttonRect.top - actualPopoverHeight - popoverOffset;
+        if (newTop < viewportMargin) {
+          newTop = viewportMargin;
+        }
+      } else { 
+        newTop = buttonRect.bottom + popoverOffset;
+        if (newTop + actualPopoverHeight > windowHeight - viewportMargin) {
+          newTop = windowHeight - actualPopoverHeight - viewportMargin;
+          if (newTop < viewportMargin) {
+            newTop = viewportMargin;
+          }
+        }
+      }
       
-      // Determine if popover should appear above or below
-      const shouldPositionAbove = spaceBelow < estimatedPopoverHeight;
-      
-      // Calculate position for fixed positioning relative to viewport
+      let newLeft = buttonRect.left;
+      if (newLeft + calculatedPopoverWidth > windowWidth - viewportMargin) {
+        newLeft = windowWidth - calculatedPopoverWidth - viewportMargin;
+      }
+      if (newLeft < viewportMargin) {
+        newLeft = viewportMargin;
+      }
+
       setSelectedButtonPosition({
-        top: shouldPositionAbove 
-          ? buttonRect.top - 5 // Position above with offset
-          : buttonRect.bottom + 5, // Position below with offset
-        left: buttonRect.left,
-        width: buttonRect.width,
-        positionAbove: shouldPositionAbove
+        top: newTop, 
+        left: newLeft,
+        width: calculatedPopoverWidth, 
+        positionAbove: positionAbove, 
       });
     }
-  }, [activeFilter]);
+  }, [activeFilter, queryFilters]); // Added queryFilters to dependencies
  
   return (
     <div className="relative">
@@ -698,7 +625,6 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
                 const displayValue = appliedFilter ? getFilterValueDisplay(option.key, appliedFilter) : null;
                 const IconComponent = option.icon || Filter;
                 
-                // Color mappings for different filter types
                 const getFilterColorClasses = (key: string) => {
                   switch(key) {
                     case 'sourceSystem':
@@ -722,14 +648,12 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
  
                 const colors = getFilterColorClasses(option.key);
                 
-                // If this filter is applied, show it as a chip
                 if (isApplied && !isActive) {
                   return (
                     <div
                       key={option.key}
                       className={`px-3 py-2 rounded-md text-sm border ${colors.border} ${colors.bg} ${colors.text} ${colors.hover} flex items-center justify-between group cursor-pointer transition-colors shadow-sm`}
                       onClick={() => {
-                        // For custom filter, we need to set the custom filter fields
                         if (option.key === 'custom' && appliedFilter) {
                           setCustomFilterKey(appliedFilter.key);
                           setCustomFilterValue(Array.isArray(appliedFilter.value) ? appliedFilter.value.join(', ') : String(appliedFilter.value));
@@ -753,8 +677,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
                       <button
                         type="button"
                         onClick={(e) => {
-                          e.stopPropagation(); // Prevent triggering the parent's onClick
-                          // For custom filter, we need to find the custom filter
+                          e.stopPropagation(); 
                           if (option.key === 'custom') {
                             const index = queryFilters.findIndex(f => f.isCustom);
                             if (index >= 0) removeFilter(index);
@@ -772,7 +695,6 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
                   );
                 }
                 
-                // Otherwise show as a button that can be clicked to add a filter
                 return (
                   <button
                     key={option.key}
@@ -811,14 +733,14 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
             <div 
               key={`filter-popover-${activeFilter}`}
               ref={activeFilterRef}
-              className="fixed bg-white p-4 rounded-lg border border-gray-200 shadow-lg z-40 max-h-[80vh] overflow-y-auto"
+              // MODIFIED className and style
+              className="fixed bg-white p-4 rounded-lg border border-gray-200 shadow-lg z-40 overflow-y-auto" // Removed max-h-[80vh]
               style={{
-                ...(selectedButtonPosition.positionAbove 
-                  ? { top: 'auto', bottom: `${window.innerHeight - selectedButtonPosition.top}px` } 
-                  : { top: `${selectedButtonPosition.top}px`, bottom: 'auto' }),
+                top: `${selectedButtonPosition.top}px`, 
                 left: `${selectedButtonPosition.left}px`,
-                width: `${Math.max(300, selectedButtonPosition.width * 1.5)}px`,
-                maxWidth: 'calc(100vw - 32px)'
+                width: `${selectedButtonPosition.width}px`, 
+                maxWidth: `calc(100vw - 32px)`, 
+                maxHeight: `calc(100vh - ${selectedButtonPosition.top}px - 16px)`, 
               }}
               onClick={(e) => e.stopPropagation()}
             >
@@ -949,7 +871,6 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
                   );
                 }
                 
-                // Special case for sourceSystem to show common options
                 if (activeFilter === 'sourceSystem') {
                   return (
                     <>
@@ -957,9 +878,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
                         <p className="text-xs text-gray-500 mb-2">Select source system:</p>
                         <div className="flex flex-wrap gap-2">
                           {availableSourceSystems.map(system => {
-                            // Check if this system is already selected either from filterInput or currentFilters
                             const isSelected = filterInput === system.id || currentFilters.sourceSystem === system.id;
-                            
                             return (
                               <button
                                 key={system.id}
@@ -986,7 +905,6 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
                         <Database size={12} className="mr-1" />
                         <span>{filterInput || currentFilters.sourceSystem ? "1 selected" : "None selected"}</span>
                       </div>
-                      {/* Apply button */}
                       <div className="flex justify-end">
                         <button
                           type="button"
@@ -1000,7 +918,6 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
                   );
                 }
                 
-                // Add a special case for the custom filter
                 if (activeFilter === 'custom') {
                   return (
                     <>
@@ -1020,7 +937,6 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
                             />
                           </div>
                         </div>
-                        
                         <div>
                           <label className="block text-xs text-gray-600 mb-1">Filter Type</label>
                           <div className="grid grid-cols-2 gap-2">
@@ -1047,7 +963,6 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
                             ))}
                           </div>
                         </div>
-                        
                         <div>
                           <label className="block text-xs text-gray-600 mb-1">Value</label>
                           <div className="flex">
@@ -1064,8 +979,6 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
                           </div>
                         </div>
                       </div>
-                      
-                      {/* Apply button */}
                       <div className="flex justify-end mt-4">
                         <button
                           type="button"
@@ -1093,7 +1006,6 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
                         autoFocus
                       />
                     </div>
-                    {/* Apply button */}
                     <div className="flex justify-end mt-4">
                       <button
                         type="button"
@@ -1137,5 +1049,3 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
     </div>
   );
 };
- 
-
