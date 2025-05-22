@@ -619,9 +619,9 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-2 mb-3">
               {/* Standard filter buttons/chips */}
               {filterOptions.map(option => {
-                const isApplied = isFilterApplied(option.key);
+                const isApplied = isFilterApplied(option.key, queryFilters);
                 const isActive = activeFilterButton === option.key;
-                const appliedFilter = getAppliedFilter(option.key);
+                const appliedFilter = getAppliedFilter(option.key, queryFilters);
                 const displayValue = appliedFilter ? getFilterValueDisplay(option.key, appliedFilter) : null;
                 const IconComponent = option.icon || Filter;
                 
